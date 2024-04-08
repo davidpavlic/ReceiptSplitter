@@ -1,0 +1,1 @@
+# Team01-LightningMcKings-Projekt2-ReceiptSplitter
