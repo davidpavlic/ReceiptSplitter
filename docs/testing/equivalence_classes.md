@@ -65,12 +65,12 @@ Methode die getestet wird: `addContact(name: String, email: String)`
 2. Der Contact Objekt wird mit einem ungültigen Email erzeugt.
 3. Der Contact Objekt wird mehrfach mit den gleichen Parametern erzeugt.
 
-| Äquivalenzklasse             | Methoden Parameter                     | Initialer Objekt Zustand                                               | Erwartetes Ergebnis                      |
-|------------------------------|----------------------------------------|------------------------------------------------------------------------|------------------------------------------|
-| 1: Gültige Email             | Gültiger Name und Email                | Contact mit dieser Email exisitert nicht                               | Contact Objekt wird erzeugt              |
-| 1: Gültige Email             | Gültiger Name und Email                | Contact mit diesem Name exisitert bereits aber mit einer anderen Email | Contact Objekt wird erzeugt              |
-| 2: Leere Email               | Gültiger Name, Email mit leeren String | Contact mit dieser Email exisitert nicht                               | Es wird eine Custom Exception aufgerufen |
-| 3: Contact Exisitert bereits | Gültiger Name und Email                | Contact mit dieser Email exisitert bereits                             | Es wird eine Custom Exception aufgerufen |
+| Äquivalenzklasse             | Methoden Parameter                        | Initialer Objekt Zustand                                               | Erwartetes Ergebnis                      |
+|------------------------------|-------------------------------------------|------------------------------------------------------------------------|------------------------------------------|
+| 1: Gültige Email             | Gültiger Name und Email                   | Contact mit dieser Email exisitert nicht                               | Contact Objekt wird erzeugt              |
+| 1: Gültige Email             | Gültiger Name und Email                   | Contact mit diesem Name exisitert bereits aber mit einer anderen Email | Contact Objekt wird erzeugt              |
+| 2: Leere Email               | Gültiger Name, Email mit leeren String    | Contact mit dieser Email exisitert nicht                               | Es wird eine Custom Exception aufgerufen |
+| 3: Contact Exisitert bereits | Gültiger Name und Email                   | Contact mit dieser Email exisitert bereits                             | Es wird eine Custom Exception aufgerufen |
 
 
 
@@ -84,11 +84,12 @@ Methode die getestet wird: `addContact(name: String, email: String)`
 2. Der Contact Objekt wird mit einem leeren String gelöscht.
 3. Der Contact Objekt wird mit einer Email gelöscht, die nicht existiert.
 
-| Äquivalenzklasse         | Methoden Parameter | Initialer Objekt Zustand                 | Erwartetes Ergebnis                             |
-|--------------------------|--------------------|------------------------------------------|-------------------------------------------------|
-| 1: Gültige Email         | Gültige Email      | Contact exisitert mit dieser Email       | Contact wird gelöscht                           |
-| 2: Leere Email           | Leerer String      | Any                                      | Es wird ein IllegalArgumentException aufgerufen |
-| 3: Email exisitert nicht | Gültige Email      | Contact exisitert mit dieser Email nicht | Es wird ein InvalidArgumentException aufgerufen |
+| Äquivalenzklasse         | Methoden Parameter              | Initialer Objekt Zustand                             | Erwartetes Ergebnis                             |
+|--------------------------|---------------------------------|------------------------------------------------------|-------------------------------------------------|
+| 1: Gültige Email         | Gültige Email                   | Contact exisitert mit dieser Email                   | Contact Objekt wird gelöscht                    |
+| 1: Gültige Email         | Gültige Email aber in Uppercase | Contact mit dieser Email exisitert aber in lowercase | Contact Objekt wird gelöscht                    |
+| 2: Leere Email           | Leerer String                   | Any                                                  | Es wird ein IllegalArgumentException aufgerufen |
+| 3: Email exisitert nicht | Gültige Email                   | Contact exisitert mit dieser Email nicht             | Es wird ein InvalidArgumentException aufgerufen |
 
 
 ## Klasse ImageExtractor
@@ -96,16 +97,18 @@ Methode die getestet wird: `extractOCR(lfile: File)`
 
 #### Gültige Äquivalenzklassen
 1. Das OCR wird mit einer gültigen Bilddatei durchgeführt.
+2. Das OCR wird mit einer gültigen Bilddatei durchgeführt, die jedoch keinen lesbaren Text enthält.
 
 #### Ungültige Äquivalenzklassen
-2. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
-3. Das OCR wird mit einer leeren Datei durchgeführt.
+4. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
+5. Das OCR wird mit einer leeren Datei durchgeführt.
 
-| Äquivalenzklasse       | Methoden Parameter | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
-|------------------------|--------------------|------------------------------|-------------------------------------------------|
-| 1: Gültiges Bild       | Gültige Bilddatei  | Tesseract Objekt instanziert | Extrahierter String wird zurückgegeben          |
-| 2: Ungültige Bilddatei | Falscher Dateityp  | Any                          | Es wird ein IllegalArgumentException aufgerufen |
-| 3: Leere Datei         | Leere Datei        | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+| Äquivalenzklasse       | Methoden Parameter                            | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
+|------------------------|-----------------------------------------------|------------------------------|-------------------------------------------------|
+| 1: Gültiges Bild       | Gültige Bilddatei                             | Tesseract Objekt instanziert | Extrahierter String wird zurückgegeben          |
+| 2: Kein lesbaren Text  | Gültige Bilddatei ohne lesbaren Text          | Tesseract Objekt instanziert | Leerer String wird zurückgegeben                |
+| 3: Ungültige Bilddatei | Falscher Dateityp                             | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+| 4: Leere Datei         | Leere Datei                                   | Any                          | Es wird ein IllegalArgumentException aufgerufen |
 
 
 

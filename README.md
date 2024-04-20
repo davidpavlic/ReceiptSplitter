@@ -78,6 +78,6 @@ Namen der Mitwirkenden:
 - Suhejl Asani
 
 ## Anhang
-- [Klassendiagramm](docs/classdiagram/racetrack_handout.png)
+- [Klassendiagramm](docs/classdiagram/classdiagramm.png)
 - [Äquivalenzklassen](docs/testing/equivalence_classes.md)
 
