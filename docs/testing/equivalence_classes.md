@@ -100,15 +100,18 @@ Methode die getestet wird: `extractOCR(lfile: File)`
 2. Das OCR wird mit einer gültigen Bilddatei durchgeführt, die jedoch keinen lesbaren Text enthält.
 
 #### Ungültige Äquivalenzklassen
-4. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
-5. Das OCR wird mit einer leeren Datei durchgeführt.
+3. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
+4. Das OCR wird mit einer leeren Datei durchgeführt.
+5. Das OCR wird mit einer sehr grosse Bilddatei durchgeführt.
 
-| Äquivalenzklasse       | Methoden Parameter                            | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
-|------------------------|-----------------------------------------------|------------------------------|-------------------------------------------------|
-| 1: Gültiges Bild       | Gültige Bilddatei                             | Tesseract Objekt instanziert | Extrahierter String wird zurückgegeben          |
-| 2: Kein lesbaren Text  | Gültige Bilddatei ohne lesbaren Text          | Tesseract Objekt instanziert | Leerer String wird zurückgegeben                |
-| 3: Ungültige Bilddatei | Falscher Dateityp                             | Any                          | Es wird ein IllegalArgumentException aufgerufen |
-| 4: Leere Datei         | Leere Datei                                   | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+
+| Äquivalenzklasse       | Methoden Parameter                   | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
+|------------------------|--------------------------------------|------------------------------|-------------------------------------------------|
+| 1: Gültiges Bild       | Gültige Bilddatei                    | Tesseract Objekt instanziert | Extrahierter String wird zurückgegeben          |
+| 2: Kein lesbaren Text  | Gültige Bilddatei ohne lesbaren Text | Tesseract Objekt instanziert | Leerer String wird zurückgegeben                |
+| 3: Ungültige Bilddatei | Falscher Dateityp                    | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+| 4: Leere Datei         | Leere Datei                          | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+| 3: Große Bilddatei     | Sehr große Bilddatei                 | Tesseract Objekt instanziert | Eine Custom Exception wird aufgerufen           |
 
 
 
