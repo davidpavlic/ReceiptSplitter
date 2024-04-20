@@ -1,75 +1,113 @@
 # Äquivalenzklassen
 
-## Klasse Car
+## Klasse ReceiptProcessor
 
-### Methode accelerate
-Für die Klasse Car haben wir die Äquivalenzklassen der Methode `accelerate` folgendermassen definiert:
-
-#### Gültige Äquivalenzklassen
-- Korrekte Beschleunigung (1-8): Beschleunigung, die die Geschwindigkeit in einer oder mehreren Dimensionen erhöht/verringert.
-- Nullvektor: Keine Beschleunigung, die Geschwindigkeit bleibt unverändert.  
-
-
-#### Ungültige Äquivalenzklassen
-- Null-Eingabe: Der Paramater ist null.
-- Nicht-Vektor-Eingaben: Eingabe von Datentypen, die keine Vektorwerte sind. Dies ist ein anderer, ungültiger Datentyp (nicht null).
-
-| Äquivalenzklasse          | Repräsentativer Wert                                  | Erwartetes Ergebnis                                  | Bemerkungen                         |
-|---------------------------|-------------------------------------------------------|------------------------------------------------------|-------------------------------------|
-| Korrekte Beschleunigung 1 | DOWN_LEFT (-1, 1)                                     | Aktualisiere die Geschwindigkeit nach unten links    | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 2 | DOWN (0, 1)                                           | Aktualisiere die Geschwindigkeit nach unten          | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 3 | DOWN_RIGHT (1, 1)                                     | Aktualisiere die Geschwindigkeit nach unten rechts   | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 4 | LEFT (-1, 0)                                          | Aktualisiere die Geschwindigkeit nach links          | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 6 | RIGHT (1, 0)                                          | Aktualisiere die Geschwindigkeit nach rechts         | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 7 | UP_LEFT (-1, -1)                                      | Aktualisiere die Geschwindigkeit nach oben links     | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 8 | UP (0, -1)                                            | Aktualisiere die Geschwindigkeit nach oben           | Testet normale Beschleunigung       |
-| Korrekte Beschleunigung 9 | UP_RIGHT (1, -1)                                      | Aktualisiere die Geschwindigkeit nach oben rechts    | Testet normale Beschleunigung       |
-| Nullvektor                | NONE (0, 0)                                           | Keine Änderung der aktuellen Geschwindigkeit         | Testet den Fall ohne Beschleunigung |                          |                                               |                                                           |                                   |
-| Ungültige Richtung        | null                                                  | Fehlerbehandlung oder keine Änderung                 | Testet den Fall mit null Eingabe    |
-| Null Objekttypen          | Objekt, welches vom Typ "Direction" ist aber null ist | Fehlerbehandlung oder keine Änderung                 | Testet den Fall mit leerem Datentyp |
-
-### Methode move
-Für die Klasse Car haben wir die Äquivalenzklassen der Methode `move` folgendermassen definiert:
+Methode die getestet wird: `calculateDebtByContact(contactItems: List<ContactItem>)`
 
 #### Gültige Äquivalenzklassen
-- Gütige Bewegung: Eine Bewegung, die die Position des Autos in einer oder mehreren Dimensionen verändert. Entweder keine, positive, negative oder eine gemischte Bewegung.
+1. Die Kalkulation wird mit einer Liste von ContactItems die mindestens ein Element beinhaltet, korrekt durchgeführt.
 
 #### Ungültige Äquivalenzklassen
-- Overflow "positiv": Geschwindigkeitswerte, die extrem hoch sind, könnten zu unerwartetem Verhalten führen, wenn sie nicht korrekt gehandhabt werden.
-- Overflow "negativ" : Geschwindigkeitswerte, die extrem niedrig sind, könnten zu unerwartetem Verhalten führen, wenn sie nicht korrekt gehandhabt werden.
+2. Die Kalkulation wird mit einer leeren Liste (null) von ContactItems durchgeführt.
+3. Die Kalkulation wird mit einer Liste von invaliden ContactItems durchgeführt. (z.B. Betrag ist negativ)
 
-| Äquivalenzklasse    | Aktuelle Position | Aktuelle Geschwindigkeit | Erwartetes Ergebnis nach move()      | Bemerkungen                                     |
-|---------------------|-------------------|--------------------------|--------------------------------------|-------------------------------------------------|
-| Gütige Bewegung     | (10, 5)           | (0, 0)                   | (10, 5)                              | Keine Bewegung; Position unverändert            |
-| Gütige Bewegung     | (10, 5)           | (5, 5)                   | (15, 10)                             | Position erhöht sich in beiden Achsen           |
-| Gütige Bewegung     | (10, 5)           | (-5, -5)                 | (5, 0)                               | Position verringert sich in beiden Achsen       |
-| Gütige Bewegung     | (10, 5)           | (5, -5)                  | (15, 0)                              | Position erhöht sich in X, verringert sich in Y |
-| Overflow "positiv"  | MAX_VALUE         | +1                       | Unerwartetes/ undefiniertes Ergebnis | Liegt ausserhalb der Grenzen                    |
-| Overflow "negativ"  | MIN_VALUE         | -1                       | Unerwartetes/ undefiniertes Ergebnis | Liegt ausserhalb der Grenzen                    |
+| Äquivalenzklasse   | Methoden Parameter                                                          | Initialer Objekt Zustand                                                            | Erwartetes Ergebnis                                                                  |
+|--------------------|-----------------------------------------------------------------------------|-------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------|
+| 1: Gültige Liste   | Liste mit gültigen ContactItems                                             | Es sind gültige Contacts vorhanden und der Receipt ist als Instanz variabel gesetzt | Der Betrag wird korrekt berechnet und zurückgegeben                                  |
+| 2: Leere Liste     | Leere List                                                                  | Any                                                                                 | Der Betrag wird nicht berechnet und es wird eine IllegalArgumentException aufgerufen |
+| 3: Ungültige Liste | Liste mit ContactItems die einen negativen Betrag haben                     | Es sind gültige Contacts vorhanden und der Receipt ist als Instanz variabel gesetzt | Der Betrag wird nicht berechnet und es wird eine IllegalArgumentException aufgerufen |
+| 3: Ungültige Liste | Liste mit ContactItems welches einen nicht existierenden Contact beinhalten | Es sind keine Contacts vorhanden und der Receipt ist als Instanz variabel gesetzt   | Der Betrag wirt nicht berechnet und es wird eine Custom Exception aufgerufen         |
 
-## Klasse Game
 
-### Methode doCarTurn
-Für die Klasse Game haben wir die Äquivalenzklassen der Methode `doCarTurn` folgendermassen definiert:
+---
+#### Methode die getestet wird: `parseReceipt(ocrString: String)`
+#### Gültige Äquivalenzklassen
+
+1. Receipt Objet wird mit einem gültigen OCR String erzeugt und ist korrekt formatiert.
+#### Ungültige Äquivalenzklassen
+2. Receipt Objet wird mit einem String welches ungültigen Informationen beinhaltet, erzeugt.
+3. Receipt Objet wird mit einem leeren String erzeugt.
+
+| Äquivalenzklasse   | Methoden Parameter                                                      | Initialer Objekt Zustand | Erwartetes Ergebnis                             |
+|--------------------|-------------------------------------------------------------------------|--------------------------|-------------------------------------------------|
+| 1: Gültiger String | Gültiger OCR String die informationen einer Quittung beinhalten         | Any                      | Ein gültiges Receipt Objekt wird erzeugt        |
+| 2: Invalid String  | String welches mit einem Random String generator erzeugt wurde          | Any                      | Es wird ein InvalidArgumentException aufgerufen |
+| 2: Invalid String  | String welches ein nicht unterstütztes Format einer Quittung beinhaltet | Any                      | Es wird ein InvalidArgumentException aufgerufen |
+| 3: Leerer String   | Leerer String                                                           | Any                      | Es wird ein InvalidArgumentException aufgerufen |
+
+## Klasse Router
+
+Methode die getestet wird: `gotoScene(enum: Enum)`
 
 #### Gültige Äquivalenzklassen
-- Normaler Pfad (TRACK): Das Auto beschleunigt und bewegt sich auf normalem Streckenabschnitt, ohne zu kollidieren oder die Ziellinie zu überqueren.
-- Kollision mit einem anderen Auto (TRACK/CAR): Das Auto kollidiert auf der Strecke mit einem anderen Auto und geht in den Zustand "gecrasht" über.
-- Kollision mit einer Wand (WALL): Das Auto fährt in eine Wand und wird als gecrasht markiert.
-- Korrekte Überquerung der Ziellinie : Das Auto überquert die Ziellinie in der richtigen Richtung und wird als Gewinner markiert.
-- Falsche Richtung an der Ziellinie: Das Auto erreicht die Ziellinie, aber in der falschen Richtung, und gewinnt daher nicht.
+
+1. Die Methode wird mit einem gültigen Enum aufgerufen und die richtige Scene wird instanziert.
 
 #### Ungültige Äquivalenzklassen
-- Ungültige Beschleunigung: Die Beschleunigung liegt ausserhalb der erlaubten Zahlenwerte (null).
-- Auto bereits gecrasht: Das Auto befindet sich bereits im Zustand "gecrasht", bevor der Zug beginnt.
 
-| Äquivalenzklasse                                                                              | Beschleunigung         | Erwartetes Ergebnis                                       | Bemerkungen                                                 |
-|-----------------------------------------------------------------------------------------------|------------------------|-----------------------------------------------------------|-------------------------------------------------------------|
-| Normaler Pfad (TRACK)                                                                         | Gültige Richtung       | Auto bewegt sich zum Endpunkt ohne Zwischenfälle          | Standard-Szenario ohne besondere Ereignisse                 |
-| Kollision mit einem anderen Auto (TRACK)                                                      | Gültige Richtung       | Auto wird als gecrasht markiert                           | Auto trifft auf ein anderes Auto und crasht                 |
-| Kollision mit einer Wand (WALL)                                                               | Gültige Richtung       | Auto wird als gecrasht markiert                           | Auto fährt gegen eine Wand und crasht                       |
-| Korrekte Überquerung der Ziellinie, "roundsToComplete" ändert den Wert von 1 auf 0 (FINISH_*) | Gültige Richtung       | Auto wird als Gewinner markiert                           | Auto überquert die Ziellinie in der richtigen Richtung      |
-| Falsche Richtung an der Ziellinie (FINISH_*)                                                  | Gültige Richtung       | Auto gewinnt nicht, "roundsToComplete" wird auf 2 gesetzt | Auto erreicht die Ziellinie, aber in der falschen Richtung  |
-| Ungültige Beschleunigung                                                                      | Ungültiger Wert (null) | Fehlermeldung                                             | Beschleunigungswerte sind ausserhalb des erlaubten Bereichs |
-| Auto bereits gecrasht                                                                         | Gültige Richtung       | Auto bewegt sich nicht                                    | Auto ist bereits als gecrasht markiert                      |
+2. Die Methode wird mit einem ungültigen Enum aufgerufen (Enum welches kein File verbunden hat).
+3. Die Methode wird mit einem null Enum aufgerufen.
+
+| Äquivalenzklasse   | Methoden Parameter                              | Initialer Objekt Zustand                           | Erwartetes Ergebnis                              |
+|--------------------|-------------------------------------------------|----------------------------------------------------|--------------------------------------------------|
+| 1: Gültiger Enum   | Enum welches eine Java FXML Datei verbunden hat | Stage und sceneMap mit gültigen Werten instanziert | Die richtige Scene wird instanziert              |
+| 2: Ungültiger Enum | Enum welches kein File verbunden hat            | Stage und sceneMap mit gültigen werten instanziert | Es wird eine InvalidArgumentException aufgerufen |
+| 2: Ungültiger Enum | Enum welches kein File verbunden hat            | SceneMap ist leer                                  | Es wird eine InvalidArgumentException aufgerufen |
+| 3: Null Enum       | Null                                            | any                                                | Es wird eine IllegalArgumentException aufgerufen |
+
+## Klasse ContactReposittory
+Methode die getestet wird: `addContact(name: String, email: String)`
+
+#### Gültige Äquivalenzklassen
+1. Der Contact Objekt wird mit einem gültigen Namen und einer gültigen Email erzeugt.
+
+#### Ungültige Äquivalenzklassen
+2. Der Contact Objekt wird mit einem ungültigen Email erzeugt.
+3. Der Contact Objekt wird mehrfach mit den gleichen Parametern erzeugt.
+
+| Äquivalenzklasse             | Methoden Parameter                     | Initialer Objekt Zustand                                               | Erwartetes Ergebnis                      |
+|------------------------------|----------------------------------------|------------------------------------------------------------------------|------------------------------------------|
+| 1: Gültige Email             | Gültiger Name und Email                | Contact mit dieser Email exisitert nicht                               | Contact Objekt wird erzeugt              |
+| 1: Gültige Email             | Gültiger Name und Email                | Contact mit diesem Name exisitert bereits aber mit einer anderen Email | Contact Objekt wird erzeugt              |
+| 2: Leere Email               | Gültiger Name, Email mit leeren String | Contact mit dieser Email exisitert nicht                               | Es wird eine Custom Exception aufgerufen |
+| 3: Contact Exisitert bereits | Gültiger Name und Email                | Contact mit dieser Email exisitert bereits                             | Es wird eine Custom Exception aufgerufen |
+
+
+
+--------------------------------------------
+#### Methode die getestet wird: `removeContact(email: String)`
+
+#### Gültige Äquivalenzklassen
+1. Der Contact Objekt wird mit einer gültigen Email gelöscht.
+
+#### Ungültige Äquivalenzklassen
+2. Der Contact Objekt wird mit einem leeren String gelöscht.
+3. Der Contact Objekt wird mit einer Email gelöscht, die nicht existiert.
+
+| Äquivalenzklasse         | Methoden Parameter | Initialer Objekt Zustand                 | Erwartetes Ergebnis                             |
+|--------------------------|--------------------|------------------------------------------|-------------------------------------------------|
+| 1: Gültige Email         | Gültige Email      | Contact exisitert mit dieser Email       | Contact wird gelöscht                           |
+| 2: Leere Email           | Leerer String      | Any                                      | Es wird ein IllegalArgumentException aufgerufen |
+| 3: Email exisitert nicht | Gültige Email      | Contact exisitert mit dieser Email nicht | Es wird ein InvalidArgumentException aufgerufen |
+
+
+## Klasse ImageExtractor
+Methode die getestet wird: `extractOCR(lfile: File)`
+
+#### Gültige Äquivalenzklassen
+1. Das OCR wird mit einer gültigen Bilddatei durchgeführt.
+
+#### Ungültige Äquivalenzklassen
+2. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
+3. Das OCR wird mit einer leeren Datei durchgeführt.
+
+| Äquivalenzklasse       | Methoden Parameter | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
+|------------------------|--------------------|------------------------------|-------------------------------------------------|
+| 1: Gültiges Bild       | Gültige Bilddatei  | Tesseract Objekt instanziert | Extrahierter String wird zurückgegeben          |
+| 2: Ungültige Bilddatei | Falscher Dateityp  | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+| 3: Leere Datei         | Leere Datei        | Any                          | Es wird ein IllegalArgumentException aufgerufen |
+
+
+
+
 
