@@ -55,7 +55,7 @@ Methode die getestet wird: `gotoScene(enum: Enum)`
 | 2: Ungültiger Enum | Enum welches kein File verbunden hat            | SceneMap ist leer                                  | Es wird eine InvalidArgumentException aufgerufen |
 | 3: Null Enum       | Null                                            | any                                                | Es wird eine IllegalArgumentException aufgerufen |
 
-## Klasse ContactReposittory
+## Klasse ContactRepository
 Methode die getestet wird: `addContact(name: String, email: String)`
 
 #### Gültige Äquivalenzklassen
