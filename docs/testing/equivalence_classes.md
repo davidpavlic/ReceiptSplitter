@@ -102,7 +102,7 @@ Methode die getestet wird: `extractOCR(lfile: File)`
 #### Ungültige Äquivalenzklassen
 3. Das OCR wird mit einem ungültigen Dateityp durchgeführt.
 4. Das OCR wird mit einer leeren Datei durchgeführt.
-5. Das OCR wird mit einer sehr grosse Bilddatei durchgeführt.
+5. Das OCR wird mit einer Bilddatei grösser als 10 MB durchgeführt.
 
 
 | Äquivalenzklasse       | Methoden Parameter                   | Initialer Objekt Zustand     | Erwartetes Ergebnis                             |
@@ -111,7 +111,7 @@ Methode die getestet wird: `extractOCR(lfile: File)`
 | 2: Kein lesbaren Text  | Gültige Bilddatei ohne lesbaren Text | Tesseract Objekt instanziert | Leerer String wird zurückgegeben                |
 | 3: Ungültige Bilddatei | Falscher Dateityp                    | Any                          | Es wird ein IllegalArgumentException aufgerufen |
 | 4: Leere Datei         | Leere Datei                          | Any                          | Es wird ein IllegalArgumentException aufgerufen |
-| 3: Große Bilddatei     | Sehr große Bilddatei                 | Tesseract Objekt instanziert | Eine Custom Exception wird aufgerufen           |
+| 3: Große Bilddatei     | Bilddatei > 10MB                     | Tesseract Objekt instanziert | Eine Custom Exception wird aufgerufen           |
 
 
 
