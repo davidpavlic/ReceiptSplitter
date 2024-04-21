@@ -4,13 +4,12 @@
 package ch.zhaw.it.pm2.receiptsplitter;
 
 import org.junit.jupiter.api.Test;
-import ch.zhaw.it.pm2.receiptsplitter.App;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class AppTest {
+class MainTest {
     @Test void appHasAGreeting() {
-        App classUnderTest = new App();
+        Main classUnderTest = new Main();
         assertNotNull(classUnderTest.getGreeting(), "app should have a greeting");
     }
 }

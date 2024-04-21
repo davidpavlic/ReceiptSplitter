@@ -8,6 +8,7 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 repositories {
@@ -33,9 +34,14 @@ java {
     }
 }
 
+javafx {
+    version = "21.0.2"
+    modules("javafx.controls", "javafx.fxml")
+}
+
 application {
     // Define the main class for the application.
-    mainClass = "ch.zhaw.it.pm2.receiptsplitter.App"
+    mainClass = "ch.zhaw.it.pm2.receiptsplitter.Main"
 }
 
 tasks.named<Test>("test") {
