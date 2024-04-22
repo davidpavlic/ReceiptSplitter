@@ -12,12 +12,11 @@ plugins {
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
+    // Use JUnit Jupiter & Mockito for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockito)
 
@@ -25,6 +24,8 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+    implementation(libs.java.ocr.tesseract)
+    implementation(libs.simple.java.mail)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

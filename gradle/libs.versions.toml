@@ -5,8 +5,12 @@
 guava = "32.1.3-jre"
 junit-jupiter = "5.10.0"
 mockito = "4.2.0"
+simple-java-mail = "8.8.3"
+java-ocr-tesseract = "4.5.4"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+simple-java-mail = { module = "org.simplejavamail:simple-java-mail", version.ref = "simple-java-mail" }
+java-ocr-tesseract = { module = "net.sourceforge.tess4j:tess4j", version.ref = "java-ocr-tesseract" }

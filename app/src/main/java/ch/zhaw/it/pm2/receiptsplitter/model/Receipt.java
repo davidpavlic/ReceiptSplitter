@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm2.receiptsplitter.repository;
+package ch.zhaw.it.pm2.receiptsplitter.model;
 
 import java.util.List;
 

@@ -1,9 +1,10 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
+import net.sourceforge.tess4j.Tesseract;
 import java.io.File;
 
 public class ImageExtractor {
-    // TODO: Add Tesseract as dependency
+    Tesseract tesseract = new Tesseract();
 
     public  ImageExtractor() {}
 

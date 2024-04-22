@@ -1,5 +1,9 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.model.ContactItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
+
 import java.util.List;
 
 public class ReceiptProcessor {

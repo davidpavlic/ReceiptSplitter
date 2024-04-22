@@ -1,5 +1,10 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.api.mailer.Mailer;
+import org.simplejavamail.email.EmailBuilder;
+import org.simplejavamail.mailer.MailerBuilder;
+
 public class EmailService {
     private static EmailService instance;
     private final String emailSender;
@@ -24,14 +29,22 @@ public class EmailService {
     }
 
     // TODO Implement Mailer dependency
-    //private Mailer getSmtpServer() {
-     //   return new Mailer(smtpServer, smtpPort, username, password);
-    //}
+    private Mailer getSmtpServer() {
+        return MailerBuilder
+                .withSMTPServer(smtpServer, smtpPort, username, password)
+                .buildMailer();
+    }
 
     public boolean sendEmail(String recipient, String subject, String body) {
-        //Mailer mailer = getSmtpServer();
-        //mailer.sendMail(emailSender, recipient, subject, body);
-        return false;
+        Mailer mailer = getSmtpServer();
+        Email email = EmailBuilder.startingBlank()
+                .from(emailSender)
+                .to(recipient)
+                .withSubject(subject)
+                .withPlainText(body)
+                .buildEmail();
+        mailer.sendMail(email);
+        return true;
     }
 
     public boolean isValidMail(String email) {

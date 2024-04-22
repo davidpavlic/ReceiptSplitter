@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+
 import java.util.List;
 import java.util.ArrayList;
 
