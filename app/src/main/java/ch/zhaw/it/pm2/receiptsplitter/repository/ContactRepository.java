@@ -6,21 +6,13 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class ContactRepository {
-    private static ContactRepository contactRepository;
     private List<Contact> contactList;
     private List<Contact> selectedContacts;
     private Contact selectedProfile;
 
-    private ContactRepository() {
+    public ContactRepository() {
         contactList = new ArrayList<>();
         selectedContacts = new ArrayList<>();
-    }
-
-    public static ContactRepository getInstance() {
-        if (contactRepository == null) {
-            contactRepository = new ContactRepository();
-        }
-        return contactRepository;
     }
 
     public void loadContact() {

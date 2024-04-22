@@ -3,9 +3,16 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 public class Main {
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        configureLogging();
+        logger.info("Hello world!");
     }
 
     public void Start() {
@@ -14,5 +21,18 @@ public class Main {
 
     private void loadRouter() {
         System.out.println("Loading the router");
+    }
+
+    private static void configureLogging() {
+        LogManager.getLogManager().reset();
+        try {
+            InputStream configStream = Main.class.getClassLoader().getResourceAsStream("logging.properties");
+            if (configStream == null) {
+                throw new IOException("Could not find logging.properties");
+            }
+            LogManager.getLogManager().readConfiguration(configStream);
+        } catch (IOException e) {
+            System.err.println("Could not setup logger configuration: " + e);
+        }
     }
 }

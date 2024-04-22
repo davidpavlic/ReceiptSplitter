@@ -30,6 +30,7 @@ build/
 
 # ignore logfiles
 *.log*
+logs/
 
 # OS dependant files
 .DS_Store

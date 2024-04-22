@@ -6,26 +6,18 @@ import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 
 public class EmailService {
-    private static EmailService instance;
     private final String emailSender;
     private final String smtpServer;
     private final int smtpPort;
     private final String username;
     private final String password;
 
-    private EmailService(String emailSender, String smtpServer, int smtpPort, String username, String password) {
+    public EmailService(String emailSender, String smtpServer, int smtpPort, String username, String password) {
         this.emailSender = emailSender;
         this.smtpServer = smtpServer;
         this.smtpPort = smtpPort;
         this.username = username;
         this.password = password;
-    }
-
-    public static EmailService getInstance(String emailSender, String smtpServer, int smtpPort, String username, String password) {
-        if (instance == null) {
-            instance = new EmailService(emailSender, smtpServer, smtpPort, username, password);
-        }
-        return instance;
     }
 
     // TODO Implement Mailer dependency

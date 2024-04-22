@@ -6,7 +6,7 @@ guava = "32.1.3-jre"
 junit-jupiter = "5.10.0"
 mockito = "4.2.0"
 simple-java-mail = "8.8.3"
-java-ocr-tesseract = "4.5.4"
+java-ocr-tesseract = "5.11.0"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
