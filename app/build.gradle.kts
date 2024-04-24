@@ -8,15 +8,15 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
+    // Use JUnit Jupiter & Mockito for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockito)
 
@@ -24,6 +24,8 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
+    implementation(libs.java.ocr.tesseract)
+    implementation(libs.simple.java.mail)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -33,9 +35,14 @@ java {
     }
 }
 
+javafx {
+    version = "21.0.2"
+    modules("javafx.controls", "javafx.fxml")
+}
+
 application {
     // Define the main class for the application.
-    mainClass = "ch.zhaw.it.pm2.receiptsplitter.App"
+    mainClass = "ch.zhaw.it.pm2.receiptsplitter.Main"
 }
 
 tasks.named<Test>("test") {
