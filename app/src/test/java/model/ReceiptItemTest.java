@@ -1,6 +1,7 @@
 package model;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem.ReceiptItemErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -52,7 +53,7 @@ public class ReceiptItemTest {
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(price, VALID_NAME, VALID_AMOUNT));
-        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
+        assertEquals(ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -61,7 +62,7 @@ public class ReceiptItemTest {
     void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, name, VALID_AMOUNT));
-        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
+        assertEquals(ReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -69,6 +70,6 @@ public class ReceiptItemTest {
     void givenInvalidAmount_whenCreatingItem_thenThrowsException(int amount) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, VALID_NAME, amount));
-        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
+        assertEquals(ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 }

@@ -2,6 +2,7 @@ package model;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem.ContactReceiptItemErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //TODO: Add Mocking because all test are dependent on correct constructor initialization
-//TODO: Enum for error messages?
 public class ContactReceiptItemTest {
 
     private static final float VALID_PRICE = 3.95F;
@@ -54,7 +54,7 @@ public class ContactReceiptItemTest {
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(price, VALID_NAME, VALID_CONTACT));
-        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
+        assertEquals(ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -63,7 +63,7 @@ public class ContactReceiptItemTest {
     void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, name, VALID_CONTACT));
-        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
+        assertEquals(ContactReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -71,6 +71,6 @@ public class ContactReceiptItemTest {
     void givenInvalidContact_whenCreatingItem_thenThrowsException(Contact contact) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, VALID_NAME, contact));
-        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.CONTACT_NULL.toString(), exception.getMessage());
+        assertEquals(ContactReceiptItemErrorMessageType.CONTACT_NULL.toString(), exception.getMessage());
     }
 }

@@ -1,6 +1,7 @@
 package model;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact.ContactErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -57,7 +58,7 @@ public class ContactTest {
     void givenInvalidFirstName_whenCreatingItem_thenThrowsException(String firstName) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new Contact(firstName, VALID_LASTNAME, VALID_EMAIL));
-        assertEquals(Contact.ContactErrorMessageType.FIRST_NAME_EMPTY.toString(), exception.getMessage());
+        assertEquals(ContactErrorMessageType.FIRST_NAME_EMPTY.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -65,7 +66,7 @@ public class ContactTest {
     void givenInvalidLastName_whenCreatingItem_thenThrowsException(String lastName) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new Contact(VALID_FIRSTNAME, lastName, VALID_EMAIL));
-        assertEquals(Contact.ContactErrorMessageType.LAST_NAME_NULL.toString(), exception.getMessage());
+        assertEquals(ContactErrorMessageType.LAST_NAME_NULL.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -74,6 +75,6 @@ public class ContactTest {
     void givenInvalidEmail_whenCreatingItem_thenThrowsException(String email) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, email));
-        assertEquals(Contact.ContactErrorMessageType.EMAIL_INVALID.toString(), exception.getMessage());
+        assertEquals(ContactErrorMessageType.EMAIL_INVALID.toString(), exception.getMessage());
     }
 }
