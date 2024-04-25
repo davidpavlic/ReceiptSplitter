@@ -77,4 +77,21 @@ public class Receipt implements CanValidateModelParam {
     private void sortReceiptItemListBy(Comparator<ReceiptItem> comparator) {
         receiptItemList.sort(comparator);
     }
+
+    public enum ReceiptErrorMessageType {
+        LIST_NULL("ReceiptItemList must not be null."),
+        ITEM_NULL("ReceiptItem must not be null."),
+        INDEX_NOT_PRESENT("Index can not be present in list.");
+
+        private final String message;
+
+        ReceiptErrorMessageType(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
+    }
 }

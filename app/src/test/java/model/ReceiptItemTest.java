@@ -11,17 +11,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //TODO: Add Mocking because all test are dependent on correct constructor initialization
-//TODO: Enum for error messages?
 public class ReceiptItemTest {
 
     private static final float VALID_PRICE = 9.95F;
     private static final String VALID_NAME = "Coca-Cola";
     private static final int VALID_AMOUNT = 3;
     private ReceiptItem receiptItem;
-
-    private static final String NAME_ERROR_MESSAGE     = "Name must not be empty.";
-    private static final String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
-    private static final String AMOUNT_ERROR_MESSAGE   = "Amount must not be zero or lower.";
 
     @BeforeEach
     void setUp() {
@@ -57,7 +52,7 @@ public class ReceiptItemTest {
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(price, VALID_NAME, VALID_AMOUNT));
-        assertEquals(PRICE_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -66,7 +61,7 @@ public class ReceiptItemTest {
     void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, name, VALID_AMOUNT));
-        assertEquals(NAME_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -74,6 +69,6 @@ public class ReceiptItemTest {
     void givenInvalidAmount_whenCreatingItem_thenThrowsException(int amount) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, VALID_NAME, amount));
-        assertEquals(AMOUNT_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ReceiptItem.ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 }

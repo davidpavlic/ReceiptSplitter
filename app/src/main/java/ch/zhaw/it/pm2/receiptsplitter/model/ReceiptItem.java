@@ -7,10 +7,6 @@ public class ReceiptItem implements CanValidateModelParam {
     private float price;
     private int amount;
 
-    private static final String NAME_ERROR_MESSAGE     = "Name must not be empty.";
-    private static final String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
-    private static final String AMOUNT_ERROR_MESSAGE   = "Amount must not be zero or lower.";
-
     public ReceiptItem(float price, String name, int amount) throws IllegalArgumentException{
         setName(name);
         setPrice(price);
@@ -22,7 +18,7 @@ public class ReceiptItem implements CanValidateModelParam {
     }
 
     public void setName(String name) throws IllegalArgumentException{
-        throwIfStringIsEmpty(name, NAME_ERROR_MESSAGE);
+        throwIfStringIsEmpty(name, ReceiptItemErrorMessageType.NAME_EMPTY.toString());
         this.name = name;
     }
 
@@ -31,7 +27,7 @@ public class ReceiptItem implements CanValidateModelParam {
     }
 
     public void setPrice(float price) throws IllegalArgumentException{
-        throwIfZeroOrLower(price, PRICE_ERROR_MESSAGE);
+        throwIfZeroOrLower(price, ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString());
         this.price = price;
     }
 
@@ -40,7 +36,24 @@ public class ReceiptItem implements CanValidateModelParam {
     }
 
     public void setAmount(int amount) throws IllegalArgumentException{
-        throwIfZeroOrLower(amount, AMOUNT_ERROR_MESSAGE);
+        throwIfZeroOrLower(amount, ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString());
         this.amount = amount;
+    }
+
+    public enum ReceiptItemErrorMessageType {
+        NAME_EMPTY("Name must not be empty."),
+        PRICE_ZERO_OR_LOWER("Price must not be zero or lower."),
+        AMOUNT_ZERO_OR_LOWER("Amount must not be zero or lower.");
+
+        private final String message;
+
+        ReceiptItemErrorMessageType(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
     }
 }

@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //TODO: Add Mocking because all test are dependent on correct constructor initialization
-//TODO: Enum for error messages?
 public class ReceiptTest {
 
     private static final ReceiptItem VALID_RECEIPT_ITEM_ONE = new ReceiptItem(9.95F, "Burger", 1);
@@ -23,10 +22,6 @@ public class ReceiptTest {
     private static final ReceiptItem VALID_RECEIPT_ITEM_THREE = new ReceiptItem(4.95F, "Fanta", 2);
     private List<ReceiptItem> validReceiptItemList;
     private Receipt receipt;
-
-    private static final String LIST_ERROR_MESSAGE     = "ReceiptItemList must not be null.";
-    private static final String ITEM_ERROR_MESSAGE     = "ReceiptItem must not be null.";
-    private static final String INDEX_ERROR_MESSAGE    = "Index can not be present in list.";
 
     @BeforeEach
     void setUp() {
@@ -106,7 +101,7 @@ public class ReceiptTest {
     void givenInvalidList_whenSettingList_thenThrowsException(List<ReceiptItem> receiptItemList){
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.setReceiptItemList(receiptItemList));
-        assertEquals(exception.getMessage(), LIST_ERROR_MESSAGE);
+        assertEquals(exception.getMessage(), Receipt.ReceiptErrorMessageType.LIST_NULL.toString());
     }
 
     @ParameterizedTest
@@ -114,7 +109,7 @@ public class ReceiptTest {
     void givenInvalidIndex_whenGettingItem_thenThrowsException(int index){
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.getReceiptItem(index));
-        assertEquals(exception.getMessage(), INDEX_ERROR_MESSAGE);
+        assertEquals(exception.getMessage(), Receipt.ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
     }
 
     @ParameterizedTest
@@ -124,7 +119,7 @@ public class ReceiptTest {
 
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.addReceiptItem(receiptItem));
-        assertEquals(exception.getMessage(), ITEM_ERROR_MESSAGE);
+        assertEquals(exception.getMessage(), Receipt.ReceiptErrorMessageType.ITEM_NULL.toString());
         assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
     }
 
@@ -134,7 +129,7 @@ public class ReceiptTest {
         ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.updateReceiptItem(index, localContact));
-        assertEquals(exception.getMessage(), INDEX_ERROR_MESSAGE);
+        assertEquals(exception.getMessage(), Receipt.ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
     }
 
     @ParameterizedTest
@@ -143,7 +138,7 @@ public class ReceiptTest {
         int receiptSizeBefore = receipt.getReceiptItemList().size();
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.deleteReceiptItem(index));
-        assertEquals(exception.getMessage(), INDEX_ERROR_MESSAGE);
+        assertEquals(exception.getMessage(), Receipt.ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
     }
 

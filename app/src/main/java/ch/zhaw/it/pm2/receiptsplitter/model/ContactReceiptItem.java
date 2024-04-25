@@ -7,10 +7,6 @@ public class ContactReceiptItem implements CanValidateModelParam {
     private String name;
     private Contact contact;
 
-    private static final String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
-    private static final String NAME_ERROR_MESSAGE     = "Name must not be empty.";
-    private static final String CONTACT_ERROR_MESSAGE  = "Contact must not be null.";
-
     public ContactReceiptItem(float price, String name, Contact contact) {
         setPrice(price);
         setName(name);
@@ -22,7 +18,7 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setPrice(float price) throws IllegalArgumentException{
-        throwIfZeroOrLower(price, PRICE_ERROR_MESSAGE);
+        throwIfZeroOrLower(price, ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString());
         this.price = price;
     }
 
@@ -31,7 +27,7 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setName(String name) throws IllegalArgumentException{
-        throwIfStringIsEmpty(name, NAME_ERROR_MESSAGE);
+        throwIfStringIsEmpty(name, ContactReceiptItemErrorMessageType.NAME_EMPTY.toString());
         this.name = name;
     }
 
@@ -40,7 +36,24 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setContact(Contact contact) throws IllegalArgumentException{
-        throwIfElementIsNull(contact, CONTACT_ERROR_MESSAGE);
+        throwIfElementIsNull(contact, ContactReceiptItemErrorMessageType.CONTACT_NULL.toString());
         this.contact = contact;
+    }
+
+    public enum ContactReceiptItemErrorMessageType {
+        PRICE_ZERO_OR_LOWER("Price must not be zero or lower."),
+        NAME_EMPTY("Name must not be empty."),
+        CONTACT_NULL("Contact must not be null.");
+
+        private final String message;
+
+        ContactReceiptItemErrorMessageType(String message) {
+            this.message = message;
+        }
+
+        @Override
+        public String toString() {
+            return message;
+        }
     }
 }

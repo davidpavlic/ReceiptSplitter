@@ -20,10 +20,6 @@ public class ContactReceiptItemTest {
     private static final Contact VALID_CONTACT = new Contact("Pablo", "Escobar", "Pablo.Escobar@hotmail.mx");
     private ContactReceiptItem contactReceiptItem;
 
-    private static final String PRICE_ERROR_MESSAGE     = "Price must not be zero or lower.";
-    private static final String NAME_ERROR_MESSAGE      = "Name must not be empty.";
-    private static final String CONTACT_ERROR_MESSAGE   = "Contact must not be null.";
-
     @BeforeEach
     void setUp() {
         contactReceiptItem = new ContactReceiptItem(VALID_PRICE, VALID_NAME, VALID_CONTACT);
@@ -58,7 +54,7 @@ public class ContactReceiptItemTest {
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(price, VALID_NAME, VALID_CONTACT));
-        assertEquals(PRICE_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -67,7 +63,7 @@ public class ContactReceiptItemTest {
     void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, name, VALID_CONTACT));
-        assertEquals(NAME_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
     }
 
     @ParameterizedTest
@@ -75,6 +71,6 @@ public class ContactReceiptItemTest {
     void givenInvalidContact_whenCreatingItem_thenThrowsException(Contact contact) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, VALID_NAME, contact));
-        assertEquals(CONTACT_ERROR_MESSAGE, exception.getMessage());
+        assertEquals(ContactReceiptItem.ContactReceiptItemErrorMessageType.CONTACT_NULL.toString(), exception.getMessage());
     }
 }
