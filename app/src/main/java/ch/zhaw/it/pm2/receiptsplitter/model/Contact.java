@@ -1,11 +1,17 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
-public class Contact {
+//TODO: JavaDoc
+public class Contact implements CanValidateModelParam {
+
     private String firstName;
     private String lastName;
     private String email;
 
-    public Contact(String firstName, String lastName, String email) {
+    private final static String FIRST_NAME_ERROR_MESSAGE   = "First name must not be empty.";
+    private final static String LAST_NAME_ERROR_MESSAGE    = "Last name must not be null.";
+    private final static String EMAIL_ERROR_MESSAGE        = "Email must be a valid email address.";
+
+    public Contact(String firstName, String lastName, String email) throws IllegalArgumentException{
         setFirstName(firstName);
         setLastName(lastName);
         setEmail(email);
@@ -15,10 +21,8 @@ public class Contact {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
-        if (firstName == null || firstName.trim().isEmpty()) {
-            throw new IllegalArgumentException("First name must not be empty.");
-        }
+    public void setFirstName(String firstName) throws IllegalArgumentException{
+        throwIfStringIsEmpty(firstName, FIRST_NAME_ERROR_MESSAGE);
         this.firstName = firstName;
     }
 
@@ -26,10 +30,9 @@ public class Contact {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName) throws IllegalArgumentException{
         // lastName can be empty
-        if(lastName == null)
-            throw new IllegalArgumentException("Last name must not be null.");
+        throwIfElementIsNull(lastName, LAST_NAME_ERROR_MESSAGE);
         this.lastName = lastName;
     }
 
@@ -37,10 +40,8 @@ public class Contact {
         return email;
     }
 
-    public void setEmail(String email) {
-        if (email == null || !email.trim().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$")) {
-            throw new IllegalArgumentException("Email must be a valid email address.");
-        }
+    public void setEmail(String email) throws IllegalArgumentException{
+        throwIfEmailIsInvalid(email, EMAIL_ERROR_MESSAGE);
         this.email = email;
     }
 }
