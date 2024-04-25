@@ -7,9 +7,9 @@ public class ContactReceiptItem implements CanValidateModelParam {
     private String name;
     private Contact contact;
 
-    private final static String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
-    private final static String NAME_ERROR_MESSAGE     = "Name must not be empty.";
-    private final static String CONTACT_ERROR_MESSAGE  = "Contact must not be null.";
+    private static final String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
+    private static final String NAME_ERROR_MESSAGE     = "Name must not be empty.";
+    private static final String CONTACT_ERROR_MESSAGE  = "Contact must not be null.";
 
     public ContactReceiptItem(float price, String name, Contact contact) {
         setPrice(price);

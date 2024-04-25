@@ -8,9 +8,9 @@ public class Receipt implements CanValidateModelParam {
 
     private List<ReceiptItem> receiptItemList;
 
-    private final static String LIST_ERROR_MESSAGE     = "ReceiptItemList must not be null.";
-    private final static String ITEM_ERROR_MESSAGE     = "ReceiptItem must not be null.";
-    private final static String INDEX_ERROR_MESSAGE    = "Index can not be present in list.";
+    private static final String LIST_ERROR_MESSAGE     = "ReceiptItemList must not be null.";
+    private static final String ITEM_ERROR_MESSAGE     = "ReceiptItem must not be null.";
+    private static final String INDEX_ERROR_MESSAGE    = "Index can not be present in list.";
 
     public Receipt(List<ReceiptItem> receiptItem) {
         setReceiptItemList(receiptItem);
@@ -31,7 +31,7 @@ public class Receipt implements CanValidateModelParam {
     }
 
     public float getReceiptTotal(){
-        return (float) receiptItemList.stream().mapToDouble(ReceiptItem::getAmount).sum();
+        return (float) receiptItemList.stream().mapToDouble(ReceiptItem::getPrice).sum();
     }
 
     public void addReceiptItem(ReceiptItem receiptItem) throws IllegalArgumentException{
@@ -39,15 +39,15 @@ public class Receipt implements CanValidateModelParam {
         receiptItemList.add(receiptItem);
     }
 
-    public void deleteReceiptItem(int index) throws IllegalArgumentException{
-        throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
-        receiptItemList.remove(index);
-    }
-
     public void updateReceiptItem(int index, ReceiptItem receiptItem) throws IllegalArgumentException{
         throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
         throwIfElementIsNull(receiptItem, ITEM_ERROR_MESSAGE);
         receiptItemList.set(index, receiptItem);
+    }
+
+    public void deleteReceiptItem(int index) throws IllegalArgumentException{
+        throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
+        receiptItemList.remove(index);
     }
 
     public void sortByPriceLowestFirst(){

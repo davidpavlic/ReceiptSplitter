@@ -7,9 +7,9 @@ public class Contact implements CanValidateModelParam {
     private String lastName;
     private String email;
 
-    private final static String FIRST_NAME_ERROR_MESSAGE   = "First name must not be empty.";
-    private final static String LAST_NAME_ERROR_MESSAGE    = "Last name must not be null.";
-    private final static String EMAIL_ERROR_MESSAGE        = "Email must be a valid email address.";
+    private static final String FIRST_NAME_ERROR_MESSAGE   = "First name must not be empty.";
+    private static final String LAST_NAME_ERROR_MESSAGE    = "Last name must not be null.";
+    private static final String EMAIL_ERROR_MESSAGE        = "Email must be a valid email address.";
 
     public Contact(String firstName, String lastName, String email) throws IllegalArgumentException{
         setFirstName(firstName);

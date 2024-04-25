@@ -7,9 +7,9 @@ public class ReceiptItem implements CanValidateModelParam {
     private float price;
     private int amount;
 
-    private final static String NAME_ERROR_MESSAGE     = "Name must not be empty.";
-    private final static String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
-    private final static String AMOUNT_ERROR_MESSAGE   = "Amount must not be zero or lower.";
+    private static final String NAME_ERROR_MESSAGE     = "Name must not be empty.";
+    private static final String PRICE_ERROR_MESSAGE    = "Price must not be zero or lower.";
+    private static final String AMOUNT_ERROR_MESSAGE   = "Amount must not be zero or lower.";
 
     public ReceiptItem(float price, String name, int amount) throws IllegalArgumentException{
         setName(name);

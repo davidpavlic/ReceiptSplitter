@@ -3,11 +3,15 @@ package model;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 //TODO: Add Mocking because all test are dependent on correct constructor initialization
+//TODO: Enum for error messages?
 public class ContactTest {
 
     private static final String VALID_FIRSTNAME = "Max";
@@ -15,20 +19,22 @@ public class ContactTest {
     private static final String VALID_EMAIL = "MaxMustermann@hotmail.com";
     private Contact contact;
 
+    private static final String FIRST_NAME_ERROR_MESSAGE   = "First name must not be empty.";
+    private static final String LAST_NAME_ERROR_MESSAGE    = "Last name must not be null.";
+    private static final String EMAIL_ERROR_MESSAGE        = "Email must be a valid email address.";
+
     @BeforeEach
     void setUp() {
         contact = new Contact(VALID_FIRSTNAME, VALID_LASTNAME, VALID_EMAIL);
     }
 
     @Test
-    void createValidItem() {
-        assertEquals(VALID_FIRSTNAME, contact.getFirstName());
-        assertEquals(VALID_LASTNAME, contact.getLastName());
-        assertEquals(VALID_EMAIL, contact.getEmail());
+    void whenCreatingValidItem_thenAllAttributesAreCorrect() {
+        assertContactAttributes(VALID_FIRSTNAME, VALID_LASTNAME, VALID_EMAIL);
     }
 
     @Test
-    void updateExistingItem() {
+    void whenUpdatingItem_thenAllAttributesAreUpdated() {
         String newFirstName = "Hans";
         String newLastName = "Landa";
         String newEmail = "HansLanda@hotmail.com";
@@ -37,56 +43,42 @@ public class ContactTest {
         contact.setLastName(newLastName);
         contact.setEmail(newEmail);
 
-        assertEquals(newFirstName, contact.getFirstName());
-        assertEquals(newLastName, contact.getLastName());
-        assertEquals(newEmail, contact.getEmail());
+        assertContactAttributes(newFirstName, newLastName, newEmail);
 
         contact.setLastName("");
         assertEquals("", contact.getLastName());
     }
 
-    @Test
-    void invalidFirstNameTest() {
-        Exception exception;
+    private void assertContactAttributes(String firstname, String lastname, String email){
+        assertEquals(firstname, contact.getFirstName());
+        assertEquals(lastname, contact.getLastName());
+        assertEquals(email, contact.getEmail());
 
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(null, VALID_LASTNAME, VALID_EMAIL));
-        assertEquals("First name must not be empty.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact("", VALID_LASTNAME, VALID_EMAIL));
-        assertEquals("First name must not be empty.", exception.getMessage());
     }
 
-    @Test
-    void invalidLastNameTest() {
-        Exception exception;
-
-        exception= assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, null, VALID_EMAIL));
-        assertEquals("Last name must not be null.", exception.getMessage());
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "  "})
+    void givenInvalidFirstName_whenCreatingItem_thenThrowsException(String firstName) {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new Contact(firstName, VALID_LASTNAME, VALID_EMAIL));
+        assertEquals(FIRST_NAME_ERROR_MESSAGE, exception.getMessage());
     }
 
-    @Test
-    void invalidEmailTest() {
-        Exception exception;
+    @ParameterizedTest
+    @NullSource
+    void givenInvalidLastName_whenCreatingItem_thenThrowsException(String lastName) {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new Contact(VALID_FIRSTNAME, lastName, VALID_EMAIL));
+        assertEquals(LAST_NAME_ERROR_MESSAGE, exception.getMessage());
+    }
 
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, null));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, ""));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, "johndoe.example.com"));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, "john@doe@example.com"));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, "john.doe@"));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, "john.doe@example"));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
-
-        exception = assertThrows(IllegalArgumentException.class, () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, "john.doe@example.c"));
-        assertEquals("Email must be a valid email address.", exception.getMessage());
+    @ParameterizedTest
+    @NullSource
+    @ValueSource(strings = {"", "  ", "johndoe.example.com", "john@doe@example.com", "john.doe@", "john.doe@example", "john.doe@example.c"})
+    void givenInvalidEmail_whenCreatingItem_thenThrowsException(String email) {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, email));
+        assertEquals(EMAIL_ERROR_MESSAGE, exception.getMessage());
     }
 }
