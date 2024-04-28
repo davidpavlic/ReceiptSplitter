@@ -22,6 +22,7 @@
                 <Menu text="Help">
                     <items>
                         <MenuItem fx:id="menuShowHelp" accelerator="F1" text="Show help" />
+                  <MenuItem mnemonicParsing="false" text="FAQ" />
                     </items>
                 </Menu>
             </menus>

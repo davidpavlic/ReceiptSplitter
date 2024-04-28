@@ -25,7 +25,7 @@ public class Router extends Application {
     public void start(Stage stage) throws Exception {
         this.stage = stage;
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pas/MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/MainWindow.fxml"));
             Pane rootNode = loader.load();
 
             Scene scene = new Scene(rootNode);
