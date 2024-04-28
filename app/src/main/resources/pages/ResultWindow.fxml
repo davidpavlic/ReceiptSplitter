@@ -10,7 +10,7 @@
    <bottom>
 
          <!-- Button on the right -->
-         <Button fx:id="confirmButton" alignment="CENTER" onAction="#confirm" text="Confirm" BorderPane.alignment="CENTER">
+         <Button alignment="CENTER" onAction="#confirm" text="Confirm" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" />
          </BorderPane.margin>

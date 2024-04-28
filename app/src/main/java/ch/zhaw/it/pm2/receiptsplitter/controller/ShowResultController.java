@@ -16,7 +16,7 @@ public class ShowResultController {
         changeResultMessage();
     }
 
-    private void changeResultMessage(l){
+    private void changeResultMessage(){
         if (isDeliverySuccessful){
             resultMessage.setText("Your requests have been sent out successfully.");
         } else {
@@ -26,7 +26,7 @@ public class ShowResultController {
 
     public void confirm(ActionEvent actionEvent) {
         if(isDeliverySuccessful){
-            Platform.exit();;
+            Platform.exit();
         } else {
             //TODO: gotoRouter(SplitWindow)
         }
