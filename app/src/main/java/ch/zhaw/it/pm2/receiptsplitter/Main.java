@@ -3,6 +3,10 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.LogManager;
@@ -12,15 +16,17 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         configureLogging();
-        logger.info("Hello world!");
+        logger.info("Starting the application");
+        start();
     }
 
-    public void Start() {
-        System.out.println("Starting the application");
-    }
-
-    private void loadRouter() {
-        System.out.println("Loading the router");
+    private static void start() {
+        Router router = new Router();
+        try {
+            Application.launch(router.getClass());
+        } catch (Exception e) {
+            logger.severe("An error occurred while trying to open the main window: " + e.getMessage());
+        }
     }
 
     private static void configureLogging() {
