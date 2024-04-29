@@ -6,23 +6,7 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 
-public class MainWindowController implements DefaultController {
-    Router router;
-
-    @Override
-    public void initialize(Router router) {
-        this.router = router;
-    }
-
-    @FXML
-    void showFAQ() {
-        router.openHelpModal(HelpMessages.FAQ_MSG);
-    }
-
-    @FXML
-    void showHelpModal() {
-        router.openHelpModal(HelpMessages.MAIN_WINDOW_MSG);
-    }
+public class MainWindowController extends DefaultController {
 
     @FXML
     public void openContactList() {

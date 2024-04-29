@@ -11,8 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
-public class ContactListController implements CanNavigate, CanReset, DefaultController {
-    private Router router;
+public class ContactListController extends DefaultController implements CanNavigate, CanReset {
 
     @FXML
     private TableColumn<?, ?> actionColumn;
@@ -28,11 +27,6 @@ public class ContactListController implements CanNavigate, CanReset, DefaultCont
     private TableColumn<?, ?> nameColumn;
     @FXML
     private TableView<?> tableContactList;
-
-    @Override
-    public void initialize(Router router) {
-        this.router = router;
-    }
 
     @FXML
     void showFAQ() {

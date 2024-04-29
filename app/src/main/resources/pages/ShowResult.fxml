@@ -9,7 +9,6 @@
 <BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.ShowResultController">
    <bottom>
 
-         <!-- Button on the right -->
          <Button alignment="CENTER" onAction="#confirm" text="Confirm" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="20.0" />
@@ -17,7 +16,7 @@
       </Button>
    </bottom>
    <center>
-      <Label fx:id="resultMessage" text="Message" textAlignment="CENTER" BorderPane.alignment="CENTER">
+      <Label  text="Message" textAlignment="CENTER" BorderPane.alignment="CENTER">
          <font>
             <Font size="20.0" />
          </font>

@@ -7,19 +7,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-public class HelpController implements DefaultController {
-    Router router;
+public class HelpController extends DefaultController {
 
     @FXML
     private TextArea helpTextArea;
 
     public void setHelpText(HelpMessages helpText){
         helpTextArea.setText(helpText.getMessage());
-    }
-
-    @Override
-    public void initialize(Router router) {
-        this.router = router;
     }
 
     @FXML

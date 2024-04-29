@@ -23,20 +23,20 @@
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
-         <children>
             <Label text="Help Instructions" VBox.vgrow="ALWAYS">
-               <VBox.margin>
-                  <Insets bottom="5.0" top="5.0" />
-               </VBox.margin>
-               <font>
-                  <Font name="System Bold Italic" size="22.0" />
-               </font>
+                <VBox.margin>
+                    <Insets bottom="5.0" top="5.0"/>
+                </VBox.margin>
+                <font>
+                    <Font name="System Bold Italic" size="22.0"/>
+                </font>
             </Label>
-            <TextArea editable="false" focusTraversable="false" minHeight="40" fx:id="helpTextArea" prefHeight="200.0" prefWidth="200.0">
-               <padding>
-                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-               </padding>
+            <TextArea editable="false" focusTraversable="false" minHeight="40" fx:id="helpTextArea" prefHeight="200.0"
+                      prefWidth="200.0">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
             </TextArea>
-         </children></VBox>
+        </VBox>
     </center>
 </BorderPane>

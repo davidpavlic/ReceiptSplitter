@@ -20,10 +20,8 @@
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <items>
-                        <MenuItem onAction="#showHelpModal" text="Show help" />
-                        <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
-                    </items>
+                    <MenuItem onAction="#showHelp" text="Show help"/>
+                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ"/>
                 </Menu>
             </menus>
         </MenuBar>

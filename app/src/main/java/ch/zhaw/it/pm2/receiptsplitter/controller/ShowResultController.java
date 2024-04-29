@@ -1,15 +1,17 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
-public class ShowResultController {
+public class ShowResultController extends DefaultController {
 
-    private final boolean isDeliverySuccessful;
 
-   @FXML  private Label resultMessage;
+    /*
 
     ShowResultController(boolean isDeliverySuccessful){
         this.isDeliverySuccessful = isDeliverySuccessful;
@@ -23,13 +25,9 @@ public class ShowResultController {
             resultMessage.setText("Sending request has failed. Please try again.");
     }
     }
-
+*/
     public void confirm(ActionEvent actionEvent) {
-        if(isDeliverySuccessful){
-            Platform.exit();
-        } else {
-            //TODO: gotoRouter(SplitWindow)
+            router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
         }
     }
-}
 

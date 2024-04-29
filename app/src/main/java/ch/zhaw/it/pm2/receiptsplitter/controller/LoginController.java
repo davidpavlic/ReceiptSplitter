@@ -8,8 +8,7 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 
-public class LoginController implements DefaultController {
-    Router router;
+public class LoginController extends DefaultController {
 
     @FXML
     private Button confirmButton;
@@ -18,23 +17,12 @@ public class LoginController implements DefaultController {
     private ComboBox<Contact> selectUserDropdown;
 
     public void initialize(Router router) {
-        this.router = router;
         confirmButton.setOnAction(event -> { confirm(); });
     }
 
     @FXML
     void closeWindow() {
         router.closeWindow();
-    }
-
-    @FXML
-    void showFAQ() {
-        router.openHelpModal(HelpMessages.FAQ_MSG);
-    }
-
-    @FXML
-    void showHelpModal() {
-        router.openHelpModal(HelpMessages.LOGIN_WINDOW_MSG);
     }
 
     @FXML

@@ -20,15 +20,15 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-public class AddReceiptController implements CanNavigate, CanReset, DefaultController {
+
+public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
 
     private File selectedFile;
 
-    private Router router;
     public ImageExtractor imageExtractor;
     private Receipt currentReceipt;
 
-      @FXML private Pane dragAndDropPane;
+    @FXML private Pane dragAndDropPane;
     @FXML private Button uploadReceiptButton;
     @FXML private Button confirmButton;
     @FXML private Button backButton;
@@ -47,14 +47,13 @@ public class AddReceiptController implements CanNavigate, CanReset, DefaultContr
 
     @Override
     public void initialize(Router router) {
-        this.router = router;
         confirmButton.setOnAction(event -> { confirm(); });
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
     @Override
     public void confirm() {
-        router.gotoScene(Pages.MAIN_WINDOW);
+        router.gotoScene(Pages.LIST_ITEMS_WINDOW);
     }
 
     @Override

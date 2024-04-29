@@ -8,6 +8,7 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -35,6 +36,10 @@ public class Main extends Application {
     }
 
     private static void configureLogging() {
+        File logDir = new File("logs");
+        if (!logDir.exists()) {
+            logDir.mkdir(); // Create the directory if it does not exist
+        }
         LogManager.getLogManager().reset();
         try {
             InputStream configStream = Main.class.getClassLoader().getResourceAsStream("logging.properties");

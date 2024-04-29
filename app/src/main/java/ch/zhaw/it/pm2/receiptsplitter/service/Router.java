@@ -32,6 +32,7 @@ public class Router {
 
     private void addSceneMap(Pages page, String pathToScene) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
+        logger.info(pathToScene);
         Pane node = loader.load();
         DefaultController controller = loader.getController();
         controller.initialize(this);

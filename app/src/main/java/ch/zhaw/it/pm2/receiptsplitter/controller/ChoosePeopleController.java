@@ -1,0 +1,22 @@
+package ch.zhaw.it.pm2.receiptsplitter.controller;
+
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+
+public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset {
+    @Override
+    public void confirm() {
+
+    }
+
+    @Override
+    public void back() {
+
+    }
+
+    @Override
+    public void reset() {
+
+    }
+}

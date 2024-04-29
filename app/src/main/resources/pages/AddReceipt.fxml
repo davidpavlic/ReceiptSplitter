@@ -17,8 +17,8 @@
             <menus>
                 <Menu text="Help">
                     <items>
-                        <MenuItem fx:id="menuShowHelp" accelerator="F1" text="Show help" />
-                        <MenuItem fx:id="menuShowFAQ" mnemonicParsing="false" text="FAQ" />
+                        <MenuItem fx:id="showHelp" accelerator="F1" text="Show help" />
+                        <MenuItem fx:id="showFAQ" mnemonicParsing="false" text="FAQ" />
                     </items>
                 </Menu>
             </menus>

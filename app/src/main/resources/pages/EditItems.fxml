@@ -11,15 +11,13 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.AllocateItemsController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.EditItemsController">
     <top>
         <MenuBar prefHeight="10.0" prefWidth="214.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <items>
-                        <MenuItem fx:id="showHelp" accelerator="F1" text="Show help" />
-                        <MenuItem mnemonicParsing="false" text="FAQ" />
-                    </items>
+                    <MenuItem fx:id="showHelp" accelerator="F1" text="Show help"/>
+                    <MenuItem mnemonicParsing="false" text="showFAQ"/>
                 </Menu>
             </menus>
         </MenuBar>
@@ -38,14 +36,16 @@
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
-         <children>
-            <TableView fx:id="contactItemTable" fixedCellSize="1.0" prefHeight="200.0" prefWidth="200.0">
-              <columns>
-                <TableColumn fx:id="itemColumn" prefWidth="232.00006711483002" text="Item" />
-                <TableColumn fx:id="contactColumn" prefWidth="154.39996337890625" text="Contact" />
-              </columns>
-            </TableView>
-         </children>
+            <children>
+                <TableView  fixedCellSize="1.0" prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                  <TableColumn prefWidth="68.00005948543549" text="Amount" />
+                  <TableColumn prefWidth="168.79999542236328" text="Name" />
+                        <TableColumn prefWidth="78.39996337890625" text="Price" />
+                        <TableColumn prefWidth="71.20001220703125" text="Total" />
+                    </columns>
+                </TableView>
+            </children>
         </VBox>
     </center>
 </BorderPane>

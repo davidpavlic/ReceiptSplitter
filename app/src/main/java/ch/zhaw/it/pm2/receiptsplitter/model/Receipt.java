@@ -11,6 +11,4 @@ public class Receipt {
         this.receiptItem = receiptItem;
     }
 
-    public ObservableList<ReceiptItem> getReceiptItems() {
-    }
 }

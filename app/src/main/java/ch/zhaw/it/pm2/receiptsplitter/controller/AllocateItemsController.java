@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
@@ -8,22 +9,21 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import jakarta.mail.FetchProfile;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.css.converter.StringConverter;
 import javafx.fxml.FXML;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.ComboBoxTableCell;
 
-import java.util.List;
 
-public class AllocateItemsController implements CanNavigate, CanReset, DefaultController {
+
+public class AllocateItemsController extends DefaultController implements CanNavigate, CanReset  {
 
     private ContactRepository contactRepository;
     private Receipt receipt;
+
     private final ObservableList<Contact> contacts = FXCollections.observableArrayList();
 
 
@@ -36,24 +36,6 @@ public class AllocateItemsController implements CanNavigate, CanReset, DefaultCo
 
 
 
-        receipt = new Receipt();
-        ObservableList<ReceiptItem> receiptItems = receipt.getReceiptItems();
-
-        contactRepository = new ContactRepository();
-        ObservableList<Contact> contacts = FXCollections.observableArrayList(contactRepository.getContactList());
-
-        contactItemTable.setItems(receiptItems);
-        itemColumn = new TableColumn<>("Items");
-
-        itemColumn.setCellFactory(ComboBoxTableCell.forTableColumn(contacts) {
-
-
-        for (ReceiptItem item : receiptItems){
-            ComboBox<Contact> dropdown = new ComboBox<>();
-            dropdown.setPromptText("Choose a contact");
-
-
-    }
 
 
 
@@ -66,15 +48,14 @@ public class AllocateItemsController implements CanNavigate, CanReset, DefaultCo
     }
 
 
-    }
     @Override
     public void confirm() {
-
+        router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
     }
 
     @Override
     public void back() {
-
+        router.gotoScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
     @Override
@@ -82,8 +63,28 @@ public class AllocateItemsController implements CanNavigate, CanReset, DefaultCo
 
     }
 
+       /*
     @Override
     public void initialize(Router router) {
 
+        receipt = new Receipt();
+        ObservableList<ReceiptItem> receiptItems = receipt.getReceiptItems();
+
+        contactRepository = new ContactRepository();
+        ObservableList<Contact> contacts = FXCollections.observableArrayList(contactRepository.getContactList());
+
+        contactItemTable.setItems(receiptItems);
+        itemColumn = new TableColumn<>("Items");
+
+        itemColumn.setCellFactory(ComboBoxTableCell.forTableColumn(contacts);
+
+
+            for (ReceiptItem item : receiptItems){
+                ComboBox<Contact> dropdown = new ComboBox<>();
+                dropdown.setPromptText("Choose a contact");
+
+            }
+
+        }
+        */
     }
-}
