@@ -30,13 +30,13 @@
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button fx:id="backButton" cancelButton="true" text="Back" HBox.hgrow="NEVER" />
+            <Button onAction="#back" cancelButton="true" text="Back" HBox.hgrow="NEVER" />
 
             <!-- Spacer that pushes both buttons to the ends -->
             <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Button on the right -->
-            <Button fx:id="confirmButton" text="Confirm" HBox.hgrow="NEVER" />
+            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
     <center>
@@ -57,7 +57,7 @@
                   <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
                     </columns>
                 </TableView>
-            <Button fx:id="addContactButton" mnemonicParsing="false" text="Add Contact" VBox.vgrow="ALWAYS">
+            <Button onAction="#openCreateProfile" mnemonicParsing="false" text="Add Contact" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>

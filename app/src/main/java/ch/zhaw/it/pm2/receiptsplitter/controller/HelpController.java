@@ -10,8 +10,6 @@ import javafx.stage.Stage;
 
 public class HelpController implements DefaultController {
     Router router;
-    @FXML
-    private Button confirmButton;
 
     @FXML
     private TextArea helpTextArea;
@@ -23,9 +21,11 @@ public class HelpController implements DefaultController {
     @Override
     public void initialize(Router router) {
         this.router = router;
-        confirmButton.setOnAction(event -> {
-            Stage stage = (Stage) confirmButton.getScene().getWindow();
-            stage.close();
-        });
+    }
+
+    @FXML
+    public void confirm() {
+        Stage stage = (Stage) helpTextArea.getScene().getWindow();
+        stage.close();
     }
 }

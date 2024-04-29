@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
@@ -43,14 +44,21 @@ public class ContactListController implements CanNavigate, CanReset, DefaultCont
         router.openHelpModal(HelpMessages.CONTACT_LIST_WINDOW_MSG);
     }
 
-    @Override
-    public void confirm() {
+    @FXML
+    public void openCreateProfile() {
+        NewContactController controller = (NewContactController) router.getController(Pages.CREATE_PROFILE_WINDOW);
+        controller.setLastPage(Pages.CONTACT_LIST_WINDOW);
+        router.gotoScene(Pages.CREATE_PROFILE_WINDOW);
+    }
 
+    @Override @FXML
+    public void confirm() {
+        router.gotoScene(Pages.MAIN_WINDOW);
     }
 
     @Override
     public void back() {
-
+        router.gotoScene(Pages.MAIN_WINDOW);
     }
 
     @Override

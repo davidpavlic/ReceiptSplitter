@@ -18,7 +18,7 @@
             <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Button on the right -->
-            <Button fx:id="confirmButton" text="Confirm" HBox.hgrow="NEVER" />
+            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
     <center>

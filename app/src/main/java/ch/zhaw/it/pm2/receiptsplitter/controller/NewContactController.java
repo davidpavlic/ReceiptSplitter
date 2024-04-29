@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 
 public class NewContactController implements DefaultController, CanNavigate {
     private Router router;
+    private Pages lastPage;
 
     @FXML
     private Button confirmButton;
@@ -27,7 +28,12 @@ public class NewContactController implements DefaultController, CanNavigate {
     @Override
     public void initialize(Router router) {
         this.router = router;
+        this.lastPage = Pages.MAIN_WINDOW;
         confirmButton.setOnAction(event -> { confirm(); });
+    }
+
+    public void setLastPage(Pages lastPage) {
+        this.lastPage = lastPage;
     }
 
     @FXML
@@ -41,11 +47,12 @@ public class NewContactController implements DefaultController, CanNavigate {
 
     @Override
     public void confirm() {
-
+        //TODO Add Contact
+        router.gotoScene(lastPage);
     }
 
     @Override @FXML
     public void back() {
-        router.gotoScene(Pages.LOGIN_WINDOW);
+        router.gotoScene(lastPage);
     }
 }

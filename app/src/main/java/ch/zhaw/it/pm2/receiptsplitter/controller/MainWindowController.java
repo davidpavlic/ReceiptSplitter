@@ -1,13 +1,12 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 
-public class MainWindowController implements DefaultController, CanNavigate {
+public class MainWindowController implements DefaultController {
     Router router;
 
     @Override
@@ -23,11 +22,6 @@ public class MainWindowController implements DefaultController, CanNavigate {
     @FXML
     void showHelpModal() {
         router.openHelpModal(HelpMessages.MAIN_WINDOW_MSG);
-    }
-
-    @Override
-    public void confirm() {
-
     }
 
     @FXML
@@ -46,7 +40,6 @@ public class MainWindowController implements DefaultController, CanNavigate {
     }
 
 
-    @Override
     @FXML
     public void back() {
         router.gotoScene(Pages.LOGIN_WINDOW);
