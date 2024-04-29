@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
+import javafx.collections.ObservableList;
+
 import java.util.List;
 
 public class Receipt {
@@ -7,5 +9,8 @@ public class Receipt {
 
     public Receipt() {
         this.receiptItem = receiptItem;
+    }
+
+    public ObservableList<ReceiptItem> getReceiptItems() {
     }
 }

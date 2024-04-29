@@ -1,7 +1,12 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageExtractor;
+import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
@@ -15,21 +20,19 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 
-public class AddReceiptController implements CanNavigate, CanReset{
+public class AddReceiptController implements CanNavigate, CanReset, DefaultController {
 
     private File selectedFile;
+
+    private Router router;
     public ImageExtractor imageExtractor;
     private Receipt currentReceipt;
 
-    @FXML private Pane dragAndDropPane;
+      @FXML private Pane dragAndDropPane;
     @FXML private Button uploadReceiptButton;
     @FXML private Button confirmButton;
     @FXML private Button backButton;
 
-    public AddReceiptController(){
-        setupDragAndDrop();
-        uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
-    }
 
     private void setupDragAndDrop() {
         dragAndDropPane.setOnDragOver(event -> {
@@ -41,14 +44,22 @@ public class AddReceiptController implements CanNavigate, CanReset{
 
         dragAndDropPane.setOnDragDropped(this::handleReceiptDropped);
     }
+
+    @Override
+    public void initialize(Router router) {
+        this.router = router;
+        confirmButton.setOnAction(event -> { confirm(); });
+        setupDragAndDrop();
+        uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
+    }
     @Override
     public void confirm() {
-        //TODO: router.gotoscene(listItemsController)
+        router.gotoScene(Pages.MAIN_WINDOW);
     }
 
     @Override
     public void back() {
-        //TODO: router.gotoscene(mainWIndowController)
+        router.gotoScene(Pages.MAIN_WINDOW);
     }
 
     @Override
@@ -88,4 +99,6 @@ public class AddReceiptController implements CanNavigate, CanReset{
         imageExtractor = new ImageExtractor();
         String extractedImage =  imageExtractor.extractOCR(file);
     }
+
+
 }
