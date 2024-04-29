@@ -30,7 +30,7 @@
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button onAction="#back" cancelButton="true" text="Back" HBox.hgrow="NEVER" />
+            <Button cancelButton="true" onAction="#back" text="Back" HBox.hgrow="NEVER" />
 
             <!-- Spacer that pushes both buttons to the ends -->
             <Pane HBox.hgrow="ALWAYS" />
@@ -56,8 +56,11 @@
                         <TableColumn fx:id="emailColumn" prefWidth="141.0" text="Email" />
                   <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
                     </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
                 </TableView>
-            <Button onAction="#openCreateProfile" mnemonicParsing="false" text="Add Contact" VBox.vgrow="ALWAYS">
+            <Button mnemonicParsing="false" onAction="#openCreateProfile" text="Add Contact" VBox.vgrow="ALWAYS">
                <VBox.margin>
                   <Insets top="10.0" />
                </VBox.margin>
