@@ -25,26 +25,52 @@ public class ReceiptItemTest {
     }
 
     @Test
-    void whenCreatingValidItem_thenAllAttributesAreCorrect() {
+    void constructor_ValidAttributes_ItemCreated() {
+        //TODO: Set Arrange and Act by including mocking and moving setup-method here
+        //Assert
         assertReceiptItemAttributes(VALID_PRICE, VALID_NAME, VALID_AMOUNT);
     }
 
     @Test
-    void whenUpdatingItem_thenAllAttributesAreUpdated() {
+    void setPrice_ValidAttributes_PriceUpdated() {
+        //Arrange
         float newPrice = 4.95F;
+
+        //Act
+        receiptItem.setPrice(newPrice);
+
+        //Assert
+        assertEquals(newPrice, receiptItem.getPrice());
+    }
+
+    @Test
+    void setName_ValidAttributes_NameUpdated() {
+        //Arrange
         String newName = "Vivi Cola";
+
+        //Act
+        receiptItem.setName(newName);
+
+        //Assert
+        assertEquals(newName, receiptItem.getName());
+    }
+
+    @Test
+    void setAmount_ValidAttributes_AmountUpdated() {
+        //Arrange
         int newAmount = 2;
 
-        receiptItem.setPrice(newPrice);
-        receiptItem.setName(newName);
+        //Act
         receiptItem.setAmount(newAmount);
 
-        assertReceiptItemAttributes(newPrice, newName, newAmount);
+        //Assert
+        assertEquals(newAmount, receiptItem.getAmount());
     }
 
     @ParameterizedTest
     @ValueSource(floats = {-1.0F, 0F})
-    void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
+    void setPrice_InvalidAttributes_ThrowsException(float price) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(price, VALID_NAME, VALID_AMOUNT));
         assertEquals(ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
@@ -53,7 +79,8 @@ public class ReceiptItemTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})
-    void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
+    void setName_InvalidAttributes_ThrowsException(String name) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, name, VALID_AMOUNT));
         assertEquals(ReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
@@ -61,7 +88,8 @@ public class ReceiptItemTest {
 
     @ParameterizedTest
     @ValueSource(ints = {-1, 0})
-    void givenInvalidAmount_whenCreatingItem_thenThrowsException(int amount) {
+    void setAmount_InvalidAttributes_ThrowsException(int amount) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, VALID_NAME, amount));
         assertEquals(ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
