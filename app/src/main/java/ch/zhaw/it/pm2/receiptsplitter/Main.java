@@ -3,17 +3,20 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 public class Main extends Application {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");

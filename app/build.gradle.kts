@@ -26,6 +26,7 @@ dependencies {
     implementation(libs.guava)
     implementation(libs.java.ocr.tesseract)
     implementation(libs.simple.java.mail)
+    implementation(libs.mail.batch.modules)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
