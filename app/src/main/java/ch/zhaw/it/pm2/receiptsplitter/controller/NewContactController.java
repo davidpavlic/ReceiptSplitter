@@ -1,49 +1,51 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
-public class LoginController implements DefaultController {
-    Router router;
+public class NewContactController implements DefaultController, CanNavigate {
+    private Router router;
 
     @FXML
     private Button confirmButton;
 
     @FXML
-    private ComboBox<Contact> selectUserDropdown;
+    private TextField emailInput;
 
+    @FXML
+    private TextField firstNameInput;
+
+    @FXML
+    private TextField lastNameInput;
+
+    @Override
     public void initialize(Router router) {
         this.router = router;
         confirmButton.setOnAction(event -> { confirm(); });
     }
 
     @FXML
-    void closeWindow() {
-        router.closeWindow();
-    }
-
-    @FXML
     void showFAQ() {
         router.openHelpModal(HelpMessages.FAQ_MSG);
     }
-
     @FXML
     void showHelpModal() {
-        router.openHelpModal(HelpMessages.LOGIN_WINDOW_MSG);
+        router.openHelpModal(HelpMessages.NEW_CONTACT_WINDOW_MSG);
     }
 
-    @FXML
-    void openCreateProfile() {
-        router.gotoScene(Pages.CREATE_PROFILE_WINDOW);
+    @Override
+    public void confirm() {
+
     }
 
-    @FXML
-    void confirm() {
-        router.gotoScene(Pages.MAIN_WINDOW);
+    @Override @FXML
+    public void back() {
+        router.gotoScene(Pages.LOGIN_WINDOW);
     }
 }

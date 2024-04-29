@@ -1,6 +1,9 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-public class SplitController implements CanNavigate{
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+
+public class SplitController implements CanNavigate {
+
     @Override
     public void confirm() {
 

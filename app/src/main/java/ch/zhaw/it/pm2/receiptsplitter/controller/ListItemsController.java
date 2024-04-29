@@ -1,6 +1,9 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-public class ListItemsController implements CanNavigate, CanReset{
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+
+public class ListItemsController implements CanNavigate, CanReset {
     @Override
     public void confirm() {
 

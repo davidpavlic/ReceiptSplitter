@@ -15,14 +15,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.MainController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.MainWindowController">
     <top>
-        <MenuBar prefHeight="10.0" prefWidth="214.0" BorderPane.alignment="CENTER">
+        <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
                     <items>
-                        <MenuItem fx:id="menuShowHelp" accelerator="F1" text="Show help" />
-                  <MenuItem mnemonicParsing="false" text="FAQ" />
+                        <MenuItem onAction="#showHelpModal" text="Show help" />
+                        <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
                     </items>
                 </Menu>
             </menus>
@@ -31,13 +31,7 @@
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button text="Back" HBox.hgrow="NEVER" />
-
-            <!-- Spacer that pushes both buttons to the ends -->
-            <Pane HBox.hgrow="ALWAYS" />
-
-            <!-- Button on the right -->
-            <Button text="Confirm" HBox.hgrow="NEVER" />
+            <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
    <center>
@@ -57,9 +51,9 @@
                       <ColumnConstraints hgrow="SOMETIMES" percentWidth="50" />
                   </columnConstraints>
       
-                  <Button fx:id="addReceiptButton" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Contact List" GridPane.rowIndex="3" />
-                  <Button fx:id="contactListButton" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Profile" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button fx:id="transactionsButton" maxWidth="Infinity" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Add Receipt" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                  <Button onAction="#openContactList" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Contact List" GridPane.rowIndex="3" />
+                  <Button onAction="#openTransactions" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Transactions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button onAction="#addReceipt" maxWidth="Infinity" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Add Receipt" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                <rowConstraints>
                   <RowConstraints />
                   <RowConstraints />

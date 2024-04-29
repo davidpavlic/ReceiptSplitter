@@ -12,21 +12,23 @@ import java.io.InputStream;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class Main {
+public class Main extends Application {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
-        start();
+        launch(args);
     }
 
-    private static void start() {
-        Router router = new Router();
-        try {
-            Application.launch(router.getClass());
-        } catch (Exception e) {
-            logger.severe("An error occurred while trying to open the main window: " + e.getMessage());
-        }
+    public void start(Stage stage) throws Exception {
+        stage.setWidth(400);
+        stage.setHeight(300);
+        stage.setMinWidth(300);
+        stage.setMinHeight(250);
+        stage.setTitle("Receipt Splitter");
+
+        Router router = new Router(stage);
+        router.gotoScene(Pages.LOGIN_WINDOW);
     }
 
     private static void configureLogging() {
