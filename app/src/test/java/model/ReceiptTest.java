@@ -21,12 +21,11 @@ public class ReceiptTest {
     private static final ReceiptItem VALID_RECEIPT_ITEM_ONE = new ReceiptItem(9.95F, "Burger", 1);
     private static final ReceiptItem VALID_RECEIPT_ITEM_TWO = new ReceiptItem(20F, "Extra Cheese", 20);
     private static final ReceiptItem VALID_RECEIPT_ITEM_THREE = new ReceiptItem(4.95F, "Fanta", 2);
-    private List<ReceiptItem> validReceiptItemList;
     private Receipt receipt;
 
     @BeforeEach
     void setUp() {
-        validReceiptItemList = new ArrayList<>();
+        List<ReceiptItem> validReceiptItemList = new ArrayList<>();
         validReceiptItemList.add(VALID_RECEIPT_ITEM_ONE);
         validReceiptItemList.add(VALID_RECEIPT_ITEM_TWO);
         validReceiptItemList.add(VALID_RECEIPT_ITEM_THREE);
@@ -34,72 +33,93 @@ public class ReceiptTest {
     }
 
     @Test
-    void whenCreatingValidList_thenAllAttributesAreCorrect() {
-        assertEquals(validReceiptItemList, receipt.getReceiptItemList());
+    void constructor_ValidAttributes_ListCreated() {
+        //TODO: Set Arrange and Act by including mocking and moving setup-method here
+        //Assert
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_ONE, receipt.getReceiptItem(0));
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(1));
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(2));
     }
 
     @Test
-    void whenGeneratingTotal_thenTotalIsCorrect(){
+    void getTotal_ValidAttributes_TotalGenerated(){
+        //Arrange
         float localTotal = VALID_RECEIPT_ITEM_ONE.getPrice() + VALID_RECEIPT_ITEM_TWO.getPrice() + VALID_RECEIPT_ITEM_THREE.getPrice();
-        assertEquals(localTotal, receipt.getReceiptTotal());
+
+        //Act
+        float generatedTotal = receipt.getReceiptTotal();
+
+        //Assert
+        assertEquals(localTotal, generatedTotal);
     }
 
     @Test
-    void whenAddingItem_thenAllAttributesAreCorrect() {
-        ReceiptItem localContact = new ReceiptItem(4F, "Entry", 4);
+    void addReceiptItem_ValidAttributes_ReceiptItemAdded() {
+        //Arrange
+        ReceiptItem localReceiptItem = new ReceiptItem(4F, "Entry", 4);
         int receiptSizeBefore = receipt.getReceiptItemList().size();
 
-        receipt.addReceiptItem(localContact);
+        //Act
+        receipt.addReceiptItem(localReceiptItem);
+
+        //Assert
         assertEquals(receiptSizeBefore + 1, receipt.getReceiptItemList().size());
-        assertReceiptItemAttributes(localContact, receipt.getReceiptItem(3));
+        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(3));
     }
 
     @Test
-    void whenUpdatingItem_thenAllAttributesAreUpdated() {
+    void updateReceiptItem_ValidAttributes_ReceiptItemUpdated() {
+        //Arrange
         ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
         int receiptSizeBefore = receipt.getReceiptItemList().size();
 
+        //Act
         receipt.updateReceiptItem(1, localContact);
+
+        //Assert
         assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
         assertReceiptItemAttributes(localContact, receipt.getReceiptItem(1));
     }
 
     @Test
-    void whenDeletingItem_thenListSizeIsReduced() {
+    void deleteReceiptItem_ValidAttributes_ReceiptItemDeleted() {
+        //Arrange
         int receiptSizeBefore = receipt.getReceiptItemList().size();
         receipt.deleteReceiptItem(0);
+
+        //Act
         assertEquals(receiptSizeBefore - 1, receipt.getReceiptItemList().size());
+
+        //Assert
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(0));
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(1));
     }
 
     @Test
-    void whenSortingList_thenAllItemsAreSorted(){
-        receipt.sortByPriceLowestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO);
+    void sortList_ValidAttributes_ListSorted(){
+        receipt.sortByPriceLowestFirst();                                                                   //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO);       //Assert
 
-        receipt.sortByPriceHighestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE);
+        receipt.sortByPriceHighestFirst();                                                                  //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE);       //Assert
 
-        receipt.sortByNameLowestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE);
+        receipt.sortByNameLowestFirst();                                                                    //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE);       //Assert
 
-        receipt.sortByNameHighestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE);
+        receipt.sortByNameHighestFirst();                                                                   //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE);       //Assert
 
-        receipt.sortByAmountLowestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO);
+        receipt.sortByAmountLowestFirst();                                                                  //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO);       //Assert
 
-        receipt.sortByAmountHighestFirst();
-        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE);
+        receipt.sortByAmountHighestFirst();                                                                 //Act
+        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE);       //Assert
     }
 
     @ParameterizedTest
     @NullSource
-    void givenInvalidList_whenSettingList_thenThrowsException(List<ReceiptItem> receiptItemList){
+    void setReceiptList_InvalidAttributes_ThrowsException(List<ReceiptItem> receiptItemList){
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.setReceiptItemList(receiptItemList));
         assertEquals(ReceiptErrorMessageType.LIST_NULL.toString(), exception.getMessage());
@@ -107,7 +127,8 @@ public class ReceiptTest {
 
     @ParameterizedTest
     @ValueSource(ints = {3, -1})
-    void givenInvalidIndex_whenGettingItem_thenThrowsException(int index){
+    void getReceiptItem_InvalidIndex_ThrowsException(int index){
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.getReceiptItem(index));
         assertEquals(ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString(), exception.getMessage());
@@ -115,9 +136,11 @@ public class ReceiptTest {
 
     @ParameterizedTest
     @NullSource
-    void givenInvalidItem_whenAddingItem_thenThrowsException(ReceiptItem receiptItem) {
+    void addReceiptList_InvalidAttributes_ThrowsException(ReceiptItem receiptItem) {
+        //Arrange
         int receiptSizeBefore = receipt.getReceiptItemList().size();
 
+        //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.addReceiptItem(receiptItem));
         assertEquals(ReceiptErrorMessageType.ITEM_NULL.toString(), exception.getMessage());
@@ -126,8 +149,11 @@ public class ReceiptTest {
 
     @ParameterizedTest
     @ValueSource(ints = {3, -1})
-    void givenInvalidIndex_whenUpdatingItem_thenThrowsException(int index) {
+    void updateReceiptItem_InvalidIndex_ThrowsException(int index) {
+        //Arrange
         ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
+
+        //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.updateReceiptItem(index, localContact));
         assertEquals(ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString(), exception.getMessage());
@@ -135,8 +161,11 @@ public class ReceiptTest {
 
     @ParameterizedTest
     @ValueSource(ints = {3, -1})
-    void givenInvalidIndex_whenDeletingItem_thenThrowsException(int index) {
+    void deleteReceiptItem_InvalidIndex_ThrowsException(int index) {
+        //Arrange
         int receiptSizeBefore = receipt.getReceiptItemList().size();
+
+        //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.deleteReceiptItem(index));
         assertEquals(ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString(), exception.getMessage());
@@ -144,7 +173,6 @@ public class ReceiptTest {
     }
 
     private void assertReceiptItemAttributes(ReceiptItem expected, ReceiptItem actual) {
-        assertEquals(expected, actual);
         assertEquals(expected.getPrice(), actual.getPrice());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getAmount(), actual.getAmount());

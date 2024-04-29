@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
 //TODO: JavaDoc
-public class Contact implements CanValidateModelParam {
+public class Contact {
 
     private String firstName;
     private String lastName;
@@ -18,7 +18,7 @@ public class Contact implements CanValidateModelParam {
     }
 
     public void setFirstName(String firstName) throws IllegalArgumentException{
-        throwIfStringIsEmpty(firstName, ContactErrorMessageType.FIRST_NAME_EMPTY.toString());
+        ModelParamValidator.throwIfStringIsEmpty(firstName, ContactErrorMessageType.FIRST_NAME_EMPTY.toString());
         this.firstName = firstName;
     }
 
@@ -28,7 +28,7 @@ public class Contact implements CanValidateModelParam {
 
     public void setLastName(String lastName) throws IllegalArgumentException{
         // lastName can be empty
-        throwIfElementIsNull(lastName, ContactErrorMessageType.LAST_NAME_NULL.toString());
+        ModelParamValidator.throwIfElementIsNull(lastName, ContactErrorMessageType.LAST_NAME_NULL.toString());
         this.lastName = lastName;
     }
 
@@ -37,7 +37,7 @@ public class Contact implements CanValidateModelParam {
     }
 
     public void setEmail(String email) throws IllegalArgumentException{
-        throwIfEmailIsInvalid(email, ContactErrorMessageType.EMAIL_INVALID.toString());
+        ModelParamValidator.throwIfEmailIsInvalid(email, ContactErrorMessageType.EMAIL_INVALID.toString());
         this.email = email;
     }
 

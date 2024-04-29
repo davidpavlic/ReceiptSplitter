@@ -4,13 +4,9 @@ import java.util.Comparator;
 import java.util.List;
 
 //TODO: JavaDoc
-public class Receipt implements CanValidateModelParam {
+public class Receipt {
 
     private List<ReceiptItem> receiptItemList;
-
-    private static final String LIST_ERROR_MESSAGE     = "ReceiptItemList must not be null.";
-    private static final String ITEM_ERROR_MESSAGE     = "ReceiptItem must not be null.";
-    private static final String INDEX_ERROR_MESSAGE    = "Index can not be present in list.";
 
     public Receipt(List<ReceiptItem> receiptItem) {
         setReceiptItemList(receiptItem);
@@ -21,12 +17,12 @@ public class Receipt implements CanValidateModelParam {
     }
 
     public void setReceiptItemList(List<ReceiptItem> receiptItemList) throws IllegalArgumentException{
-        throwIfElementIsNull(receiptItemList, LIST_ERROR_MESSAGE);
+        ModelParamValidator.throwIfElementIsNull(receiptItemList, ReceiptErrorMessageType.LIST_NULL.toString());
         this.receiptItemList = receiptItemList;
     }
 
     public ReceiptItem getReceiptItem(int index) throws IllegalArgumentException{
-        throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         return receiptItemList.get(index);
     }
 
@@ -35,18 +31,18 @@ public class Receipt implements CanValidateModelParam {
     }
 
     public void addReceiptItem(ReceiptItem receiptItem) throws IllegalArgumentException{
-        throwIfElementIsNull(receiptItem, ITEM_ERROR_MESSAGE);
+        ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
         receiptItemList.add(receiptItem);
     }
 
     public void updateReceiptItem(int index, ReceiptItem receiptItem) throws IllegalArgumentException{
-        throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
-        throwIfElementIsNull(receiptItem, ITEM_ERROR_MESSAGE);
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
         receiptItemList.set(index, receiptItem);
     }
 
     public void deleteReceiptItem(int index) throws IllegalArgumentException{
-        throwIfIndexIsNotPresent(index, receiptItemList.size(), INDEX_ERROR_MESSAGE);
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         receiptItemList.remove(index);
     }
 

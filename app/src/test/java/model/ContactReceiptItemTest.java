@@ -26,32 +26,52 @@ public class ContactReceiptItemTest {
     }
 
     @Test
-    void whenCreatingValidItem_thenAllAttributesAreCorrect() {
+    void constructor_ValidAttributes_ItemCreated() {
+        //TODO: Set Arrange and Act by including mocking and moving setup-method here
+        //Assert
         assertContactReceiptItemAttributes(VALID_PRICE, VALID_NAME, VALID_CONTACT);
     }
 
     @Test
-    void whenUpdatingItem_thenAllAttributesAreUpdated() {
+    void setPrice_ValidAttributes_PriceUpdated() {
+        //Arrange
         float newPrice = 5.95F;
-        String newName = "Burger";
-        Contact newContact = new Contact("Ronald", "McDonald", "Ronald.McDonald@megges.com");
 
+        //Act
         contactReceiptItem.setPrice(newPrice);
-        contactReceiptItem.setName(newName);
-        contactReceiptItem.setContact(newContact);
 
-        assertContactReceiptItemAttributes(newPrice, newName, newContact);
+        //Assert
+        assertEquals(newPrice, contactReceiptItem.getPrice());
     }
 
-    private void assertContactReceiptItemAttributes(float expectedPrice, String expectedName, Contact expectedContact) {
-        assertEquals(expectedPrice, contactReceiptItem.getPrice());
-        assertEquals(expectedName, contactReceiptItem.getName());
-        assertEquals(expectedContact, contactReceiptItem.getContact());
+    @Test
+    void setName_ValidAttributes_NameUpdated() {
+        //Arrange
+        String newName = "Burger";
+
+        //Act
+        contactReceiptItem.setName(newName);
+
+        //Assert
+        assertEquals(newName, contactReceiptItem.getName());
+    }
+
+    @Test
+    void setContact_ValidAttributes_ContactUpdated() {
+        //Arrange
+        Contact newContact = new Contact("Ronald", "McDonald", "Ronald.McDonald@megges.com");
+
+        //Act
+        contactReceiptItem.setContact(newContact);
+
+        //Assert
+        assertEquals(newContact, contactReceiptItem.getContact());
     }
 
     @ParameterizedTest
     @ValueSource(floats = {-1.0F, 0F})
-    void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
+    void setPrice_InvalidAttributes_ThrowsException(float price) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(price, VALID_NAME, VALID_CONTACT));
         assertEquals(ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
@@ -60,7 +80,8 @@ public class ContactReceiptItemTest {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})
-    void givenInvalidName_whenCreatingItem_thenThrowsException(String name) {
+    void setName_InvalidAttributes_ThrowsException(String name) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, name, VALID_CONTACT));
         assertEquals(ContactReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
@@ -68,9 +89,16 @@ public class ContactReceiptItemTest {
 
     @ParameterizedTest
     @NullSource
-    void givenInvalidContact_whenCreatingItem_thenThrowsException(Contact contact) {
+    void setContact_InvalidAttributes_ThrowsException(Contact contact) {
+        //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, VALID_NAME, contact));
         assertEquals(ContactReceiptItemErrorMessageType.CONTACT_NULL.toString(), exception.getMessage());
+    }
+
+    private void assertContactReceiptItemAttributes(float expectedPrice, String expectedName, Contact expectedContact) {
+        assertEquals(expectedPrice, contactReceiptItem.getPrice());
+        assertEquals(expectedName, contactReceiptItem.getName());
+        assertEquals(expectedContact, contactReceiptItem.getContact());
     }
 }
