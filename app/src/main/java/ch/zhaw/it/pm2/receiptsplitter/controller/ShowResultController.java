@@ -2,15 +2,9 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 
 public class ShowResultController extends DefaultController {
-
-
     /*
 
     ShowResultController(boolean isDeliverySuccessful){

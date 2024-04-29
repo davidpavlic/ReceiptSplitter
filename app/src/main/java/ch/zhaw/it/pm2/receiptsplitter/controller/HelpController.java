@@ -7,7 +7,6 @@ import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
 public class HelpController extends DefaultController {
-
     @FXML
     private TextArea helpTextArea;
 

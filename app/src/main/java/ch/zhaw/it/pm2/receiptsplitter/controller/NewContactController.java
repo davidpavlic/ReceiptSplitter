@@ -18,20 +18,11 @@ import java.util.List;
 public class NewContactController extends DefaultController implements CanNavigate, CanReset {
     private Pages lastPage;
 
-    @FXML
-    private Button confirmButton;
-
-    @FXML
-    private TextField emailInput;
-
-    @FXML
-    private TextField firstNameInput;
-
-    @FXML
-    private TextField lastNameInput;
-
-    @FXML
-    private Label emailErrorLabel;
+    @FXML private Button confirmButton;
+    @FXML private TextField emailInput;
+    @FXML private TextField firstNameInput;
+    @FXML private TextField lastNameInput;
+    @FXML private Label emailErrorLabel;
 
     @Override
     public void initialize(Router router) {

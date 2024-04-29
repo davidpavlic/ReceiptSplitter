@@ -4,6 +4,7 @@ import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageExtractor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
@@ -22,9 +23,7 @@ import java.nio.file.StandardCopyOption;
 
 
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
-
     private File selectedFile;
-
     public ImageExtractor imageExtractor;
     private Receipt currentReceipt;
 
@@ -33,7 +32,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button confirmButton;
     @FXML private Button backButton;
 
-
     private void setupDragAndDrop() {
         dragAndDropPane.setOnDragOver(event -> {
             if (event.getGestureSource() != dragAndDropPane && event.getDragboard().hasFiles()) {
@@ -41,12 +39,13 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             }
             event.consume();
         });
-
         dragAndDropPane.setOnDragDropped(this::handleReceiptDropped);
     }
 
     @Override
     public void initialize(Router router) {
+        this.router = router;
+        this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
         confirmButton.setOnAction(event -> { confirm(); });
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));

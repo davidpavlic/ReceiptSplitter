@@ -3,12 +3,19 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import com.google.common.base.FinalizableReferenceQueue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class ShowSplitController  extends DefaultController implements CanNavigate {
+    @Override
+    public void initialize(Router router) {
+        this.router = router;
+        this.helpMessage = HelpMessages.SHOW_SPLIT_WINDOW_MSG;
+    }
+
     @Override
     public void confirm() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to send out the emails?", ButtonType.YES, ButtonType.NO);

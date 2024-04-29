@@ -10,11 +10,8 @@ import javafx.scene.control.*;
 
 public class LoginController extends DefaultController {
 
-    @FXML
-    private Button confirmButton;
-
-    @FXML
-    private ComboBox<Contact> selectUserDropdown;
+    @FXML private Button confirmButton;
+    @FXML private ComboBox<Contact> selectUserDropdown;
 
     @Override
     public void initialize(Router router) {

@@ -13,29 +13,18 @@ import javafx.scene.control.TableView;
 
 public class ContactListController extends DefaultController implements CanNavigate, CanReset {
 
-    @FXML
-    private TableColumn<?, ?> actionColumn;
-    @FXML
-    private Button addContactButton;
-    @FXML
-    private Button backButton;
-    @FXML
-    private Button confirmButton;
-    @FXML
-    private TableColumn<?, ?> emailColumn;
-    @FXML
-    private TableColumn<?, ?> nameColumn;
-    @FXML
-    private TableView<?> tableContactList;
+    @FXML private TableColumn<?, ?> actionColumn;
+    @FXML private Button addContactButton;
+    @FXML private Button backButton;
+    @FXML private Button confirmButton;
+    @FXML private TableColumn<?, ?> emailColumn;
+    @FXML private TableColumn<?, ?> nameColumn;
+    @FXML private TableView<?> tableContactList;
 
-    @FXML
-    void showFAQ() {
-
-    }
-
-    @FXML
-    void showHelpModal() {
-        router.openHelpModal(HelpMessages.CONTACT_LIST_WINDOW_MSG);
+    @Override
+    public void initialize(Router router) {
+        this.router = router;
+        this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
     }
 
     @FXML
