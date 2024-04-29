@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
 //TODO: JavaDoc
-public class ContactReceiptItem implements CanValidateModelParam {
+public class ContactReceiptItem {
 
     private float price;
     private String name;
@@ -18,7 +18,7 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setPrice(float price) throws IllegalArgumentException{
-        throwIfZeroOrLower(price, ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString());
+        ModelParamValidator.throwIfZeroOrLower(price, ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString());
         this.price = price;
     }
 
@@ -27,7 +27,7 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setName(String name) throws IllegalArgumentException{
-        throwIfStringIsEmpty(name, ContactReceiptItemErrorMessageType.NAME_EMPTY.toString());
+        ModelParamValidator.throwIfStringIsEmpty(name, ContactReceiptItemErrorMessageType.NAME_EMPTY.toString());
         this.name = name;
     }
 
@@ -36,7 +36,7 @@ public class ContactReceiptItem implements CanValidateModelParam {
     }
 
     public void setContact(Contact contact) throws IllegalArgumentException{
-        throwIfElementIsNull(contact, ContactReceiptItemErrorMessageType.CONTACT_NULL.toString());
+        ModelParamValidator.throwIfElementIsNull(contact, ContactReceiptItemErrorMessageType.CONTACT_NULL.toString());
         this.contact = contact;
     }
 

@@ -1,10 +1,10 @@
 package model;
 
-import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact.ContactErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -45,13 +45,6 @@ public class ContactTest {
         assertEquals("", contact.getLastName());
     }
 
-    private void assertContactAttributes(String firstname, String lastname, String email){
-        assertEquals(firstname, contact.getFirstName());
-        assertEquals(lastname, contact.getLastName());
-        assertEquals(email, contact.getEmail());
-
-    }
-
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", "  "})
@@ -71,10 +64,26 @@ public class ContactTest {
 
     @ParameterizedTest
     @NullSource
-    @ValueSource(strings = {"", "  ", "johndoe.example.com", "john@doe@example.com", "john.doe@", "john.doe@example", "john.doe@example.c"})
+    @MethodSource("getInvalidEmailFormats")
     void givenInvalidEmail_whenCreatingItem_thenThrowsException(String email) {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new Contact(VALID_FIRSTNAME, VALID_LASTNAME, email));
         assertEquals(ContactErrorMessageType.EMAIL_INVALID.toString(), exception.getMessage());
+    }
+
+    private void assertContactAttributes(String firstname, String lastname, String email){
+        assertEquals(firstname, contact.getFirstName());
+        assertEquals(lastname, contact.getLastName());
+        assertEquals(email, contact.getEmail());
+    }
+
+    private static String[] getInvalidEmailFormats(){
+        return new String[]{"",
+                            "  ",
+                            "johndoe.example.com",
+                            "john@doe@example.com",
+                            "john.doe@",
+                            "john.doe@example",
+                            "john.doe@example.c"};
     }
 }

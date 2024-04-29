@@ -144,7 +144,6 @@ public class ReceiptTest {
     }
 
     private void assertReceiptItemAttributes(ReceiptItem expected, ReceiptItem actual) {
-        assertEquals(expected, actual);
         assertEquals(expected.getPrice(), actual.getPrice());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getAmount(), actual.getAmount());

@@ -42,12 +42,6 @@ public class ReceiptItemTest {
         assertReceiptItemAttributes(newPrice, newName, newAmount);
     }
 
-    private void assertReceiptItemAttributes(float price, String name, int amount) {
-        assertEquals(price, receiptItem.getPrice());
-        assertEquals(name, receiptItem.getName());
-        assertEquals(amount, receiptItem.getAmount());
-    }
-
     @ParameterizedTest
     @ValueSource(floats = {-1.0F, 0F})
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
@@ -71,5 +65,11 @@ public class ReceiptItemTest {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ReceiptItem(VALID_PRICE, VALID_NAME, amount));
         assertEquals(ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
+    }
+
+    private void assertReceiptItemAttributes(float price, String name, int amount) {
+        assertEquals(price, receiptItem.getPrice());
+        assertEquals(name, receiptItem.getName());
+        assertEquals(amount, receiptItem.getAmount());
     }
 }

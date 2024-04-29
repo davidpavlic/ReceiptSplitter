@@ -43,12 +43,6 @@ public class ContactReceiptItemTest {
         assertContactReceiptItemAttributes(newPrice, newName, newContact);
     }
 
-    private void assertContactReceiptItemAttributes(float expectedPrice, String expectedName, Contact expectedContact) {
-        assertEquals(expectedPrice, contactReceiptItem.getPrice());
-        assertEquals(expectedName, contactReceiptItem.getName());
-        assertEquals(expectedContact, contactReceiptItem.getContact());
-    }
-
     @ParameterizedTest
     @ValueSource(floats = {-1.0F, 0F})
     void givenInvalidPrice_whenCreatingItem_thenThrowsException(float price) {
@@ -72,5 +66,11 @@ public class ContactReceiptItemTest {
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new ContactReceiptItem(VALID_PRICE, VALID_NAME, contact));
         assertEquals(ContactReceiptItemErrorMessageType.CONTACT_NULL.toString(), exception.getMessage());
+    }
+
+    private void assertContactReceiptItemAttributes(float expectedPrice, String expectedName, Contact expectedContact) {
+        assertEquals(expectedPrice, contactReceiptItem.getPrice());
+        assertEquals(expectedName, contactReceiptItem.getName());
+        assertEquals(expectedContact, contactReceiptItem.getContact());
     }
 }
