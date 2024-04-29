@@ -16,7 +16,10 @@ public class LoginController extends DefaultController {
     @FXML
     private ComboBox<Contact> selectUserDropdown;
 
+    @Override
     public void initialize(Router router) {
+        this.router = router;
+        this.helpMessage = HelpMessages.LOGIN_WINDOW_MSG;
         confirmButton.setOnAction(event -> { confirm(); });
     }
 

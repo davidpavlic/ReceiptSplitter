@@ -38,7 +38,8 @@
             <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Button on the right -->
-            <Button fx:id="confirmButton" text="Confirm" HBox.hgrow="NEVER" />
+            <Button onAction="#reset" prefHeight="26.0" prefWidth="60.0" text="Reset" HBox.hgrow="NEVER" />
+         <Button fx:id="confirmButton" text="Confirm" />
         </HBox>
     </bottom>
     <center>

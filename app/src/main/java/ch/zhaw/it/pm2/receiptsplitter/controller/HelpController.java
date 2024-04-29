@@ -2,7 +2,6 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;

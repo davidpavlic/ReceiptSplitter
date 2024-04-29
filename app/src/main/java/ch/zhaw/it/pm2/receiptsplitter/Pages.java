@@ -15,14 +15,14 @@ public enum Pages {
     SHOW_SPLIT_WINDOW("/pages/ShowSplit.fxml"),
     EDIT_ITEMS_WINDOW("/pages/EditItems.fxml");
 
-    private final String message;
+    private final String path;
 
-    Pages(String message) {
-        this.message = message;
+    Pages(String path) {
+        this.path = path;
     }
 
     public String getPath() {
-        return message;
+        return path;
     }
 }
 
