@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-//TODO: Slight Refactoring and method grouping
+//TODO: Slight Refactoring
 //TODO: JavaDoc
 public class ContactRepository {
     private final List<Contact> contactList = new ArrayList<>();
@@ -23,8 +23,19 @@ public class ContactRepository {
     private static final String DELIMITER = ";";
     private final Path contactsFilePath;
 
+    //Constructor defines the filepath
     public ContactRepository(String path) {
         contactsFilePath = Paths.get(path);
+    }
+
+    //Loads the contacts from the file into the contact list
+    public void loadContacts() throws IOException{
+        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contactList::add);
+    }
+
+    //The following methods represent CRUD operations for the selected profile
+    public Contact getProfile(){
+        return selectedProfile;
     }
 
     public void setProfile(String email){
@@ -39,12 +50,24 @@ public class ContactRepository {
             setProfile(contact.getEmail());
     }
 
-    public Contact getProfile(){
-        return selectedProfile;
+    //Returns the contact list
+    public List<Contact> getContactList() {
+        return contactList;
     }
 
-    public void loadContacts() throws IOException{
-        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contactList::add);
+    //Checks if a contact exists
+    public boolean contactExists(String email){
+        return findContactByEmail(email) != null;
+    }
+
+    //The following methods represent CRUD operations for contacts adjusting the file, contactlist, selectedContact and selectedProfile
+    public Contact findContactByEmail(String email) {
+        for (Contact contact : contactList) {
+            if (contact.getEmail().equals(email)) {
+                return contact;
+            }
+        }
+        return null;
     }
 
     public boolean addContact(Contact contact) throws IllegalArgumentException, IOException {
@@ -52,6 +75,12 @@ public class ContactRepository {
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
 
         return appendContactToContactFile(contact);
+    }
+
+    public boolean updateContact(String email, Contact newContact) throws IllegalArgumentException, IOException {
+        if(!contactExists(email))
+            throw new IllegalArgumentException("No record found with email: " + email);
+        return updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
@@ -65,30 +94,7 @@ public class ContactRepository {
         return false;
     }
 
-    public boolean updateContact(String email, Contact newContact) throws IllegalArgumentException, IOException {
-        if(!contactExists(email))
-            throw new IllegalArgumentException("No record found with email: " + email);
-        return updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
-    }
-
-    public List<Contact> getContactList() {
-        return contactList;
-    }
-
-    public Contact findContactByEmail(String email) {
-        for (Contact contact : contactList) {
-            if (contact.getEmail().equals(email)) {
-                return contact;
-            }
-        }
-        return null;
-    }
-
-    public boolean contactExists(String email){
-        return findContactByEmail(email) != null;
-    }
-
-    //The following methods represent CRUD operations for selected methods
+    //The following methods represent CRUD operations for selected contacts list
     public List<Contact> getSelectedContacts() {
         return selectedContacts;
     }
@@ -105,7 +111,7 @@ public class ContactRepository {
         return selectedContacts.removeIf(contact -> contact.getEmail().equals(email));
     }
 
-    //The following method is a helper method for updating a contact
+    //The following method is a helper method for updating a contact in the contact list
     private boolean updateContactInContactList(String email, Contact newContact){
         for (Contact contact : contactList) {
             if (contact.getEmail().equals(email)) {
