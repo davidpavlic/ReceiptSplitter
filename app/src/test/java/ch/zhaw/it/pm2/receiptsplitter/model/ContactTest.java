@@ -1,6 +1,5 @@
-package model;
+package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact.ContactErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -62,7 +61,7 @@ public class ContactTest {
         String newEmail = "HansLanda@hotmail.com";
 
         //Act
-        contact.setFirstName(newEmail);
+        contact.setEmail(newEmail);
 
         //Assert
         assertEquals(newEmail, contact.getEmail());
