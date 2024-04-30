@@ -2,7 +2,7 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
 
 //TODO: JavaDoc
 //TODO: Custom Exception
-public class ModelParamValidator {
+class ModelParamValidator {
 
     static void throwIfIndexOutOfBounds(int index, int size, String errorMessage){
         if (index < 0 || index >= size)
