@@ -40,7 +40,7 @@ public class ContactReceiptItem {
         this.contact = contact;
     }
 
-    public enum ContactReceiptItemErrorMessageType {
+    protected enum ContactReceiptItemErrorMessageType {
         PRICE_ZERO_OR_LOWER("Price must not be zero or lower."),
         NAME_EMPTY("Name must not be empty."),
         CONTACT_NULL("Contact must not be null.");

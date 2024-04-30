@@ -41,7 +41,7 @@ public class Contact {
         this.email = email;
     }
 
-    public enum ContactErrorMessageType {
+    protected enum ContactErrorMessageType {
         FIRST_NAME_EMPTY("First name must not be empty."),
         LAST_NAME_NULL("Last name must not be null."),
         EMAIL_INVALID("Email must be a valid email address.");
