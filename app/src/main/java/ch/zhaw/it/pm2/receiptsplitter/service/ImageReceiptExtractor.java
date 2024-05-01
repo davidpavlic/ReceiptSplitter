@@ -183,7 +183,7 @@ public class ImageReceiptExtractor {
         double calculatedTotalPrice = unitPrice * itemQuantity;  // Calculate total price using quantity
         double recordedTotalPrice = getUnitPrice(totalPriceField);  // Get recorded total price, should already be total
 
-        if (totalPriceField != null && priceField != null) {
+        if (priceField != null) {
             return Math.abs(recordedTotalPrice - calculatedTotalPrice) < 0.01  // Margin of error with double comparison from extracted values
                     ? recordedTotalPrice
                     : chooseMostConfidentPrice(totalPriceField, priceField, calculatedTotalPrice);
