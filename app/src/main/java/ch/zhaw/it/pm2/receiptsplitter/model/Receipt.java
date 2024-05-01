@@ -74,7 +74,7 @@ public class Receipt {
         receiptItemList.sort(comparator);
     }
 
-    public enum ReceiptErrorMessageType {
+    protected enum ReceiptErrorMessageType {
         LIST_NULL("ReceiptItemList must not be null."),
         ITEM_NULL("ReceiptItem must not be null."),
         INDEX_NOT_PRESENT("Index can not be present in list.");

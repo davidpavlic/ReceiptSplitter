@@ -40,7 +40,7 @@ public class ReceiptItem {
         this.amount = amount;
     }
 
-    public enum ReceiptItemErrorMessageType {
+    protected enum ReceiptItemErrorMessageType {
         NAME_EMPTY("Name must not be empty."),
         PRICE_ZERO_OR_LOWER("Price must not be zero or lower."),
         AMOUNT_ZERO_OR_LOWER("Amount must not be zero or lower.");

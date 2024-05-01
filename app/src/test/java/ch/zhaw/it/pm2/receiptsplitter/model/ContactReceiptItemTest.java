@@ -1,7 +1,5 @@
-package model;
+package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem.ContactReceiptItemErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

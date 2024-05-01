@@ -1,8 +1,6 @@
-package model;
+package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt.ReceiptErrorMessageType;
-import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
