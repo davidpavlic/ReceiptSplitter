@@ -30,7 +30,11 @@ public class Main extends Application {
         stage.setTitle("Receipt Splitter");
 
         Router router = new Router(stage);
-        router.gotoScene(Pages.LOGIN_WINDOW);
+        try {
+            router.gotoScene(Pages.LOGIN_WINDOW);
+        } catch (IllegalStateException e) {
+            logger.severe("Could not load the login window: " + e);
+        }
     }
 
     private static void configureLogging() {

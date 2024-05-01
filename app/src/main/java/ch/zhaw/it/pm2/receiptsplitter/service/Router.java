@@ -41,16 +41,16 @@ public class Router {
         sceneMap.put(page, new Pair<>(scene, controller));
     }
 
-    public void gotoScene(Pages page) {
+    public void gotoScene(Pages page) throws IllegalStateException {
         if (stage != null) {
             stage.setScene(getScene(page));
             stage.show();
         } else {
-           logger.severe("Stage is null, can not switch scene");
+            throw new IllegalStateException("Stage is null, can not switch scene");
         }
     }
 
-    public void openHelpModal(HelpMessages helpText) {
+    public void openHelpModal(HelpMessages helpText) throws IllegalStateException{
         try {
             Scene helpModalScene = getScene(Pages.HELP_MODAL);
 
@@ -66,7 +66,7 @@ public class Router {
 
             dialogStage.showAndWait();
         } catch (Exception e) {
-            logger.severe("An error occurred while trying to open the help modal: " + e.getMessage());
+            throw  new IllegalStateException("Could not open help modal", e);
         }
     }
 

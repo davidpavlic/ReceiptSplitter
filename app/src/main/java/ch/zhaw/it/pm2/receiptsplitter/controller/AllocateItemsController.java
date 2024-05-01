@@ -37,12 +37,12 @@ public class AllocateItemsController extends DefaultController implements CanNav
 
     @Override
     public void confirm() {
-        router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
+        switchScene(Pages.SHOW_SPLIT_WINDOW);
     }
 
     @Override
     public void back() {
-        router.gotoScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
     @Override
@@ -54,6 +54,7 @@ public class AllocateItemsController extends DefaultController implements CanNav
         this.router = router;
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
     }
+    //TODO Implement initialize method after Contact Repository is implemented
        /*
     @Override
     public void initialize(Router router) {

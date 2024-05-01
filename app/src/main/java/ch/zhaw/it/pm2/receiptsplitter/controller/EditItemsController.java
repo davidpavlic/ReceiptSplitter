@@ -17,17 +17,15 @@ public class EditItemsController extends DefaultController implements CanNavigat
 
     @Override
     public void confirm() {
-        router.gotoScene(Pages.LIST_ITEMS_WINDOW);
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
     @Override
     public void back() {
-        router.gotoScene(Pages.LIST_ITEMS_WINDOW);
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
 }

@@ -24,13 +24,47 @@ import java.nio.file.StandardCopyOption;
 
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
     private File selectedFile;
-    public ImageExtractor imageExtractor;
+    private ImageExtractor imageExtractor;
     private Receipt currentReceipt;
 
     @FXML private Pane dragAndDropPane;
     @FXML private Button uploadReceiptButton;
     @FXML private Button confirmButton;
     @FXML private Button backButton;
+
+    @Override
+    public void initialize(Router router) {
+        this.router = router;
+        this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
+        confirmButton.setOnAction(event -> confirm() );
+        setupDragAndDrop();
+        uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
+    }
+    @Override
+    public void confirm() {
+        switchScene(Pages.LIST_ITEMS_WINDOW);
+    }
+
+    @Override
+    public void back() {
+        switchScene(Pages.MAIN_WINDOW);
+    }
+
+    @Override
+    public void reset() {
+            currentReceipt = null;
+    }
+
+    public void handleReceiptDropped(DragEvent dragEvent) {
+        Dragboard dragboard = dragEvent.getDragboard();
+        boolean success = false;
+        if (dragboard.hasFiles()) {
+            success = true;
+            uploadFile(dragboard.getFiles().get(0));
+        }
+        dragEvent.setDropCompleted(success);
+        dragEvent.consume();
+    }
 
     private void setupDragAndDrop() {
         dragAndDropPane.setOnDragOver(event -> {
@@ -42,40 +76,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         dragAndDropPane.setOnDragDropped(this::handleReceiptDropped);
     }
 
-    @Override
-    public void initialize(Router router) {
-        this.router = router;
-        this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
-        confirmButton.setOnAction(event -> { confirm(); });
-        setupDragAndDrop();
-        uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
-    }
-    @Override
-    public void confirm() {
-        router.gotoScene(Pages.LIST_ITEMS_WINDOW);
-    }
-
-    @Override
-    public void back() {
-        router.gotoScene(Pages.MAIN_WINDOW);
-    }
-
-    @Override
-    public void reset() {
-            currentReceipt = null;
-    }
-
-    public void handleReceiptDropped(DragEvent dragEvent) {
-        Dragboard db = dragEvent.getDragboard();
-        boolean success = false;
-        if (db.hasFiles()) {
-            success = true;
-            uploadFile(db.getFiles().get(0));
-        }
-        dragEvent.setDropCompleted(success);
-        dragEvent.consume();
-    }
-
     private void openDialog(){
         FileChooser fileChooser = new FileChooser();
         selectedFile = fileChooser.showOpenDialog(uploadReceiptButton.getScene().getWindow());
@@ -85,18 +85,17 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     }
 
     private void uploadFile(File file){
-        File destination = new File("app/src/main/resources/receipts" + file.getName());
+        //TODO Check how we want to store Receipts.
+        File destination = new File(getClass().getResource("receipts") + file.getName());
         try {
             Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
             currentReceipt = new Receipt();
+            //TODO Upload Receipt correctly
             System.out.println("Receipt uploaded successfully!");
         } catch (IOException ioException) {
             System.err.println("Error uploading receipt: " + ioException.getMessage());
         }
 
-        imageExtractor = new ImageExtractor();
         String extractedImage =  imageExtractor.extractOCR(file);
     }
-
-
 }

@@ -5,11 +5,11 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import com.google.common.base.FinalizableReferenceQueue;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
 public class ShowSplitController  extends DefaultController implements CanNavigate {
+
     @Override
     public void initialize(Router router) {
         this.router = router;
@@ -24,7 +24,7 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 //TODO: Send out Mails
-                router.gotoScene(Pages.SHOW_RESULT_WINDOW);
+                switchScene(Pages.SHOW_RESULT_WINDOW);
                 alert.hide();
             }
         });
@@ -32,6 +32,6 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
 
     @Override
     public void back() {
-        router.gotoScene(Pages.ALLOCATE_ITEMS_WINDOW);
+        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 }

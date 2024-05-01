@@ -6,6 +6,7 @@ challenge_points.txt
 *.ids
 *.iws
 misc.xml
+.idea/
 .idea/*
 
 # Eclipse files

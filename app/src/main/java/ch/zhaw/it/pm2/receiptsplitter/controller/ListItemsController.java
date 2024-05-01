@@ -16,24 +16,24 @@ public class ListItemsController extends DefaultController implements CanNavigat
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
     }
 
-    @Override @FXML
+    @FXML
+    @Override
     public void confirm() {
-        router.gotoScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
-    @Override @FXML
+    @FXML
+    @Override
     public void back() {
-        router.gotoScene(Pages.ADD_RECEIPT_WINDOW);
+        switchScene(Pages.MAIN_WINDOW);
     }
 
     @FXML
     public void goToEditItemsController() {
-        router.gotoScene(Pages.EDIT_ITEMS_WINDOW);
+        switchScene(Pages.EDIT_ITEMS_WINDOW);
     }
 
     @Override
-    public void reset() {
-
-    }
+    public void reset() {}
 
 }

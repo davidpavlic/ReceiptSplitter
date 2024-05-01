@@ -57,15 +57,17 @@ public class NewContactController extends DefaultController implements CanNaviga
     @Override
     public void confirm() {
         reset();
-        router.gotoScene(lastPage);
+        switchScene(lastPage);
     }
 
-    @Override @FXML
+    @FXML
+    @Override
     public void back() {
-        router.gotoScene(lastPage);
+        switchScene(lastPage);
     }
 
-    @Override @FXML
+    @FXML
+    @Override
     public void reset() {
         emailInput.clear();
         firstNameInput.clear();

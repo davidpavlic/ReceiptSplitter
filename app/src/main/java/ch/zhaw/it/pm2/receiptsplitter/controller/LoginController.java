@@ -17,7 +17,7 @@ public class LoginController extends DefaultController {
     public void initialize(Router router) {
         this.router = router;
         this.helpMessage = HelpMessages.LOGIN_WINDOW_MSG;
-        confirmButton.setOnAction(event -> { confirm(); });
+        confirmButton.setOnAction(event -> confirm() );
     }
 
     @FXML
@@ -29,11 +29,11 @@ public class LoginController extends DefaultController {
     void openCreateProfile() {
         NewContactController controller = (NewContactController) router.getController(Pages.CREATE_PROFILE_WINDOW);
         controller.setLastPage(Pages.LOGIN_WINDOW);
-        router.gotoScene(Pages.CREATE_PROFILE_WINDOW);
+        switchScene(Pages.CREATE_PROFILE_WINDOW);
     }
 
     @FXML
     void confirm() {
-        router.gotoScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.MAIN_WINDOW);
     }
 }

@@ -34,18 +34,18 @@ public class ContactListController extends DefaultController implements CanNavig
         router.gotoScene(Pages.CREATE_PROFILE_WINDOW);
     }
 
-    @Override @FXML
+    @FXML
+    @Override
     public void confirm() {
-        router.gotoScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
     @Override
     public void back() {
-        router.gotoScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.MAIN_WINDOW);
     }
 
     @Override
     public void reset() {
-
     }
 }
