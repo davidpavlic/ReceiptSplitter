@@ -1,7 +1,5 @@
 package ch.zhaw.it.pm2.receiptsplitter.logger;
 
-import java.io.File;
-import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.FileHandler;

@@ -5,7 +5,8 @@ challenge_points.txt
 *.ipr
 *.ids
 *.iws
-.idea/
+misc.xml
+.idea/*
 
 # Eclipse files
 .project
