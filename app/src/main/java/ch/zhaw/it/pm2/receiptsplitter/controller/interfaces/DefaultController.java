@@ -30,18 +30,27 @@ public abstract class  DefaultController {
         }
         try {
             router.openHelpModal(helpMessage);
-        } catch (IllegalStateException e) {
-            logger.severe("Could not open help modal, router returned IllegalStateException: " + e);
-            logger.fine(Arrays.toString(e.getStackTrace()));
+        } catch (IllegalStateException exception) {
+            logger.severe("Could not open help modal, router returned IllegalStateException: " + exception);
+            logger.fine(Arrays.toString(exception.getStackTrace()));
         }
     }
 
     protected void switchScene(Pages page) {
         try {
             router.gotoScene(page);
-        } catch (IllegalStateException e) {
-            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getName() + ", " + e);
-            logger.fine(Arrays.toString(e.getStackTrace()));
+        } catch (IllegalStateException exception) {
+            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getName() + ", " + exception);
+            logger.fine(Arrays.toString(exception.getStackTrace()));
+        }
+    }
+
+    protected void switchScene(Pages page, Pages lastPage) {
+        try {
+            router.gotoScene(page, lastPage);
+        } catch (IllegalStateException | IllegalArgumentException exception) {
+            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getName() + ", " + exception);
+            logger.fine(Arrays.toString(exception.getStackTrace()));
         }
     }
 }

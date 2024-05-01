@@ -41,9 +41,14 @@ javafx {
     modules("javafx.controls", "javafx.fxml")
 }
 
+// Set Env var for API Key used for Authentication with SMTP Server
+val smtpApiKey: String? = if (hasProperty("SMTP_API_KEY")) findProperty("SMTP_API_KEY") as String else null
+val smtpUsername: String? = if (hasProperty("SMTP_USERNAME")) findProperty("SMTP_USERNAME") as String else null
+
 application {
     // Define the main class for the application.
     mainClass = "ch.zhaw.it.pm2.receiptsplitter.Main"
+    applicationDefaultJvmArgs = listOf("-DSMTP_API_KEY=${smtpApiKey}", "-DSMTP_USERNAME=${smtpUsername}")
 }
 
 tasks.named<Test>("test") {

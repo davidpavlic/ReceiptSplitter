@@ -1,10 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
@@ -15,7 +12,7 @@ import javafx.scene.control.TextField;
 import java.util.Arrays;
 import java.util.List;
 
-public class NewContactController extends DefaultController implements CanNavigate, CanReset {
+public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -41,15 +38,7 @@ public class NewContactController extends DefaultController implements CanNaviga
         confirmButton.setOnAction(event -> confirm());
     }
 
-    private void updateUIBasedOnValidation(List<TextField> textFields) {
-        boolean anyEmpty = textFields.stream()
-                .anyMatch(field -> field.getText().trim().isEmpty());
-        boolean emailValid = EmailService.isValidMail(emailInput.getText());
-
-        confirmButton.setDisable(anyEmpty || !emailValid);
-        emailErrorLabel.setVisible(!emailValid && !emailInput.getText().isEmpty());
-    }
-
+    @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }
@@ -72,5 +61,14 @@ public class NewContactController extends DefaultController implements CanNaviga
         emailInput.clear();
         firstNameInput.clear();
         lastNameInput.clear();
+    }
+
+    private void updateUIBasedOnValidation(List<TextField> textFields) {
+        boolean anyEmpty = textFields.stream()
+                .anyMatch(field -> field.getText().trim().isEmpty());
+        boolean emailValid = EmailService.isValidMail(emailInput.getText());
+
+        confirmButton.setDisable(anyEmpty || !emailValid);
+        emailErrorLabel.setVisible(!emailValid && !emailInput.getText().isEmpty());
     }
 }

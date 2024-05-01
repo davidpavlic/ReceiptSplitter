@@ -27,9 +27,7 @@ public class LoginController extends DefaultController {
 
     @FXML
     void openCreateProfile() {
-        NewContactController controller = (NewContactController) router.getController(Pages.CREATE_PROFILE_WINDOW);
-        controller.setLastPage(Pages.LOGIN_WINDOW);
-        switchScene(Pages.CREATE_PROFILE_WINDOW);
+        switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.LOGIN_WINDOW);
     }
 
     @FXML

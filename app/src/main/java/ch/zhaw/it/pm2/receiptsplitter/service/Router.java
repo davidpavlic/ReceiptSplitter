@@ -4,6 +4,7 @@ import ch.zhaw.it.pm2.receiptsplitter.Main;
 import ch.zhaw.it.pm2.receiptsplitter.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -30,17 +31,6 @@ public class Router {
         }
     }
 
-    private void addSceneMap(Pages page, String pathToScene) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
-        logger.info(pathToScene);
-        Pane node = loader.load();
-        DefaultController controller = loader.getController();
-        controller.initialize(this);
-
-        Scene scene = new Scene(node);
-        sceneMap.put(page, new Pair<>(scene, controller));
-    }
-
     public void gotoScene(Pages page) throws IllegalStateException {
         if (stage != null) {
             stage.setScene(getScene(page));
@@ -49,6 +39,17 @@ public class Router {
             throw new IllegalStateException("Stage is null, can not switch scene");
         }
     }
+
+    public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
+        DefaultController controller = getController(page);
+        if (controller instanceof HasDynamicLastPage) {
+            ((HasDynamicLastPage) controller).setLastPage(lastPage);
+        } else {
+            throw new IllegalArgumentException("Controller does not implement HasDynamicLastPage");
+        }
+        gotoScene(page);
+    }
+
 
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException{
         try {
@@ -65,8 +66,8 @@ public class Router {
             dialogStage.setScene(helpModalScene);
 
             dialogStage.showAndWait();
-        } catch (Exception e) {
-            throw  new IllegalStateException("Could not open help modal", e);
+        } catch (Exception exception) {
+            throw  new IllegalStateException("Could not open help modal", exception);
         }
     }
 
@@ -80,5 +81,15 @@ public class Router {
 
     public void closeWindow() {
             stage.close();
+    }
+
+    private void addSceneMap(Pages page, String pathToScene) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
+        Pane node = loader.load();
+        DefaultController controller = loader.getController();
+        controller.initialize(this);
+
+        Scene scene = new Scene(node);
+        sceneMap.put(page, new Pair<>(scene, controller));
     }
 }

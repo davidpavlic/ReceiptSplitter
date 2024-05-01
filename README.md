@@ -17,6 +17,9 @@ Wir verwenden zudem untenstehende Version von Gradle als Build Tool und Dependen
 git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/team01-lightningmckings-projekt1-racetrack.git
 ```
 - Öffnen Sie das Projekt in ihrer IDE.
+- Erstellen die Datei gradle.properties im Projektverzeichnis und fügen Sie den Inhalt aus der Datei local.gradle.properties ein.
+- Gehen Sie zum Password Vault und fügen Sie den API Username und API Key ein in der Datei gradle.properties TODO: Link zu Password Vault 
+```
 - Führen sie folgende Befehle aus um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
 ### Linux/MacOS
 ```

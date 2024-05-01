@@ -3,9 +3,11 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +17,16 @@ import java.util.logging.Logger;
 
 public class Main extends Application {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
-        launch(args);
+        if (!checkIfEnvConfigsAreSet()) {
+            logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
+        } else {
+            launch(args);
+        }
     }
 
     public void start(Stage stage) throws Exception {
@@ -32,9 +39,16 @@ public class Main extends Application {
         Router router = new Router(stage);
         try {
             router.gotoScene(Pages.LOGIN_WINDOW);
-        } catch (IllegalStateException e) {
-            logger.severe("Could not load the login window: " + e);
+        } catch (IllegalStateException exception) {
+            logger.severe("Could not load the login window: " + exception);
         }
+    }
+
+    private static boolean checkIfEnvConfigsAreSet() {
+        logger.info("Checking environment configurations");
+        String smtpUsername = System.getProperty("SMTP_USERNAME");
+        String smtpApiKey = System.getProperty("SMTP_API_KEY");
+        return (!smtpUsername.equals("null") && !smtpApiKey.equals("null"));
     }
 
     private static void configureLogging() {
@@ -49,8 +63,8 @@ public class Main extends Application {
                 throw new IOException("Could not find logging.properties");
             }
             LogManager.getLogManager().readConfiguration(configStream);
-        } catch (IOException e) {
-            System.err.println("Could not setup logger configuration: " + e);
+        } catch (IOException exception) {
+            System.err.println("Could not setup logger configuration: " + exception);
         }
     }
 }

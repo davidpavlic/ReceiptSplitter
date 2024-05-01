@@ -73,3 +73,5 @@ Desktop.ini
 
 # databases
 *.sqlite
+
+gradle.properties

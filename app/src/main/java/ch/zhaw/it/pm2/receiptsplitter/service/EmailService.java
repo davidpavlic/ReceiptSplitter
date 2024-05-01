@@ -9,12 +9,10 @@ public class EmailService {
     private static final String EMAIL_SENDER = "noreplyreceiptsplitter@gmail.com";
     private static final String SMTP_SERVER = "smtp.sendgrid.net";
     private static final int SMTP_PORT = 25;
-    private static final String USERNAME = "apikey";
-    private static final String PASSWORD = "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";
+    private static final String USERNAME = System.getProperty("SMTP_USERNAME");
+    private static final String PASSWORD = System.getProperty("SMTP_API_KEY");
 
-    public EmailService() {
-
-    }
+    public EmailService() {}
 
     private Mailer getSmtpServer() {
         return MailerBuilder
