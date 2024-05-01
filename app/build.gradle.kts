@@ -24,8 +24,8 @@ dependencies {
 
     // This dependency is used by the application.
     implementation(libs.guava)
-    implementation(libs.java.ocr.tesseract)
     implementation(libs.simple.java.mail)
+    implementation(libs.azure.ai.form.recognizer)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
