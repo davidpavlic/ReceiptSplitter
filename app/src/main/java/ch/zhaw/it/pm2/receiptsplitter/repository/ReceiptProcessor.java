@@ -1,14 +1,14 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import ch.zhaw.it.pm2.receiptsplitter.model.ContactItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 
 import java.util.List;
 
 public class ReceiptProcessor {
     private Receipt receipt;
-    private List<ContactItem> contactItems;
+    private List<ContactReceiptItem> contactItems;
 
     public ReceiptProcessor() {}
 
@@ -16,11 +16,11 @@ public class ReceiptProcessor {
 
     }
 
-    public List<ContactItem> getContactItemsByContact(Contact contact) {
+    public List<ContactReceiptItem> getContactItemsByContact(Contact contact) {
            return null;
     }
 
-    public float calculateDebtByContact(List<ContactItem> contactItems) {
+    public float calculateDebtByContact(List<ContactReceiptItem> contactItems) {
         return 0;
     }
 }
