@@ -7,10 +7,12 @@ junit-jupiter = "5.10.0"
 mockito = "4.2.0"
 simple-java-mail = "8.8.3"
 java-ocr-tesseract = "5.11.0"
+mail-batch-modules = "8.8.3"
 
 [libraries]
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit-jupiter" }
 mockito = { module = "org.mockito:mockito-core", version.ref = "mockito" }
 simple-java-mail = { module = "org.simplejavamail:simple-java-mail", version.ref = "simple-java-mail" }
+mail-batch-modules = {module="org.simplejavamail:batch-module", version.ref = "mail-batch-modules"}
 java-ocr-tesseract = { module = "net.sourceforge.tess4j:tess4j", version.ref = "java-ocr-tesseract" }
