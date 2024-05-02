@@ -89,7 +89,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         File destination = new File(getClass().getResource("receipts") + file.getName());
         try {
             Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            currentReceipt = new Receipt();
+            //currentReceipt = new Receipt();
             //TODO Upload Receipt correctly
             System.out.println("Receipt uploaded successfully!");
         } catch (IOException ioException) {
