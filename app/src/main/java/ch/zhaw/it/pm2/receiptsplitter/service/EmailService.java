@@ -43,6 +43,6 @@ public class EmailService {
 
     public static boolean isValidMail(String email) {
         //TODO make this nonStatic and use one isValidMail method
-        return email.matches("^(.+)@(.+)$");
+        return email.trim().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
     }
 }

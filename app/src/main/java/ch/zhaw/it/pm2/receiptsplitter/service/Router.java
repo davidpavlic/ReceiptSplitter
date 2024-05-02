@@ -26,7 +26,7 @@ import java.util.logging.Logger;
  */
 public class Router {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    private final Stage stage;
+    final Stage stage;
     private final Map<Pages, Pair<Scene, DefaultController>> sceneMap = new HashMap<>();
 
     /**
