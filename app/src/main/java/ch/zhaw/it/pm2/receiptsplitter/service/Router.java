@@ -18,19 +18,37 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
+/**
+ * The Router class is responsible for managing the navigation between different scenes in the Receipt Splitter application.
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class Router {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     private final Stage stage;
     private final Map<Pages, Pair<Scene, DefaultController>> sceneMap = new HashMap<>();
 
+    /**
+     * Constructs a new Router with the given stage.
+     * Initializes the scene map with all pages defined in the Pages enum.
+     *
+     * @param stage the primary stage for this application
+     * @throws IOException if an error occurs during scene initialization
+     */
     public Router(Stage stage) throws IOException {
         this.stage = stage;
-        // Initialize the scene map with all pages defined in the Pages enum
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath());
         }
     }
 
+    /**
+     * Switches to the specified scene.
+     *
+     * @param page the page to switch to
+     * @throws IllegalStateException if the stage is null
+     */
     public void gotoScene(Pages page) throws IllegalStateException {
         if (stage != null) {
             stage.setScene(getScene(page));
@@ -40,6 +58,14 @@ public class Router {
         }
     }
 
+    /**
+     * Switches to the specified scene and sets the last page for controllers that implement HasDynamicLastPage.
+     *
+     * @param page the page to switch to
+     * @param lastPage the last page to set
+     * @throws IllegalStateException if the stage is null
+     * @throws IllegalArgumentException if the controller does not implement HasDynamicLastPage
+     */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
         DefaultController controller = getController(page);
         if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
@@ -50,7 +76,12 @@ public class Router {
         gotoScene(page);
     }
 
-
+    /**
+     * Opens a help modal with the specified help message.
+     *
+     * @param helpText the help message to display
+     * @throws IllegalStateException if an error occurs during modal opening
+     */
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException{
         try {
             Scene helpModalScene = getScene(Pages.HELP_MODAL);
@@ -72,18 +103,40 @@ public class Router {
         }
     }
 
+    /**
+     * Returns the scene for the specified page.
+     *
+     * @param page the page to get the scene for
+     * @return the scene for the specified page
+     */
     public Scene getScene(Pages page) {
         return sceneMap.get(page).getKey();
     }
 
+    /**
+     * Returns the controller for the specified page.
+     *
+     * @param page the page to get the controller for
+     * @return the controller for the specified page
+     */
     public DefaultController getController(Pages page) {
         return sceneMap.get(page).getValue();
     }
 
+    /**
+     * Closes the window.
+     */
     public void closeWindow() {
-            stage.close();
+        stage.close();
     }
 
+    /**
+     * Adds a scene to the scene map.
+     *
+     * @param page the page to add
+     * @param pathToScene the path to the scene
+     * @throws IOException if an error occurs during scene loading
+     */
     private void addSceneMap(Pages page, String pathToScene) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
         Pane node = loader.load();

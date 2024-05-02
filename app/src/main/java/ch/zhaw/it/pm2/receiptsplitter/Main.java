@@ -8,7 +8,6 @@ import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,10 +15,33 @@ import java.io.InputStream;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
+/**
+ * <p>The Main class is the entry point of the Receipt Splitter application.</p>
+ *
+ * <p>This application is structured into several packages, each with a specific purpose:</p>
+ * <ul>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter</code>: Contains the Main class which is the entry point of the application.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.model</code>: Contains model classes like Contact.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.utils</code>: Contains utility classes like EnvConstants for managing environment variables.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.repository</code>: Contains repository classes like ContactRepository for managing a list of Contact objects.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.service</code>: Contains service classes that handle business logic.</li>
+ * </ul>
+ *
+ * <p>The Main class sets up the logging configuration, checks if all environment variables are set correctly, and launches the JavaFX application.</p>
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class Main extends Application {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    private static final org.slf4j.Logger log = LoggerFactory.getLogger(Main.class);
 
+    /**
+     * The main method of the application.
+     * It configures the logging, checks if all environment variables are set correctly,
+     * and launches the JavaFX application if they are.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
@@ -30,6 +52,13 @@ public class Main extends Application {
         }
     }
 
+    /**
+     * The start method of the JavaFX application.
+     * It sets up the stage, instances the Router and tries to load the login window.
+     *
+     * @param stage the primary stage for this application
+     * @throws Exception if any error occurs during the setup
+     */
     public void start(Stage stage) throws Exception {
         stage.setWidth(400);
         stage.setHeight(300);
@@ -45,6 +74,11 @@ public class Main extends Application {
         }
     }
 
+
+    /**
+     * Configures the logging for the application.
+     * It creates a logs directory if it does not exist and sets up the logger configuration.
+     */
     private static void configureLogging() {
         File logDir = new File("logs");
         if (!logDir.exists()) {
