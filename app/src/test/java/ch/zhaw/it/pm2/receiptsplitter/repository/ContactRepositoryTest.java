@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
@@ -16,8 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 //TODO: Add Mocking because all test are dependent on correct constructor initialization
 public class ContactRepositoryTest {
 
-    private static final String CONTACTS_FILE_PATH = "src/test/resources/contacts.csv";
-    private static final String CONTACTS_TEST_FILE_PATH = "src/test/resources/contacts_testdata.csv";
+    private static final Path CONTACTS_FILE_PATH = Paths.get("src/test/resources/contacts.csv");
+    private static final Path CONTACTS_TEST_FILE_PATH = Paths.get("src/test/resources/contacts_testdata.csv");
 
     private static final Contact FIRST_CONTACT = new Contact("John", "Doe", "John.Doe@example.com");
     private static final Contact SECOND_CONTACT = new Contact("Max", "Mustermann", "Max.Mustermann@example.com");
@@ -35,20 +36,23 @@ public class ContactRepositoryTest {
     }
 
     private void resetTestData() throws IOException {
-        if(!Files.exists(Paths.get(CONTACTS_TEST_FILE_PATH)))
+        if(!Files.exists(CONTACTS_FILE_PATH))
             createTestData();
 
-        Files.copy( Paths.get(CONTACTS_TEST_FILE_PATH), Paths.get(CONTACTS_FILE_PATH), StandardCopyOption.REPLACE_EXISTING);
+        if(!Files.exists(CONTACTS_TEST_FILE_PATH))
+            Files.createFile(CONTACTS_TEST_FILE_PATH);
+
+        Files.copy( CONTACTS_FILE_PATH, CONTACTS_TEST_FILE_PATH, StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void createTestData() throws IOException {
-        Files.createFile(Paths.get(CONTACTS_TEST_FILE_PATH));
-        Files.write(Paths.get(CONTACTS_TEST_FILE_PATH), ("John;Doe;John.Doe@example.com\n" +
+        Files.createFile(CONTACTS_FILE_PATH);
+        Files.write(CONTACTS_FILE_PATH, ("John;Doe;John.Doe@example.com\n" +
                         "Max;Mustermann;Max.Mustermann@example.com").getBytes());
     }
 
     private void initializeRepository() throws Exception{
-        contactRepository = new ContactRepository(CONTACTS_FILE_PATH);
+        contactRepository = new ContactRepository(CONTACTS_TEST_FILE_PATH.toString());
         contactRepository.loadContacts();
     }
 
@@ -95,7 +99,7 @@ public class ContactRepositoryTest {
         //Assert profile contact reference
         assertContactListAttributes(FIRST_CONTACT, contactRepository.getProfile());
         //Assert selected contact list reference
-        assertContactListAttributes(FIRST_CONTACT, contactRepository.getSelectedContacts().get(0));
+        assertContactListAttributes(FIRST_CONTACT, contactRepository.getSelectedContacts().getLast());
     }
 
     @Test
@@ -110,9 +114,9 @@ public class ContactRepositoryTest {
         //Assert profile contact reference
         assertContactListAttributes(NEW_CONTACT, contactRepository.getProfile());
         //Assert selected contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getSelectedContacts().get(0));
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getSelectedContacts().getLast());
         //Assert contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().get(2));
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().getLast());
     }
 
     //TODO: Add mocking, dependent on first setProfile method
@@ -129,7 +133,7 @@ public class ContactRepositoryTest {
         //Assert profile contact reference
         assertContactListAttributes(SECOND_CONTACT, contactRepository.getProfile());
         //Assert selected contact list reference
-        assertContactListAttributes(SECOND_CONTACT, contactRepository.getSelectedContacts().get(0));
+        assertContactListAttributes(SECOND_CONTACT, contactRepository.getSelectedContacts().getLast());
     }
 
     @Test
@@ -142,7 +146,7 @@ public class ContactRepositoryTest {
         //Assert selected contact list size remains unchanged
         assertEquals(INITIAL_SELECTED_SIZE, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().get(2));
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().getLast());
     }
 
     //TODO: Add mocking, dependent on addToSelectedContacts method
@@ -159,7 +163,7 @@ public class ContactRepositoryTest {
         //Assert selected contact list decreased by one
         assertEquals(INITIAL_SELECTED_SIZE, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContactList().get(0));
+        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContactList().getLast());
     }
 
     @Test
@@ -185,7 +189,7 @@ public class ContactRepositoryTest {
 
         //Assert contact List size remains unchanged
         assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
-        //Assert selected contacts size should remains unchanged
+        //Assert selected contacts size should remain unchanged
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
         assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().get(0));
