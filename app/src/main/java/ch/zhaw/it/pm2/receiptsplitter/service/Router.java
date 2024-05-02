@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
-import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
@@ -42,8 +42,8 @@ public class Router {
 
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
         DefaultController controller = getController(page);
-        if (controller instanceof HasDynamicLastPage) {
-            ((HasDynamicLastPage) controller).setLastPage(lastPage);
+        if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
+            dynamicLastPageController.setLastPage(lastPage);
         } else {
             throw new IllegalArgumentException("Controller does not implement HasDynamicLastPage");
         }
@@ -66,8 +66,9 @@ public class Router {
             dialogStage.setScene(helpModalScene);
 
             dialogStage.showAndWait();
-        } catch (Exception exception) {
-            throw  new IllegalStateException("Could not open help modal", exception);
+        } catch (IllegalStateException exception) {
+            logger.severe("Could not open help modal: " + exception);
+            throw  exception;
         }
     }
 

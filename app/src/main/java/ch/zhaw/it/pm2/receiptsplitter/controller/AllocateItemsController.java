@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
@@ -13,11 +13,8 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.ComboBoxTableCell;
-
 
 
 public class AllocateItemsController extends DefaultController implements CanNavigate, CanReset  {

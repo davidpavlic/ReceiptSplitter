@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller.interfaces;
 
-import ch.zhaw.it.pm2.receiptsplitter.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 
 import java.util.Arrays;
@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import javafx.fxml.FXML;
 
 public abstract class  DefaultController {
-    Logger logger = Logger.getLogger(DefaultController.class.getName());
+    private final Logger logger = Logger.getLogger(DefaultController.class.getName());
     protected Router router;
     protected HelpMessages helpMessage;
 

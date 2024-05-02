@@ -3,8 +3,9 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
-import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
-        if (!checkIfEnvConfigsAreSet()) {
+        if (!EnvConstants.areAllSet()) {
             logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
         } else {
             launch(args);
@@ -42,13 +43,6 @@ public class Main extends Application {
         } catch (IllegalStateException exception) {
             logger.severe("Could not load the login window: " + exception);
         }
-    }
-
-    private static boolean checkIfEnvConfigsAreSet() {
-        logger.info("Checking environment configurations");
-        String smtpUsername = System.getProperty("SMTP_USERNAME");
-        String smtpApiKey = System.getProperty("SMTP_API_KEY");
-        return (!smtpUsername.equals("null") && !smtpApiKey.equals("null"));
     }
 
     private static void configureLogging() {

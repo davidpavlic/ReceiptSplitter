@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
+import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.email.EmailBuilder;
@@ -9,8 +10,8 @@ public class EmailService {
     private static final String EMAIL_SENDER = "noreplyreceiptsplitter@gmail.com";
     private static final String SMTP_SERVER = "smtp.sendgrid.net";
     private static final int SMTP_PORT = 25;
-    private static final String USERNAME = System.getProperty("SMTP_USERNAME");
-    private static final String PASSWORD = System.getProperty("SMTP_API_KEY");
+    private static final String USERNAME = System.getProperty(EnvConstants.SMTP_USERNAME.getKey());
+    private static final String PASSWORD = System.getProperty(EnvConstants.SMTP_API_KEY.getKey());
 
     public EmailService() {}
 

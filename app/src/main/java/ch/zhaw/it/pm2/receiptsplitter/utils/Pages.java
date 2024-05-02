@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm2.receiptsplitter;
+package ch.zhaw.it.pm2.receiptsplitter.utils;
 
 public enum Pages {
 
