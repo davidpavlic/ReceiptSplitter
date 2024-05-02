@@ -9,5 +9,7 @@ public class LoggerFileHandler extends FileHandler {
         super("logs/" + new SimpleDateFormat("dd-MM-yyyy").format(new Date()) + "-%u.log");
         // %u is for unique, this is need for when the file limit is reached and therefore rotates.
         // otherwise it would overwrite the existing file.
+
     }
+
 }
