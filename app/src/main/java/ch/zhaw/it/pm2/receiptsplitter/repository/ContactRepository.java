@@ -63,11 +63,13 @@ public class ContactRepository {
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
         if(selectedProfile != null && selectedProfile.getEmail().equals(email))
             throw new IllegalArgumentException("Contact is selected profile");
+
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
         if(removeContactFromContactFile(email))
             return contactList.removeIf(contact -> contact.getEmail().equals(email)) && removeFromSelectedContacts(email);
+
         return false;
     }
 

@@ -1,7 +1,6 @@
-package repository;
+package ch.zhaw.it.pm2.receiptsplitter.repository;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -36,7 +35,16 @@ public class ContactRepositoryTest {
     }
 
     private void resetTestData() throws IOException {
+        if(!Files.exists(Paths.get(CONTACTS_TEST_FILE_PATH)))
+            createTestData();
+
         Files.copy( Paths.get(CONTACTS_TEST_FILE_PATH), Paths.get(CONTACTS_FILE_PATH), StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    private void createTestData() throws IOException {
+        Files.createFile(Paths.get(CONTACTS_TEST_FILE_PATH));
+        Files.write(Paths.get(CONTACTS_TEST_FILE_PATH), ("John;Doe;John.Doe@example.com\n" +
+                        "Max;Mustermann;Max.Mustermann@example.com").getBytes());
     }
 
     private void initializeRepository() throws Exception{
