@@ -5,11 +5,10 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.StandardCopyOption;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -19,8 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ContactRepositoryTest {
 
     private static final String CONTACTS_FILE_PATH = "src/test/resources/contacts.csv";
-    private static final String TEST_DATA = "John;Doe;John.Doe@example.com\n" +
-                                            "Max;Mustermann;Max.Mustermann@example.com\n";
+    private static final String CONTACTS_TEST_FILE_PATH = "src/test/resources/contacts_testdata.csv";
 
     private static final Contact FIRST_CONTACT = new Contact("John", "Doe", "John.Doe@example.com");
     private static final Contact SECOND_CONTACT = new Contact("Max", "Mustermann", "Max.Mustermann@example.com");
@@ -37,12 +35,8 @@ public class ContactRepositoryTest {
         initializeRepository();
     }
 
-    private void resetTestData(){
-        try (BufferedWriter writer = Files.newBufferedWriter(Paths.get(CONTACTS_FILE_PATH), StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            writer.write(TEST_DATA);
-        } catch (IOException e) {
-            System.err.println("Failed to initialize test data: " + e.getMessage());
-        }
+    private void resetTestData() throws IOException {
+        Files.copy( Paths.get(CONTACTS_TEST_FILE_PATH), Paths.get(CONTACTS_FILE_PATH), StandardCopyOption.REPLACE_EXISTING);
     }
 
     private void initializeRepository() throws Exception{
@@ -54,7 +48,7 @@ public class ContactRepositoryTest {
     void constructor_ValidAttributes_ListCreated(){
         //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
-        assertEquals(2, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
         assertContactListAttributes(FIRST_CONTACT, contactRepository.getContactList().get(0));
         assertContactListAttributes(SECOND_CONTACT, contactRepository.getContactList().get(1));
     }
