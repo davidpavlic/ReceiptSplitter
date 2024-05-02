@@ -35,10 +35,10 @@ public class ImageReceiptExtractor {
      *
      * @param file The image file to extract the receipt data from.
      * @return The extracted OCR as a ReceiptORC object.
-     * @throws ImageExtractorException If an error occurs during the extraction process.
+     * @throws ImageReceiptExtractorException If an error occurs during the extraction process.
      * @throws NullPointerException If the file is null.
      */
-    public ReceiptORC extractReceiptOCR(File file) throws ImageExtractorException {
+    public ReceiptORC extractReceiptOCR(File file) throws ImageReceiptExtractorException {
         Objects.requireNonNull(file, "File must not be null");
 
         try {
@@ -60,10 +60,10 @@ public class ImageReceiptExtractor {
             );
         } catch (HttpResponseException e) {
             logger.severe("Network error occurred: " + e.getMessage());
-            throw new ImageExtractorException("Could not extract OCR from image. OCR service not available.", e);
+            throw new ImageReceiptExtractorException("Could not extract OCR from image. OCR service not available.", e);
         } catch (Exception e) {
             logger.severe("Error while extracting OCR from image: " + e.getMessage());
-            throw new ImageExtractorException("Could not extract OCR from image.", e);
+            throw new ImageReceiptExtractorException("Could not extract OCR from image.", e);
         }
     }
 
@@ -106,12 +106,12 @@ public class ImageReceiptExtractor {
     /**
      * Checked Exception thrown when an error occurs during the image extraction process.
      */
-    public static class ImageExtractorException extends Exception {
-        public ImageExtractorException(String message) {
+    public static class ImageReceiptExtractorException extends Exception {
+        public ImageReceiptExtractorException(String message) {
             super(message);
         }
 
-        public ImageExtractorException(String message, Throwable cause) {
+        public ImageReceiptExtractorException(String message, Throwable cause) {
             super(message, cause);
         }
     }
@@ -130,19 +130,19 @@ public class ImageReceiptExtractor {
     }
 
     @NotNull
-    private Map<String, DocumentField> getAnalyzedReceiptFields(SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller) throws ImageExtractorException {
+    private Map<String, DocumentField> getAnalyzedReceiptFields(SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller) throws ImageReceiptExtractorException {
         AnalyzeResult analyzeResult = analyzeLayoutResultPoller.getFinalResult();
 
         // The image to analyze is a single receipt, so we can assume that the first document is the analyzed receipt
         if (analyzeResult.getDocuments().isEmpty()) {
-            throw new ImageExtractorException("No document to extract found in the image");
+            throw new ImageReceiptExtractorException("No document to extract found in the image");
         }
 
         AnalyzedDocument analyzedReceipt = analyzeResult.getDocuments().getFirst();
         Map<String, DocumentField> analyzedReceiptFields = analyzedReceipt.getFields();
 
         if (!analyzedReceiptFields.containsKey("Items") || !analyzedReceiptFields.containsKey("Total")) {
-            throw new ImageExtractorException("No receipt items or total price found in the receipt");
+            throw new ImageReceiptExtractorException("No receipt items or total price found in the receipt");
         }
 
         return analyzedReceiptFields;
