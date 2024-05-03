@@ -20,7 +20,7 @@ import java.util.logging.Logger;
  * The ImageReceiptExtractor  class is responsible for extracting receipt data from an image file.
  * The extracted data includes the total price and a list of items.
  * Each item includes the quantity, name, and total price.
- *
+ * <p>
  * The class includes nested classes for representing the extracted receipt and its items, and an exception class for handling errors.
  */
 public class ImageReceiptExtractor {
@@ -42,18 +42,18 @@ public class ImageReceiptExtractor {
      * @param file The image file to extract the receipt data from.
      * @return The extracted OCR as a ReceiptORC object.
      * @throws ImageReceiptExtractorException If an error occurs during the extraction process.
-     * @throws NullPointerException If the file is null.
+     * @throws NullPointerException           If the file is null.
      */
     public ReceiptORC extractReceiptOCR(File file) throws ImageReceiptExtractorException {
         Objects.requireNonNull(file, "File must not be null");
 
         try {
+            // Create a client for the Azure Form Recognizer service
             DocumentAnalysisClient client = new DocumentAnalysisClientBuilder()
                     .credential(new AzureKeyCredential(key))
                     .endpoint(endpoint)
                     .buildClient();
 
-            // Convert the file to a byte array without bufferedImage
             BinaryData binaryData = BinaryData.fromFile(file.toPath());
             SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller = client.beginAnalyzeDocument(MODEL_ID, binaryData);
             Map<String, DocumentField> analyzedReceiptFields = getAnalyzedReceiptFields(analyzeLayoutResultPoller);
@@ -76,13 +76,14 @@ public class ImageReceiptExtractor {
     /**
      * Represents a receipt extracted from an image.
      *
-     * @param totalPrice The total price of the receipt.
+     * @param totalPrice   The total price of the receipt.
      * @param receiptItems The items on the receipt.
      */
     public record ReceiptORC(double totalPrice, List<ReceiptItemOCR> receiptItems) {
 
         /**
          * Creates a new ReceiptORC instance.
+         *
          * @throws NullPointerException if the items are null.
          */
         public ReceiptORC {
@@ -94,14 +95,14 @@ public class ImageReceiptExtractor {
      * Represents a single item on a receipt extracted from an image.
      *
      * @param amount The amount of the specific item on the receipt.
-     * @param name  The name of the item.
-     * @param price The total price of the item.
-     *
+     * @param name   The name of the item.
+     * @param price  The total price of the item.
      */
     public record ReceiptItemOCR(int amount, String name, double price) {
 
         /**
          * Creates a new ReceiptItemOCR instance.
+         *
          * @throws NullPointerException if the name is null.
          */
         public ReceiptItemOCR {
@@ -125,6 +126,7 @@ public class ImageReceiptExtractor {
     @NotNull
     private List<ReceiptItemOCR> extractReceiptItems(Map<String, DocumentField> analyzedReceiptFields) {
         return analyzedReceiptFields.get("Items").getValueAsList().stream()
+                .filter(Objects::nonNull)
                 .map(item -> {
                     String itemDescription = getDocumentFieldContent(item, "Description", "");
                     int itemQuantity = getDocumentFieldIntValue(item, "Quantity", 1);
@@ -209,7 +211,7 @@ public class ImageReceiptExtractor {
 
         return field.getValueAsDouble();
     }
-    
+
     // Round the extracted price to two decimal places
     private static double roundExtractedPrice(double value) {
         return Math.round(value * 100.0) / 100.0;
