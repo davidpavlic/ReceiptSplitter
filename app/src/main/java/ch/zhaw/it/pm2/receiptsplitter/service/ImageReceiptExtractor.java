@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
+import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import com.azure.ai.formrecognizer.documentanalysis.DocumentAnalysisClient;
 import com.azure.ai.formrecognizer.documentanalysis.DocumentAnalysisClientBuilder;
 import com.azure.ai.formrecognizer.documentanalysis.models.*;
@@ -24,10 +25,15 @@ import java.util.logging.Logger;
  */
 public class ImageReceiptExtractor {
     private static final Logger logger = Logger.getLogger(ImageReceiptExtractor.class.getName());
-
-    private static final String endpoint = "[Endpoint URL]";
-    private static final String key = "[API Key]";
     private static final String MODEL_ID = "prebuilt-receipt";
+
+    private final String endpoint;
+    private final String key;
+
+    public ImageReceiptExtractor() {
+        endpoint = System.getProperty(EnvConstants.AZURE_AI_FORM_RECOGNIZER_ENDPOINT.getKey());
+        key = System.getProperty(EnvConstants.AZURE_AI_FORM_RECOGNIZER_KEY.getKey());
+    }
 
     /**
      * Extracts the receipt data from an image file.

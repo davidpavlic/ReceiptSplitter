@@ -41,14 +41,31 @@ javafx {
     modules("javafx.controls", "javafx.fxml")
 }
 
-// Set Env var for API Key used for Authentication with SMTP Server
-val smtpApiKey: String? = if (hasProperty("SMTP_API_KEY")) findProperty("SMTP_API_KEY") as String else null
-val smtpUsername: String? = if (hasProperty("SMTP_USERNAME")) findProperty("SMTP_USERNAME") as String else null
+// Set the Environment Variable  keys
+object EnvVarKeys {
+    const val SMTP_USERNAME = "SMTP_USERNAME"
+    const val SMTP_API_KEY = "SMTP_API_KEY"
+    const val AZURE_FORM_RECOGNIZER_ENDPOINT = "AZURE_AI_FORM_RECOGNIZER_ENDPOINT"
+    const val AZURE_FORM_RECOGNIZER_KEY = "AZURE_AI_FORM_RECOGNIZER_KEY"
+}
+
+// Get the Env Vars from the gradle.properties file
+val smtpApiKey: String? =  findProperty(EnvVarKeys.SMTP_USERNAME) as String?
+val smtpUsername: String? = findProperty(EnvVarKeys.SMTP_API_KEY) as String?
+val azureFormRecognizerEndpoint: String? = findProperty(EnvVarKeys.AZURE_FORM_RECOGNIZER_ENDPOINT) as String?
+val azureFormRecognizerKey: String? = findProperty(EnvVarKeys.AZURE_FORM_RECOGNIZER_KEY) as String?
 
 application {
     // Define the main class for the application.
     mainClass = "ch.zhaw.it.pm2.receiptsplitter.Main"
-    applicationDefaultJvmArgs = listOf("-DSMTP_API_KEY=${smtpApiKey}", "-DSMTP_USERNAME=${smtpUsername}")
+
+    // Set the Env Vars as JVM arguments for the application.
+    applicationDefaultJvmArgs = listOf(
+            "-D${EnvVarKeys.SMTP_USERNAME}=${smtpApiKey}",
+            "-D${EnvVarKeys.SMTP_API_KEY}=${smtpUsername}",
+            "-D${EnvVarKeys.AZURE_FORM_RECOGNIZER_ENDPOINT}=${azureFormRecognizerEndpoint}",
+            "-D${EnvVarKeys.AZURE_FORM_RECOGNIZER_KEY}=${azureFormRecognizerKey}"
+    )
 }
 
 tasks.named<Test>("test") {
