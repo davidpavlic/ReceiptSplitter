@@ -27,7 +27,7 @@
     <bottom>
         <HBox prefWidth="394.0" spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button fx:id="backButton" onAction="#back" text="Back" HBox.hgrow="NEVER" />
+            <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
 
             <!-- Spacer that pushes both buttons to the ends -->
             <Pane HBox.hgrow="ALWAYS" />

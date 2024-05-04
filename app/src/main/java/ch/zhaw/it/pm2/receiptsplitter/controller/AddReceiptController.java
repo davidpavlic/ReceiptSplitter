@@ -5,9 +5,10 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ImageReceiptExtractorException;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptOCR;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
@@ -19,20 +20,17 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 
 
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
     private File selectedFile;
-    private ImageReceiptExtractor imageExtractor;
-    private Receipt currentReceipt;
+    private ImageReceiptExtractor imageExtractor = new ImageReceiptExtractor();
+    ReceiptProcessor receiptProcessor;
 
     @FXML private Pane dragAndDropPane;
     @FXML private Button uploadReceiptButton;
     @FXML private Button confirmButton;
-    @FXML private Button backButton;
 
     @Override
     public void initialize(Router router) {
@@ -42,28 +40,35 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
+
     @Override
     public void confirm() {
-        switchScene(Pages.LIST_ITEMS_WINDOW);
+        if(processReceipt(selectedFile)){
+            switchScene(Pages.LIST_ITEMS_WINDOW);
+            //explicitly set to null to prevent bottlenecks
+            selectedFile = null;
+        }
+        System.out.println("Test");
     }
 
     @Override
     public void back() {
         switchScene(Pages.MAIN_WINDOW);
+        //explicitly set to null to prevent bottlenecks
+        selectedFile = null;
     }
 
     @Override
     public void reset() {
-            currentReceipt = null;
+            //TODO currentReceipt = null;
     }
 
     public void handleReceiptDropped(DragEvent dragEvent) {
-        Dragboard dragboard = dragEvent.getDragboard();
         boolean success = false;
-        if (dragboard.hasFiles()) {
+        Dragboard dragboard = dragEvent.getDragboard();
+
+        if (dragboard.hasFiles())
             success = true;
-            uploadFile(dragboard.getFiles().get(0));
-        }
         dragEvent.setDropCompleted(success);
         dragEvent.consume();
     }
@@ -81,28 +86,29 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     private void openDialog(){
         FileChooser fileChooser = new FileChooser();
         selectedFile = fileChooser.showOpenDialog(uploadReceiptButton.getScene().getWindow());
-        if (selectedFile != null) {
-            uploadFile(selectedFile);
-        }
     }
 
-    private void uploadFile(File file){
-        //TODO Check how we want to store Receipts.
-        File destination = new File(getClass().getResource("receipts") + file.getName());
+    private boolean processReceipt(File file){
         try {
-            Files.copy(file.toPath(), destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            //currentReceipt = new Receipt();
-            //TODO Upload Receipt correctly
-            System.out.println("Receipt uploaded successfully!");
             ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
 
-            // TODO: Map the extracted data response to the currentReceipt object and save it in ReceiptProcessor
+            ArrayList<ReceiptItem> receiptItems = new ArrayList<>();
+
+            for(ReceiptItemOCR receiptItemOCR : extractedImage.receiptItemOCRList()){
+                float price = (float) receiptItemOCR.price();
+                int amount = receiptItemOCR.amount();
+                String name = receiptItemOCR.name();
+
+                receiptItems.add(new ReceiptItem(price, name, amount));
+            }
+
+            receiptProcessor = new ReceiptProcessor(new Receipt(receiptItems));
+
+            return true;
         } catch (ImageReceiptExtractorException e) {
             System.err.println("Error extracting receipt: " + e.getMessage());
             // TODO: Show user error message
-        } catch (IOException ioException) {
-            System.err.println("Error uploading receipt: " + ioException.getMessage());
-            // TODO: Show user error message
         }
+        return false;
     }
 }
