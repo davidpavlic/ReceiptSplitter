@@ -57,7 +57,7 @@ public class Router {
      * @throws IllegalStateException if the stage is null
      */
     public void gotoScene(Pages page) {
-        if (page == null) throw new IllegalArgumentException("Page cannot be null");
+        Objects.requireNonNull(page, "Page cannot be null");
 
         if (stage != null) {
             stage.setScene(getScene(page));
@@ -94,7 +94,7 @@ public class Router {
      */
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
         //TODO Implement this somewhere else?
-        if (helpText == null) throw new IllegalArgumentException("Help message cannot be null");
+        Objects.requireNonNull(helpText, "Help message cannot be null");
 
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/HelpModal.fxml"));
