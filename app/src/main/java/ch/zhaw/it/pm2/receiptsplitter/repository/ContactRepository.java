@@ -72,7 +72,7 @@ public class ContactRepository {
             throw new IllegalArgumentException("No record found with email: " + email);
 
         if(updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
-            notifyObservers(); // Notify observers of the change
+            notifyObservers();
             return true;
         }
         return false;
@@ -219,9 +219,9 @@ public class ContactRepository {
     }
 
     private String parseContactToLine(Contact contact) {
-        return String.format("%s%s%s%s%s%s%n",
+        return String.format("%s%s%s%s%s",
                 contact.getFirstName(), DELIMITER,
                 contact.getLastName(), DELIMITER,
-                contact.getEmail(), DELIMITER);
+                contact.getEmail());
     }
 }
