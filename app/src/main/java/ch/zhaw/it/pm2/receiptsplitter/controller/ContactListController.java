@@ -1,30 +1,45 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
+
+import java.io.IOException;
 
 public class ContactListController extends DefaultController implements CanNavigate, CanReset {
 
-    @FXML private TableColumn<?, ?> actionColumn;
-    @FXML private Button addContactButton;
-    @FXML private Button backButton;
-    @FXML private Button confirmButton;
-    @FXML private TableColumn<?, ?> emailColumn;
-    @FXML private TableColumn<?, ?> nameColumn;
-    @FXML private TableView<?> tableContactList;
+    @FXML
+    private TableColumn<Contact, String> actionColumn;
+    @FXML
+    private TableColumn<Contact, String> emailColumn;
+    @FXML
+    private TableColumn<Contact, String> nameColumn;
+    @FXML
+    private TableView<Contact> tableContactList;
+
+    private ContactRepository contactRepository;
 
     @Override
     public void initialize(Router router) {
         this.router = router;
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
+        this.contactRepository = ((LoginController) router.getController(Pages.LOGIN_WINDOW)).getContactRepository();
+        configureTable();
     }
 
     @FXML
@@ -35,9 +50,10 @@ public class ContactListController extends DefaultController implements CanNavig
     @FXML
     @Override
     public void confirm() {
-        switchScene(Pages.LIST_ITEMS_WINDOW);
+        switchScene(Pages.MAIN_WINDOW);
     }
 
+    @FXML
     @Override
     public void back() {
         switchScene(Pages.MAIN_WINDOW);
@@ -45,5 +61,60 @@ public class ContactListController extends DefaultController implements CanNavig
 
     @Override
     public void reset() {
+    }
+
+    private void configureTable() {
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+        ObservableList<Contact> data = FXCollections.observableArrayList(contactRepository.getContactList());
+        tableContactList.setItems(data);
+
+        contactRepository.getContactList().addListener((ListChangeListener.Change<? extends Contact> c) -> {
+            while (c.next()) {
+                if (c.wasAdded()) {
+                    tableContactList.getItems().addAll(c.getAddedSubList());
+                } else if (c.wasRemoved()) {
+                    tableContactList.getItems().removeAll(c.getRemoved());
+                }
+            }
+        });
+
+        actionColumn.setMaxWidth(130);
+        actionColumn.setCellFactory(new Callback<>() {
+            @Override
+            public TableCell<Contact, String> call(TableColumn<Contact, String> param) {
+                return new TableCell<>() {
+                    final ComboBox<String> comboBox = new ComboBox<>();
+
+                    @Override
+                    protected void updateItem(String item, boolean empty) {
+                        super.updateItem(item, empty);
+                        if (empty) {
+                            setGraphic(null);
+                        } else {
+                            comboBox.setPromptText("Select Action");
+                            comboBox.getItems().setAll("Edit", "Delete");
+                            comboBox.setOnAction(event -> {
+                                String selectedAction = comboBox.getSelectionModel().getSelectedItem();
+                                if ("Edit".equals(selectedAction)) {
+                                    // Perform edit action
+                                } else if ("Delete".equals(selectedAction)) {
+                                    Contact contact = getTableView().getItems().get(getIndex());
+                                    try {
+                                        contactRepository.removeContact(contact.getEmail());
+                                    } catch (IOException e) {
+                                        throw new RuntimeException(e);
+                                    }
+                                }
+                            });
+                            // Disable the ComboBox if the current row's Contact is the selected profile
+                            Contact contact = getTableView().getItems().get(getIndex());
+                            comboBox.setDisable(contact.equals(contactRepository.getProfile()));
+                            setGraphic(comboBox);
+                        }
+                    }
+                };
+            }
+        });
     }
 }

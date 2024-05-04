@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
@@ -45,6 +47,13 @@ public class NewContactController extends DefaultController implements CanNaviga
 
     @Override
     public void confirm() {
+        ContactRepository contactRepository = ((LoginController) router.getController(Pages.LOGIN_WINDOW)).getContactRepository();
+        try {
+            Contact contact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
+            contactRepository.addContact(contact);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         reset();
         switchScene(lastPage);
     }

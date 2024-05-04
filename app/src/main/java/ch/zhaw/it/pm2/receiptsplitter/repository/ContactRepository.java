@@ -1,6 +1,8 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
 public class ContactRepository {
-    private final List<Contact> contactList = new ArrayList<>();
+    private final ObservableList<Contact> contactList = FXCollections.observableArrayList();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
 
@@ -95,7 +97,7 @@ public class ContactRepository {
         return selectedProfile;
     }
 
-    public List<Contact> getContactList() {
+    public ObservableList<Contact> getContactList() {
         return contactList;
     }
 

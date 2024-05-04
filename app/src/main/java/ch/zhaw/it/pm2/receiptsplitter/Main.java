@@ -60,10 +60,10 @@ public class Main extends Application {
      * @throws Exception if any error occurs during the setup
      */
     public void start(Stage stage) throws Exception {
-        stage.setWidth(400);
-        stage.setHeight(300);
-        stage.setMinWidth(300);
-        stage.setMinHeight(250);
+        stage.setWidth(500);
+        stage.setHeight(400);
+        stage.setMinWidth(460);
+        stage.setMinHeight(360);
         stage.setTitle("Receipt Splitter");
 
         Router router = new Router(stage);

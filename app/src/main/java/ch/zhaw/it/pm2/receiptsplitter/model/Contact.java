@@ -41,6 +41,10 @@ public class Contact {
         this.email = email;
     }
 
+    public String getDisplayName() {
+        return firstName + " " + lastName;
+    }
+
     protected enum ContactErrorMessageType {
         FIRST_NAME_EMPTY("First name must not be empty."),
         LAST_NAME_NULL("Last name must not be null."),

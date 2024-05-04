@@ -53,4 +53,6 @@ public abstract class  DefaultController {
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
     }
+
+    abstract void sceneDidLoad();
 }
