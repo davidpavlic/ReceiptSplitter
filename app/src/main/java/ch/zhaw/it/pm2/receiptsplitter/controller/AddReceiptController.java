@@ -1,13 +1,15 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageExtractor;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ImageReceiptExtractorException;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptOCR;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.input.DragEvent;
@@ -24,7 +26,7 @@ import java.nio.file.StandardCopyOption;
 
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
     private File selectedFile;
-    private ImageExtractor imageExtractor;
+    private ImageReceiptExtractor imageExtractor;
     private Receipt currentReceipt;
 
     @FXML private Pane dragAndDropPane;
@@ -92,10 +94,15 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             //currentReceipt = new Receipt();
             //TODO Upload Receipt correctly
             System.out.println("Receipt uploaded successfully!");
+            ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
+
+            // TODO: Map the extracted data response to the currentReceipt object and save it in ReceiptProcessor
+        } catch (ImageReceiptExtractorException e) {
+            System.err.println("Error extracting receipt: " + e.getMessage());
+            // TODO: Show user error message
         } catch (IOException ioException) {
             System.err.println("Error uploading receipt: " + ioException.getMessage());
+            // TODO: Show user error message
         }
-
-        String extractedImage =  imageExtractor.extractOCR(file);
     }
 }
