@@ -44,7 +44,7 @@ public class ImageReceiptExtractor {
      * @throws ImageReceiptExtractorException If an error occurs during the extraction process.
      * @throws NullPointerException           If the file is null.
      */
-    public ReceiptORC extractReceiptOCR(File file) throws ImageReceiptExtractorException {
+    public ReceiptOCR extractReceiptOCR(File file) throws ImageReceiptExtractorException {
         Objects.requireNonNull(file, "File must not be null");
 
         try {
@@ -55,11 +55,11 @@ public class ImageReceiptExtractor {
             SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller = client.beginAnalyzeDocument(MODEL_ID, binaryData);
             Map<String, DocumentField> analyzedReceiptFields = getAnalyzedReceiptFields(analyzeLayoutResultPoller);
 
-            List<ReceiptItemOCR> receiptItems = extractReceiptItems(analyzedReceiptFields);
+            List<ReceiptItemOCR> receiptItemOCRList = extractReceiptItemOCRList(analyzedReceiptFields);
 
-            return new ReceiptORC(
+            return new ReceiptOCR(
                     roundExtractedPrice(analyzedReceiptFields.get("Total").getValueAsDouble()),
-                    receiptItems
+                    receiptItemOCRList
             );
         } catch (HttpResponseException e) {
             logger.severe("Network error occurred: " + e.getMessage());
@@ -67,56 +67,6 @@ public class ImageReceiptExtractor {
         } catch (Exception e) {
             logger.severe("Error while extracting OCR from image: " + e.getMessage());
             throw new ImageReceiptExtractorException("Could not extract OCR from image.", e);
-        }
-    }
-
-    /**
-     * Represents a receipt extracted from an image.
-     *
-     * @param totalPrice   The total price of the receipt.
-     * @param receiptItems The items on the receipt.
-     */
-    public record ReceiptORC(double totalPrice, List<ReceiptItemOCR> receiptItems) {
-
-        /**
-         * Creates a new ReceiptORC instance.
-         *
-         * @throws NullPointerException if the items are null.
-         */
-        public ReceiptORC {
-            Objects.requireNonNull(receiptItems, "Receipt Items must not be null");
-        }
-    }
-
-    /**
-     * Represents a single item on a receipt extracted from an image.
-     *
-     * @param amount The amount of the specific item on the receipt.
-     * @param name   The name of the item.
-     * @param price  The total price of the item.
-     */
-    public record ReceiptItemOCR(int amount, String name, double price) {
-
-        /**
-         * Creates a new ReceiptItemOCR instance.
-         *
-         * @throws NullPointerException if the name is null.
-         */
-        public ReceiptItemOCR {
-            Objects.requireNonNull(name, "Name must not be null");
-        }
-    }
-
-    /**
-     * Checked Exception thrown when an error occurs during the image extraction process.
-     */
-    public static class ImageReceiptExtractorException extends Exception {
-        public ImageReceiptExtractorException(String message) {
-            super(message);
-        }
-
-        public ImageReceiptExtractorException(String message, Throwable cause) {
-            super(message, cause);
         }
     }
 
@@ -129,7 +79,7 @@ public class ImageReceiptExtractor {
     }
 
     @NotNull
-    private List<ReceiptItemOCR> extractReceiptItems(Map<String, DocumentField> analyzedReceiptFields) {
+    private List<ReceiptItemOCR> extractReceiptItemOCRList(Map<String, DocumentField> analyzedReceiptFields) {
         return analyzedReceiptFields.get("Items").getValueAsList().stream()
                 .filter(Objects::nonNull)
                 .map(item -> {
@@ -220,5 +170,55 @@ public class ImageReceiptExtractor {
     // Round the extracted price to two decimal places
     private static double roundExtractedPrice(double value) {
         return Math.round(value * 100.0) / 100.0;
+    }
+
+    /**
+     * Represents a receipt extracted from an image with OCR.
+     *
+     * @param totalPrice         The total price of the receipt.
+     * @param receiptItemOCRList The items on the receipt.
+     */
+    public record ReceiptOCR(double totalPrice, List<ReceiptItemOCR> receiptItemOCRList) {
+
+        /**
+         * Creates a new ReceiptOCR instance.
+         *
+         * @throws NullPointerException if the items are null.
+         */
+        public ReceiptOCR {
+            Objects.requireNonNull(receiptItemOCRList, "Receipt Items must not be null");
+        }
+    }
+
+    /**
+     * Represents a single item on a receipt extracted from an image with OCR.
+     *
+     * @param amount The amount of the specific item on the receipt.
+     * @param name   The name of the item.
+     * @param price  The total price of the item.
+     */
+    public record ReceiptItemOCR(int amount, String name, double price) {
+
+        /**
+         * Creates a new ReceiptItemOCR instance.
+         *
+         * @throws NullPointerException if the name is null.
+         */
+        public ReceiptItemOCR {
+            Objects.requireNonNull(name, "Name must not be null");
+        }
+    }
+
+    /**
+     * Checked Exception thrown when an error occurs during the image extraction process.
+     */
+    public static class ImageReceiptExtractorException extends Exception {
+        public ImageReceiptExtractorException(String message) {
+            super(message);
+        }
+
+        public ImageReceiptExtractorException(String message, Throwable cause) {
+            super(message, cause);
+        }
     }
 }

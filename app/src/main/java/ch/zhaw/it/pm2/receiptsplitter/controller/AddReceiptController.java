@@ -7,7 +7,7 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ImageReceiptExtractorException;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptORC;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptOCR;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
@@ -94,7 +94,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             //currentReceipt = new Receipt();
             //TODO Upload Receipt correctly
             System.out.println("Receipt uploaded successfully!");
-            ReceiptORC extractedImage =  imageExtractor.extractReceiptOCR(file);
+            ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
 
             // TODO: Map the extracted data response to the currentReceipt object and save it in ReceiptProcessor
         } catch (ImageReceiptExtractorException e) {
