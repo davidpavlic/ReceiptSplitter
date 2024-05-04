@@ -6,6 +6,7 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.collections.FXCollections;
@@ -23,23 +24,23 @@ import java.io.IOException;
 
 public class ContactListController extends DefaultController implements CanNavigate, CanReset {
 
-    @FXML
-    private TableColumn<Contact, String> actionColumn;
-    @FXML
-    private TableColumn<Contact, String> emailColumn;
-    @FXML
-    private TableColumn<Contact, String> nameColumn;
-    @FXML
-    private TableView<Contact> tableContactList;
-
-    private ContactRepository contactRepository;
+    @FXML private TableColumn<Contact, String> actionColumn;
+    @FXML private TableColumn<Contact, String> emailColumn;
+    @FXML private TableColumn<Contact, String> nameColumn;
+    @FXML private TableView<Contact> tableContactList;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
-        this.contactRepository = ((LoginController) router.getController(Pages.LOGIN_WINDOW)).getContactRepository();
+        contactRepository.addObserver(this);
         configureTable();
+    }
+
+    @Override
+    public void refreshScene() {
+        ObservableList<Contact> data = FXCollections.observableArrayList(contactRepository.getContactList());
+        tableContactList.setItems(data);
     }
 
     @FXML
@@ -68,16 +69,6 @@ public class ContactListController extends DefaultController implements CanNavig
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
         ObservableList<Contact> data = FXCollections.observableArrayList(contactRepository.getContactList());
         tableContactList.setItems(data);
-
-        contactRepository.getContactList().addListener((ListChangeListener.Change<? extends Contact> c) -> {
-            while (c.next()) {
-                if (c.wasAdded()) {
-                    tableContactList.getItems().addAll(c.getAddedSubList());
-                } else if (c.wasRemoved()) {
-                    tableContactList.getItems().removeAll(c.getRemoved());
-                }
-            }
-        });
 
         actionColumn.setMaxWidth(130);
         actionColumn.setCellFactory(new Callback<>() {
@@ -108,8 +99,8 @@ public class ContactListController extends DefaultController implements CanNavig
                                 }
                             });
                             // Disable the ComboBox if the current row's Contact is the selected profile
-                            Contact contact = getTableView().getItems().get(getIndex());
-                            comboBox.setDisable(contact.equals(contactRepository.getProfile()));
+                            //Contact contact = getTableView().getItems().get(getIndex());
+                            //comboBox.setDisable(contact.equals(contactRepository.getProfile()));
                             setGraphic(comboBox);
                         }
                     }

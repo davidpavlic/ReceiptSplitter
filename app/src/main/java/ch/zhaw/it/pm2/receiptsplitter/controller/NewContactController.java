@@ -2,6 +2,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
@@ -24,8 +25,8 @@ public class NewContactController extends DefaultController implements CanNaviga
     @FXML private Label emailErrorLabel;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         this.lastPage = Pages.MAIN_WINDOW;
         this.helpMessage = HelpMessages.NEW_CONTACT_WINDOW_MSG;
 
@@ -41,13 +42,15 @@ public class NewContactController extends DefaultController implements CanNaviga
     }
 
     @Override
+    public void refreshScene() {}
+
+    @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }
 
     @Override
     public void confirm() {
-        ContactRepository contactRepository = ((LoginController) router.getController(Pages.LOGIN_WINDOW)).getContactRepository();
         try {
             Contact contact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
             contactRepository.addContact(contact);

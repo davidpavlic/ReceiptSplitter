@@ -11,6 +11,7 @@ public enum HelpMessages {
     CHOOSE_PEOPLE_WINDOW_MSG("Please choose the people to split the receipt with."),
     EDIT_ITEMS_WINDOW_MSG("Please edit the items of the receipt."),
     SHOW_SPLIT_WINDOW_MSG("Please review the split."),
+    LIST_ITEMS_WINDOW_MSG("Please review the items."),
     FAQ_MSG("This is a FAQ, Needs to be defined");
 
     private final String message;

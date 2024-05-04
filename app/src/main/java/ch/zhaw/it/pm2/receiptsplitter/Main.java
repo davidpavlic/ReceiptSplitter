@@ -3,6 +3,8 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
@@ -12,6 +14,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -66,7 +69,12 @@ public class Main extends Application {
         stage.setMinHeight(360);
         stage.setTitle("Receipt Splitter");
 
-        Router router = new Router(stage);
+        //ContactRepository contactRepository = new ContactRepository(Objects.requireNonNull(getClass().getResource("/contacts.csv")).getPath());
+        ContactRepository contactRepository = new ContactRepository("contacts.csv"); // TODO: Ask martin about this
+        contactRepository.loadContacts();
+        ReceiptProcessor receiptProcessor = new ReceiptProcessor();
+        Router router = new Router(stage, contactRepository, receiptProcessor);
+
         try {
             router.gotoScene(Pages.LOGIN_WINDOW);
         } catch (IllegalStateException exception) {

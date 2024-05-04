@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
@@ -11,10 +13,13 @@ import javafx.fxml.FXML;
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset {
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
-        this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
+        this.helpMessage = HelpMessages.LIST_ITEMS_WINDOW_MSG;
     }
+
+    @Override
+    public void refreshScene() {}
 
     @FXML
     @Override

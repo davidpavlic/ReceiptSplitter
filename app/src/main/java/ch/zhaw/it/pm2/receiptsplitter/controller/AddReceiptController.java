@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
@@ -33,13 +35,17 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
-        confirmButton.setOnAction(event -> confirm() );
         setupDragAndDrop();
+        confirmButton.setOnAction(event -> confirm() );
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
+
+    @Override
+    public void refreshScene() {}
+
     @Override
     public void confirm() {
         switchScene(Pages.LIST_ITEMS_WINDOW);

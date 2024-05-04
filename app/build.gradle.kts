@@ -51,6 +51,8 @@ application {
     applicationDefaultJvmArgs = listOf("-DSMTP_API_KEY=${smtpApiKey}", "-DSMTP_USERNAME=${smtpUsername}")
 }
 
+//TODO Force to reload contacts.csv file
+
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()

@@ -1,8 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -18,7 +17,8 @@ import java.util.stream.Collectors;
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
 public class ContactRepository {
-    private final ObservableList<Contact> contactList = FXCollections.observableArrayList();
+    private final List<DefaultController> observers = new ArrayList<>();
+    private final List<Contact> contactList = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
 
@@ -33,6 +33,14 @@ public class ContactRepository {
     //Loads the contacts from the file into the contact list
     public void loadContacts() throws IOException{
         Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contactList::add);
+    }
+
+    public void addObserver(DefaultController observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(DefaultController observer) {
+        observers.remove(observer);
     }
 
     //Checks if a contact exists
@@ -53,13 +61,17 @@ public class ContactRepository {
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
 
         appendContactToContactFile(contact);
-        return contactList.add(contact);
+        contactList.add(contact);
+        notifyObservers();
+        return true;
     }
 
     public boolean updateContact(String email, Contact newContact) throws IllegalArgumentException, IOException {
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
-        return updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
+        boolean updateSuccess = updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
+        notifyObservers();
+        return updateSuccess;
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
@@ -69,9 +81,13 @@ public class ContactRepository {
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
-        if(removeContactFromContactFile(email))
-            return contactList.removeIf(contact -> contact.getEmail().equals(email)) && removeFromSelectedContacts(email);
-
+        if(removeContactFromContactFile(email)) {
+            if (contactList.removeIf(contact -> contact.getEmail().equals(email))) {
+                boolean removeSuccess = removeFromSelectedContacts(email);
+                notifyObservers();
+                return removeSuccess;
+            }
+        }
         return false;
     }
 
@@ -97,7 +113,7 @@ public class ContactRepository {
         return selectedProfile;
     }
 
-    public ObservableList<Contact> getContactList() {
+    public List<Contact> getContactList() {
         return contactList;
     }
 
@@ -118,6 +134,12 @@ public class ContactRepository {
         if(addContact(contact))
             return setProfile(contact.getEmail());
         return false;
+    }
+
+    private void notifyObservers() {
+        for (DefaultController observer : observers) {
+            observer.refreshScene();
+        }
     }
 
     //The following method is a helper method for updating a contact in the contact list
@@ -169,9 +191,10 @@ public class ContactRepository {
         return false;
     }
 
-    private void appendContactToContactFile(Contact contact) throws IOException{
-        BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND);
-        writer.write(parseContactToLine(contact));
+    private void appendContactToContactFile(Contact contact) throws IOException {
+        try (BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND)) {
+            writer.write(parseContactToLine(contact));
+        }
     }
 
     //The following methods parse between line and contact

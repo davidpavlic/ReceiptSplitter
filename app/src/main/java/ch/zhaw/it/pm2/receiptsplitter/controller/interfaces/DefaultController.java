@@ -1,8 +1,11 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller.interfaces;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
@@ -10,17 +13,26 @@ import javafx.fxml.FXML;
 public abstract class  DefaultController {
     private final Logger logger = Logger.getLogger(DefaultController.class.getName());
     protected Router router;
+    protected ContactRepository contactRepository;
+    protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
 
-    public void initialize(Router router){
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor){
         this.router = router;
+        this.contactRepository = contactRepository;
+        this.receiptProcessor = receiptProcessor;
         this.helpMessage = HelpMessages.LOGIN_WINDOW_MSG;
     }
 
 
     @FXML
     void showFAQ() {
-        router.openHelpModal(HelpMessages.FAQ_MSG);
+        try {
+            router.openHelpModal(HelpMessages.FAQ_MSG);
+        } catch (IllegalStateException | IOException exception) {
+            logger.severe("Could not open help modal, router returned IllegalStateException: " + exception);
+            logger.fine(Arrays.toString(exception.getStackTrace()));
+        }
     }
 
     @FXML
@@ -30,7 +42,7 @@ public abstract class  DefaultController {
         }
         try {
             router.openHelpModal(helpMessage);
-        } catch (IllegalStateException exception) {
+        } catch (IllegalStateException | IOException exception) {
             logger.severe("Could not open help modal, router returned IllegalStateException: " + exception);
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
@@ -54,5 +66,5 @@ public abstract class  DefaultController {
         }
     }
 
-    abstract void sceneDidLoad();
+    public abstract void refreshScene();
 }
