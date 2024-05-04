@@ -21,6 +21,7 @@ public class ContactRepository {
     private final List<Contact> contactList = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
+    private Contact selectedToEditContact;
 
     private static final String DELIMITER = ";";
     private final Path contactsFilePath;
@@ -66,12 +67,15 @@ public class ContactRepository {
         return true;
     }
 
-    public boolean updateContact(String email, Contact newContact) throws IllegalArgumentException, IOException {
+    public boolean updateContact(String email, Contact newContact) throws IOException {
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
-        boolean updateSuccess = updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
-        notifyObservers();
-        return updateSuccess;
+
+        if(updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
+            notifyObservers(); // Notify observers of the change
+            return true;
+        }
+        return false;
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
@@ -109,12 +113,20 @@ public class ContactRepository {
         return selectedContacts;
     }
 
+    public Contact getSelectedToEditContact() {
+        return selectedToEditContact;
+    }
+
     public Contact getProfile(){
         return selectedProfile;
     }
 
     public List<Contact> getContactList() {
         return contactList;
+    }
+
+    public void setSelectedToEditContact(Contact selectedToEditContact) {
+        this.selectedToEditContact = selectedToEditContact;
     }
 
     //Setters

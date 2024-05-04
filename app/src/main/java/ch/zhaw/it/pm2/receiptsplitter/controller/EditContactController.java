@@ -1,13 +1,13 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -16,7 +16,7 @@ import javafx.scene.control.TextField;
 import java.util.Arrays;
 import java.util.List;
 
-public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {
+public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset {
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -29,7 +29,7 @@ public class NewContactController extends DefaultController implements CanNaviga
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.lastPage = Pages.MAIN_WINDOW;
-        this.helpMessage = HelpMessages.NEW_CONTACT_WINDOW_MSG;
+        this.helpMessage = HelpMessages.EDIT_CONTACT_WINDOW_MSG;
 
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
@@ -43,7 +43,12 @@ public class NewContactController extends DefaultController implements CanNaviga
     }
 
     @Override
-    public void refreshScene() {}
+    public void refreshScene() {
+        Contact contact = contactRepository.getSelectedToEditContact();
+        emailInput.setText(contact.getEmail());
+        firstNameInput.setText(contact.getFirstName());
+        lastNameInput.setText(contact.getLastName());
+    }
 
     @Override
     public void setLastPage(Pages lastPage) {
@@ -53,11 +58,10 @@ public class NewContactController extends DefaultController implements CanNaviga
     @Override
     public void confirm() {
         try {
-            Contact contact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
-            contactRepository.addContact(contact);
+            Contact newContact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
+            contactRepository.updateContact(contactRepository.getSelectedToEditContact().getEmail(), newContact);
         } catch (Exception e) {
-            logger.severe("Error adding contact: " + e.getMessage());
-            logger.fine(Arrays.toString(e.getStackTrace()));
+            e.printStackTrace();
         }
         reset();
         switchScene(lastPage);

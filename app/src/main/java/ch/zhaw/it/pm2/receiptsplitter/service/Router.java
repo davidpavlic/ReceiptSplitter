@@ -7,7 +7,7 @@ import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -43,6 +43,7 @@ public class Router {
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
         }
+        contactRepository.loadContacts();
     }
 
     /**

@@ -6,7 +6,7 @@ import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageExtractor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;

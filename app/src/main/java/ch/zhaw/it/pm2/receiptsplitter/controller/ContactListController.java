@@ -3,24 +3,24 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 public class ContactListController extends DefaultController implements CanNavigate, CanReset {
 
@@ -39,8 +39,8 @@ public class ContactListController extends DefaultController implements CanNavig
 
     @Override
     public void refreshScene() {
-        ObservableList<Contact> data = FXCollections.observableArrayList(contactRepository.getContactList());
-        tableContactList.setItems(data);
+        tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContactList()));
+        tableContactList.refresh();
     }
 
     @FXML
@@ -67,15 +67,15 @@ public class ContactListController extends DefaultController implements CanNavig
     private void configureTable() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
-        ObservableList<Contact> data = FXCollections.observableArrayList(contactRepository.getContactList());
-        tableContactList.setItems(data);
 
-        actionColumn.setMaxWidth(130);
+        actionColumn.setMaxWidth(140);
         actionColumn.setCellFactory(new Callback<>() {
             @Override
             public TableCell<Contact, String> call(TableColumn<Contact, String> param) {
                 return new TableCell<>() {
-                    final ComboBox<String> comboBox = new ComboBox<>();
+                    final Button editButton = new Button("Edit");
+                    final Button deleteButton = new Button("Delete");
+                    final HBox hbox = new HBox(editButton, deleteButton);
 
                     @Override
                     protected void updateItem(String item, boolean empty) {
@@ -83,25 +83,33 @@ public class ContactListController extends DefaultController implements CanNavig
                         if (empty) {
                             setGraphic(null);
                         } else {
-                            comboBox.setPromptText("Select Action");
-                            comboBox.getItems().setAll("Edit", "Delete");
-                            comboBox.setOnAction(event -> {
-                                String selectedAction = comboBox.getSelectionModel().getSelectedItem();
-                                if ("Edit".equals(selectedAction)) {
-                                    // Perform edit action
-                                } else if ("Delete".equals(selectedAction)) {
-                                    Contact contact = getTableView().getItems().get(getIndex());
-                                    try {
-                                        contactRepository.removeContact(contact.getEmail());
-                                    } catch (IOException e) {
-                                        throw new RuntimeException(e);
-                                    }
+                            hbox.setSpacing(10);
+                            editButton.setPrefWidth(60);
+                            deleteButton.setPrefWidth(60);
+
+                            editButton.setOnAction(event -> {
+                                contactRepository.setSelectedToEditContact(getTableView().getItems().get(getIndex()));
+                                try {
+                                    switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
+                                } catch (Exception e) {
+                                    logger.severe("Error Editing profile: " + e.getMessage());
+                                    logger.fine(Arrays.toString(e.getStackTrace()));
                                 }
                             });
-                            // Disable the ComboBox if the current row's Contact is the selected profile
-                            //Contact contact = getTableView().getItems().get(getIndex());
-                            //comboBox.setDisable(contact.equals(contactRepository.getProfile()));
-                            setGraphic(comboBox);
+
+                            deleteButton.setOnAction(event -> {
+                                Contact contact = getTableView().getItems().get(getIndex());
+                                try {
+                                    contactRepository.removeContact(contact.getEmail());
+                                } catch (IOException e) {
+                                    logger.severe("Error removing contact: " + e.getMessage());
+                                    logger.fine(Arrays.toString(e.getStackTrace()));
+                                }
+                            });
+
+                            Contact contact = getTableView().getItems().get(getIndex());
+                            deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
+                            setGraphic(hbox);
                         }
                     }
                 };

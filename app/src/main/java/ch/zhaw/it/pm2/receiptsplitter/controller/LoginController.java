@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -49,12 +49,14 @@ public class LoginController extends DefaultController {
     @Override
     public void refreshScene() {
         selectUserDropdown.getItems().clear();
-        selectUserDropdown.setPromptText("Please choose a profile");
         selectUserDropdown.getItems().addAll(contactRepository.getContactList());
+        selectUserDropdown.setPromptText("Please choose a profile");
+        if (contactRepository.getProfile() != null) {
+            selectUserDropdown.setValue(contactRepository.getProfile());
+        }
     }
 
     private void configureDropdown() {
-        // Add a listener to the selection modelclear
         selectUserDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             confirmButton.setDisable(newValue == null);
         });
@@ -85,7 +87,7 @@ public class LoginController extends DefaultController {
                 if (item == null || empty) {
                     setText(null);
                 } else {
-                    setText(item.getDisplayName()); // Display the email
+                    setText(item.getDisplayName());
                 }
             }
         });
