@@ -49,10 +49,7 @@ public class ImageReceiptExtractor {
 
         try {
             // Create a client for the Azure Form Recognizer service
-            DocumentAnalysisClient client = new DocumentAnalysisClientBuilder()
-                    .credential(new AzureKeyCredential(key))
-                    .endpoint(endpoint)
-                    .buildClient();
+            DocumentAnalysisClient client = getDocumentAnalysisClient();
 
             BinaryData binaryData = BinaryData.fromFile(file.toPath());
             SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller = client.beginAnalyzeDocument(MODEL_ID, binaryData);
@@ -121,6 +118,14 @@ public class ImageReceiptExtractor {
         public ImageReceiptExtractorException(String message, Throwable cause) {
             super(message, cause);
         }
+    }
+
+    @NotNull
+    private DocumentAnalysisClient getDocumentAnalysisClient() {
+        return new DocumentAnalysisClientBuilder()
+                .credential(new AzureKeyCredential(key))
+                .endpoint(endpoint)
+                .buildClient();
     }
 
     @NotNull
