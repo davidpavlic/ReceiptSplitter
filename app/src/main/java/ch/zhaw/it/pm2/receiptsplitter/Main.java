@@ -49,6 +49,7 @@ public class Main extends Application {
         logger.info("Starting the application");
         if (!EnvConstants.areAllSet()) {
             logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
+            throw new IllegalStateException();
         } else {
             launch(args);
         }
