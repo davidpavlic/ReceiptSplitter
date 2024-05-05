@@ -9,6 +9,9 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Logger;
+
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
 
 /**
@@ -28,6 +31,7 @@ public abstract class  DefaultController {
     protected ContactRepository contactRepository;
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
+    protected StringProperty errorProperty = new SimpleStringProperty();
 
 
     /**
@@ -84,6 +88,7 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page);
         } catch (IllegalStateException exception) {
+            errorProperty.setValue("Could not switch to " + page + " Window");
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
             throw exception;
@@ -100,6 +105,7 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page, lastPage);
         } catch (IllegalStateException | IllegalArgumentException exception) {
+            errorProperty.setValue("Could not switch to " + page + " Window");
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
             throw exception;

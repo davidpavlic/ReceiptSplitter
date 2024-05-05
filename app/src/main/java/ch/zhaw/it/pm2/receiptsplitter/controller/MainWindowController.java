@@ -22,7 +22,9 @@ public class MainWindowController extends DefaultController implements IsObserve
 
     @Override
     public void update() {
-        welcomeMessage.setText("Welcome " + contactRepository.getProfile().getFirstName());
+        if (!(contactRepository.getProfile() == null)) {
+            welcomeMessage.setText("Welcome " + contactRepository.getProfile().getFirstName());
+        }
     }
 
     @FXML

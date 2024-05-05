@@ -32,13 +32,15 @@ public class EditContactController extends DefaultController implements CanNavig
         super.initialize(router, contactRepository, receiptProcessor);
         this.lastPage = Pages.MAIN_WINDOW;
         this.helpMessage = HelpMessages.EDIT_CONTACT_WINDOW_MSG;
-
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
-        // Add a listener that updates button state and checks email validity
         textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
             updateUIBasedOnValidation(textFields);
         }));
+
+        errorProperty.addListener((observable, oldValue, newValue) -> {
+            emailErrorLabel.setText(newValue);
+        });
 
         updateUIBasedOnValidation(textFields);
         confirmButton.setOnAction(event -> confirm());

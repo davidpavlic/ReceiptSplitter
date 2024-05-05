@@ -39,6 +39,10 @@ public class NewContactController extends DefaultController implements CanNaviga
             updateUIBasedOnValidation(textFields);
         }));
 
+        errorProperty.addListener((observable, oldValue, newValue) -> {
+            emailErrorLabel.setText(newValue);
+        });
+
         updateUIBasedOnValidation(textFields);
         confirmButton.setOnAction(event -> confirm());
     }

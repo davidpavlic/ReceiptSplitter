@@ -29,7 +29,6 @@ public class LoginController extends DefaultController implements IsObserver{
         configureDropdown();
         confirmButton.setDisable(true);
         confirmButton.setOnAction(event -> confirm());
-        selectContactDropdown.setPromptText("Please choose a profile");
     }
 
     @FXML
@@ -81,6 +80,7 @@ public class LoginController extends DefaultController implements IsObserver{
     }
 
     private void configureDropdown() {
+        selectContactDropdown.setPromptText("Please choose a profile");
         selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             confirmButton.setDisable(newValue == null);
         });
