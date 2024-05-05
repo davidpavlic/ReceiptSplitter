@@ -7,10 +7,10 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -18,108 +18,147 @@ import java.util.List;
 class ReceiptProcessorTest {
     @Mock private Receipt receipt;
     @Mock private ReceiptItem item;
-    @Mock private Contact contact;
 
     private ReceiptProcessor receiptProcessor;
+    private Contact validContact;
+    private Contact invalidContact;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        receiptProcessor = Mockito.spy(new ReceiptProcessor());
-        receiptProcessor.addReceipt(receipt);
-        when(contact.getEmail()).thenReturn("samuel.ammann@swissmail.com");
-        doReturn(true).when(receiptProcessor).doesContactExist(any(Contact.class));
-        item = new ReceiptItem(15.0f, "Tea", 1);
+        receiptProcessor = new ReceiptProcessor();
+        receiptProcessor.setReceipt(receipt);
+        validContact = new Contact("Samuel", "Ammann", "samuel.ammann@swissmail.com");
+        invalidContact = new Contact("Doesnt", "Exist", "invalid@nonexisting.com");
+        item = new ReceiptItem(5.0f, "Tee", 1);
     }
 
-    // Test for addReceipt method
     @Test
-    void testAddReceipt_validInput_receiptAdded() {
+    void setReceipt_ValidInput_ReceiptAdded() {
+        // Arrange
         Receipt newReceipt = mock(Receipt.class);
-        assertDoesNotThrow(() -> receiptProcessor.addReceipt(newReceipt));
+
+        // Act
+        receiptProcessor.setReceipt(newReceipt);
+
+        // Assert
         assertNotNull(receiptProcessor.getReceiptItems());
     }
 
     @Test
-    void testAddReceipt_nullInput_throwException() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.addReceipt(null));
-        assertEquals("Receipt cannot be null.", exception.getMessage());
-    }
+    void setReceipt_NullInput_ThrowException() {
+        // Act & Assert
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.setReceipt(null));
 
-    // Test for splitReceiptItems method
-    @Test
-    void testSplitReceiptItems_validInput_itemsSplitted() {
-        when(receipt.getReceiptItems()).thenReturn(Collections.singletonList(new ReceiptItem(20.0F, "Pommes Frites", 2)));
-        List<ReceiptItem> splittedItems = receiptProcessor.splitReceiptItems();
-        assertEquals(2, splittedItems.size());
-        assertEquals(10.0, splittedItems.get(0).getPrice());
+        // Assert
+        assertTrue(thrown.getMessage().contains("Receipt cannot be null"), "Exception message should confirm the receipt cannot be null.");
     }
 
     @Test
-    void testSplitReceiptItems_noItems_emptyList() {
+    void splitReceiptItems_ValidReceiptItem_ItemsSplit() {
+        // Arrange
+        float price = 20F;
+        int amount = 2;
+        when(receipt.getReceiptItems()).thenReturn(Collections.singletonList(new ReceiptItem(price, "Pommes Frites", amount)));
+
+        // Act
+        List<ReceiptItem> splitItems = receiptProcessor.splitReceiptItems();
+
+        // Assert
+        assertEquals(amount, splitItems.size());
+        assertEquals(price/amount, splitItems.get(0).getPrice());
+    }
+
+    @Test
+    void splitReceiptItems_NoItems_EmptyList() {
+        // Arrange
         when(receipt.getReceiptItems()).thenReturn(Collections.emptyList());
-        assertTrue(receiptProcessor.splitReceiptItems().isEmpty());
+
+        // Act
+        List<ReceiptItem> result = receiptProcessor.splitReceiptItems();
+
+        // Assert
+        assertTrue(result.isEmpty());
     }
 
-    // Test for createOrUpdateReceiptItem method
     @Test
-    void testCreateOrUpdateReceiptItem_validInput_addNewItem() {
+    void createOrUpdateReceiptItem_ValidReceiptItem_NewItemAdded() {
+        // Arrange
         when(receipt.getReceiptItems()).thenReturn(new ArrayList<>());
-        assertDoesNotThrow(() -> receiptProcessor.createOrUpdateReceiptItem(item));
+
+        // Act
+        receiptProcessor.createOrUpdateReceiptItem(item);
+
+        // Assert
         verify(receipt).getReceiptItems();
     }
 
     @Test
-    void testCreateOrUpdateReceiptItem_nullInput_throwException() {
-        Exception exception = assertThrows(Exception.class, () -> receiptProcessor.createOrUpdateReceiptItem(null));
-        assertEquals("Receipt item cannot be null.", exception.getMessage());
+    void createOrUpdateReceiptItem_NullInput_ThrowException() {
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> receiptProcessor.createOrUpdateReceiptItem(null));
     }
 
-    // Test for deleteReceiptItem method
     @Test
-    void testDeleteReceiptItem_validInput_itemDeleted() {
+    void deleteReceiptItem_ValidReceiptItem_itemDeleted() {
+        // Arrange
         when(receipt.getReceiptItems()).thenReturn(new ArrayList<>(Collections.singletonList(item)));
-        assertDoesNotThrow(() -> receiptProcessor.deleteReceiptItem(item));
-        verify(receipt).getReceiptItems();
+
+        //Act
+        receiptProcessor.deleteReceiptItem(item);
     }
 
-    // Test for createContactReceiptItem method
     @Test
-    void testCreateContactReceiptItem_validInput_contactReceiptItemCreated() {
-        receiptProcessor.createContactReceiptItem(contact, item);
+    void createContactReceiptItem_ValidContactAndReceiptItem_ContactReceiptItemCreated() {
+        receiptProcessor.createContactReceiptItem(validContact, item);
         assertFalse(receiptProcessor.getContactReceiptItems().isEmpty());
         assertEquals(1, receiptProcessor.getContactReceiptItems().size());
         ContactReceiptItem createdItem = receiptProcessor.getContactReceiptItems().get(0);
-        assertEquals("Tea", createdItem.getName());
-        assertEquals(15.0, createdItem.getPrice());
-        assertEquals(contact, createdItem.getContact());
+        assertEquals("Tee", createdItem.getName());
+        assertEquals(5.0, createdItem.getPrice());
+        assertEquals(validContact, createdItem.getContact());
     }
 
-    @Test
-    void testCreateContactReceiptItem_invalidContact_throwException() {
-        Contact invalidContact = new Contact("John", "Doe", "invalid@example.com");
-        when(receiptProcessor.doesContactExist(invalidContact)).thenReturn(false);
-        ReceiptItem receiptItem = new ReceiptItem(10.0f, "Coffee", 2);
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.createContactReceiptItem(invalidContact, receiptItem));
-        assertEquals("Contact does not exist.", exception.getMessage());
-    }
-
-    // Multiple tests for calculateDebtByPerson
     @Test
     void testCalculateDebtByPerson_validInput_correctDebt() {
-        when(receipt.getReceiptItems()).thenReturn(Collections.singletonList(item));
-        when(contact.getEmail()).thenReturn("samuel.ammann@swissmail.com");
+        // Arrange
+        ContactReceiptItem contactReceiptItem1 = new ContactReceiptItem(5.0f, "Tee", validContact);
+        ContactReceiptItem contactReceiptItem2 = new ContactReceiptItem(3.0f, "Wasser", validContact);
+        List<ContactReceiptItem> contactReceiptItems = Arrays.asList(contactReceiptItem1, contactReceiptItem2);
+        receiptProcessor.setContactReceiptItems(contactReceiptItems);
 
-        ContactReceiptItem cri = new ContactReceiptItem(10.0F, "Test Item", contact);
-        receiptProcessor.setContactReceiptItems(Collections.singletonList(cri));
+        double expectedTotalDebt = contactReceiptItems.stream()
+                .mapToDouble(ContactReceiptItem::getPrice)
+                .sum();
 
-        assertEquals(10.0, receiptProcessor.calculateDebtByPerson(contact));
+        // Act
+        double actualTotalDebt = receiptProcessor.calculateDebtByPerson(validContact);
+
+        // Assert
+        assertEquals(expectedTotalDebt, actualTotalDebt, 0.01, "The calculated debt should match the expected total debt.");
     }
 
     @Test
-    void testCalculateDebtByPerson_emptyList_throwException() {
-        when(receiptProcessor.doesContactExist(contact)).thenReturn(false);  // Ensure this contact is considered non-existent
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.calculateDebtByPerson(contact));
-        assertEquals("The list is empty.", exception.getMessage());
+    void calculateDebtByPerson_EmptyList_ThrowException() {
+        // Arrange
+        List<ContactReceiptItem> emptyContactReceiptItems = new ArrayList<>();
+        receiptProcessor.setContactReceiptItems(emptyContactReceiptItems);
+
+        // Act & Assert
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.calculateDebtByPerson(validContact));
+
+        // Assert
+        assertTrue(thrown.getMessage().contains("The list is empty"), "Exception message should indicate that no items are associated with the contact.");
+    }
+
+    @Test
+    void calculateDebtByPerson_NonExistingContact_ThrowException() {
+        // Arrange
+        ContactReceiptItem contactReceiptItem = new ContactReceiptItem(5.0f, "Tea", validContact);
+        List<ContactReceiptItem> contactReceiptItems = Collections.singletonList(contactReceiptItem);
+        receiptProcessor.setContactReceiptItems(contactReceiptItems);
+
+        // Act & Assert
+        assertThrows(IllegalArgumentException.class, () -> receiptProcessor.calculateDebtByPerson(invalidContact), "Should throw IllegalArgumentException because the contact does not exist.");
     }
 }

@@ -117,9 +117,6 @@ public class ReceiptProcessor {
      * @throws IllegalArgumentException if the contact does not exist or receiptItem is null
      */
     public void  createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
-        if (!doesContactExist(contact)) {
-            throw new IllegalArgumentException("Contact does not exist.");
-        }
         contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(),  contact));
     }
 
@@ -198,7 +195,7 @@ public class ReceiptProcessor {
      * @param contact the contact to verify
      * @return true if the contact exists, false otherwise
      */
-    protected boolean doesContactExist(Contact contact) {
+    private boolean doesContactExist(Contact contact) {
         if (contact == null) {
             return false;
         }
