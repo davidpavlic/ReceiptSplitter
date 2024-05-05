@@ -2,7 +2,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.BeforeEach;

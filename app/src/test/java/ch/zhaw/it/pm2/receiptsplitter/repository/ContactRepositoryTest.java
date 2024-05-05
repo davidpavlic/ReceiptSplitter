@@ -60,9 +60,9 @@ public class ContactRepositoryTest {
     void constructor_ValidAttributes_ListCreated(){
         //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
-        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
-        assertContactListAttributes(FIRST_CONTACT, contactRepository.getContactList().get(0));
-        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContactList().get(1));
+        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContacts().size());
+        assertContactListAttributes(FIRST_CONTACT, contactRepository.getContacts().get(0));
+        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContacts().get(1));
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ContactRepositoryTest {
         contactRepository.setProfile(FIRST_CONTACT.getEmail());
 
         //Assert contact list size remains unchanged
-        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContacts().size());
         //Assert selected contacts size increased by one
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert profile contact reference
@@ -108,7 +108,7 @@ public class ContactRepositoryTest {
         contactRepository.setNewProfile(NEW_CONTACT);
 
         //Assert contact list size increased by one
-        assertEquals(INITIAL_LIST_SIZE + 1, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE + 1, contactRepository.getContacts().size());
         //Assert selected contacts size increased by one
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert profile contact reference
@@ -116,7 +116,7 @@ public class ContactRepositoryTest {
         //Assert selected contact list reference
         assertContactListAttributes(NEW_CONTACT, contactRepository.getSelectedContacts().getLast());
         //Assert contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().getLast());
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getContacts().getLast());
     }
 
     //TODO: Add mocking, dependent on first setProfile method
@@ -127,7 +127,7 @@ public class ContactRepositoryTest {
         contactRepository.setProfile(SECOND_CONTACT.getEmail());
 
         //Assert contact list size remains unchanged
-        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContacts().size());
         //Assert Selected contacts size increased by one and not two
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert profile contact reference
@@ -142,11 +142,11 @@ public class ContactRepositoryTest {
         contactRepository.addContact(NEW_CONTACT);
 
         //Assert contact list size increased by one
-        assertEquals(INITIAL_LIST_SIZE + 1, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE + 1, contactRepository.getContacts().size());
         //Assert selected contact list size remains unchanged
         assertEquals(INITIAL_SELECTED_SIZE, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().getLast());
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getContacts().getLast());
     }
 
     //TODO: Add mocking, dependent on addToSelectedContacts method
@@ -159,11 +159,11 @@ public class ContactRepositoryTest {
         contactRepository.removeContact(FIRST_CONTACT.getEmail());
 
         //Assert contact list decreased by one
-        assertEquals(INITIAL_LIST_SIZE - 1, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE - 1, contactRepository.getContacts().size());
         //Assert selected contact list decreased by one
         assertEquals(INITIAL_SELECTED_SIZE, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContactList().getLast());
+        assertContactListAttributes(SECOND_CONTACT, contactRepository.getContacts().getLast());
     }
 
     @Test
@@ -188,11 +188,11 @@ public class ContactRepositoryTest {
         contactRepository.updateContact(FIRST_CONTACT.getEmail(), NEW_CONTACT);
 
         //Assert contact List size remains unchanged
-        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContactList().size());
+        assertEquals(INITIAL_LIST_SIZE, contactRepository.getContacts().size());
         //Assert selected contacts size should remain unchanged
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(NEW_CONTACT, contactRepository.getContactList().get(0));
+        assertContactListAttributes(NEW_CONTACT, contactRepository.getContacts().get(0));
         //Assert selected contact list reference
         assertContactListAttributes(NEW_CONTACT, contactRepository.getSelectedContacts().get(0));
         //Assert profile reference
