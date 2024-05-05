@@ -41,18 +41,17 @@
             </HBox>
             <TableView fx:id="itemsTable">
                 <columns>
-                    <TableColumn prefWidth="281.59998166561127" text="Item" />
-                    <TableColumn prefWidth="104.800048828125" text="Price" />
+                    <TableColumn fx:id="itemNameColumn" text="Item Name" minWidth="-Infinity" maxWidth="Infinity" />
+                    <TableColumn fx:id="itemPriceColumn" text="Item Price" minWidth="-Infinity" maxWidth="Infinity" />
                 </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
             </TableView>
             <HBox alignment="CENTER_RIGHT">
-                <Text text="Total  ">
-               <font>
-                  <Font size="16.0" />
-               </font></Text>
-                <Text fx:id="totalPrice" text="10.50" textAlignment="RIGHT">
+                <Text fx:id="totalPrice"  text="10.50" textAlignment="RIGHT">
                <HBox.margin>
-                  <Insets bottom="2.0" right="20.0" />
+                  <Insets bottom="2.0" top="10"  right="20.0" />
                </HBox.margin>
                <font>
                   <Font size="16.0" />

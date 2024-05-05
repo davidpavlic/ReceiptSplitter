@@ -50,7 +50,6 @@ public class Main extends Application {
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
-        testEmailService();
         if (!checkSystemConfigurations()) {
             throw new IllegalStateException("Can not start Application, System Configurations are not correct.");
         } else {

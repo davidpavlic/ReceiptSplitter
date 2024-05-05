@@ -7,6 +7,8 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
@@ -18,8 +20,8 @@
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <MenuItem onAction="#showHelp" text="Show help"/>
-                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ"/>
+                    <MenuItem onAction="#showHelp" text="Show help" />
+                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
                 </Menu>
             </menus>
         </MenuBar>
@@ -38,28 +40,29 @@
     </bottom>
     <center>
         <VBox alignment="CENTER" BorderPane.alignment="TOP_CENTER">
-            <children>
-                <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Login" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font name="System Bold Italic" size="26.0" />
-                    </font>
-               <VBox.margin>
-                  <Insets bottom="25.0" />
-               </VBox.margin>
+            <ImageView fitHeight="65.0" fitWidth="65.0">
+                <Image url="@../images/login_icon.png"/>
+            </ImageView>
+            <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Login" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                <font>
+                    <Font name="System Bold Italic" size="26.0"/>
+                </font>
+                <VBox.margin>
+                    <Insets bottom="10.0"/>
+                </VBox.margin>
+            </Label>
+            <HBox alignment="CENTER" fillHeight="false" spacing="10.0">
+                <VBox.margin>
+                    <Insets bottom="10.0" top="10.0"/>
+                </VBox.margin>
+                <Label text="Choose your Profile:">
+                    <HBox.margin>
+                        <Insets/>
+                    </HBox.margin>
                 </Label>
-                <HBox alignment="CENTER" fillHeight="false" spacing="10.0">
-                    <VBox.margin>
-                        <Insets bottom="10.0" top="10.0"/>
-                    </VBox.margin>
-                    <Label text="Choose your Profile:">
-                        <HBox.margin>
-                            <Insets/>
-                        </HBox.margin>
-                    </Label>
-                    <ComboBox fx:id="selectContactDropdown" prefHeight="26.0" prefWidth="180.0"/>
-                </HBox>
-            <Button onAction="#openCreateProfile" mnemonicParsing="false" text="Create new Profile" />
-            </children>
+                <ComboBox fx:id="selectContactDropdown" prefHeight="26.0" prefWidth="180.0"/>
+            </HBox>
+            <Button mnemonicParsing="false" onAction="#openCreateProfile" text="Create new Profile"/>
         </VBox>
     </center>
 </BorderPane>
