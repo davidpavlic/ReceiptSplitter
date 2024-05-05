@@ -3,12 +3,12 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -18,12 +18,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
-import javafx.util.Callback;
 
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ContactListController extends DefaultController implements CanNavigate, CanReset ,IsObserver {
+public class ContactListController extends DefaultController implements CanNavigate, CanReset, IsObserver {
 
     @FXML private TableColumn<Contact, String> actionColumn;
     @FXML private TableColumn<Contact, String> emailColumn;
@@ -108,11 +107,7 @@ public class ContactListController extends DefaultController implements CanNavig
 
     private void handleEditAction(Contact contact) {
         contactRepository.setSelectedToEditContact(contact);
-        try {
-            switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
-        } catch (IllegalStateException | IllegalArgumentException e) {
-            logError("Error Editing profile", e);
-        }
+        switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
     }
 
     private void handleDeleteAction(Contact contact) {

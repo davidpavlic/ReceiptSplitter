@@ -1,6 +1,9 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -69,7 +72,7 @@ public class EditContactController extends DefaultController implements CanNavig
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.severe(illegalArgumentException.getMessage());
             emailErrorLabel.setText("Could not update contact: Email does not exist");
-        }  catch (IOException ioException) {
+        } catch (IOException ioException) {
             logger.severe(ioException.getMessage());
             logger.fine(Arrays.toString(ioException.getStackTrace()));
             emailErrorLabel.setText("An error occurred trying to access the contacts file.");
@@ -83,11 +86,7 @@ public class EditContactController extends DefaultController implements CanNavig
     @FXML
     @Override
     public void back() {
-        try {
-            switchScene(lastPage);
-        } catch (IllegalStateException exception) {
-            emailErrorLabel.setText("Could not switch to " + lastPage.toString() + " Window");
-        }
+        switchScene(lastPage);
     }
 
     @FXML

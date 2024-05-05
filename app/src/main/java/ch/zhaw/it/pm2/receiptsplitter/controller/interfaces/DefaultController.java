@@ -59,6 +59,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException | IOException exception) {
             logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
+            errorProperty.setValue("Could not open FAQ modal");
         }
     }
 
@@ -76,6 +77,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException | IOException exception) {
             logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
+            errorProperty.setValue("Could not open help modal");
         }
     }
 
@@ -88,10 +90,9 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page);
         } catch (IllegalStateException exception) {
-            errorProperty.setValue("Could not switch to " + page + " Window");
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            throw exception;
+            errorProperty.setValue("Could not switch to " + page + " Window");
         }
     }
 
@@ -105,10 +106,9 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page, lastPage);
         } catch (IllegalStateException | IllegalArgumentException exception) {
-            errorProperty.setValue("Could not switch to " + page + " Window");
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            throw exception;
+            errorProperty.setValue("Could not switch to " + page + " Window");
         }
     }
 }

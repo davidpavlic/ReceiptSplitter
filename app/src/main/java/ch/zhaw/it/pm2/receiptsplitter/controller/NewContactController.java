@@ -1,13 +1,16 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -59,10 +62,10 @@ public class NewContactController extends DefaultController implements CanNaviga
             contactRepository.addContact(contact);
             reset();
             back();
-        }catch (IllegalArgumentException illegalArgumentException) {
+        } catch (IllegalArgumentException illegalArgumentException) {
             logger.severe(illegalArgumentException.getMessage());
             emailErrorLabel.setText("Could not add contact: Email does already exist");
-        }  catch (IOException ioException) {
+        } catch (IOException ioException) {
             logger.severe(ioException.getMessage());
             logger.fine(Arrays.toString(ioException.getStackTrace()));
             emailErrorLabel.setText("An error occurred trying to access the contacts file.");
@@ -76,11 +79,7 @@ public class NewContactController extends DefaultController implements CanNaviga
     @FXML
     @Override
     public void back() {
-        try {
-            switchScene(lastPage);
-        } catch (IllegalStateException exception) {
-            emailErrorLabel.setText("Could not switch to " + lastPage.toString() + " Window");
-        }
+        switchScene(lastPage);
     }
 
     @FXML
