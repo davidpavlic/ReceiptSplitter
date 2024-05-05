@@ -1,15 +1,14 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
