@@ -55,9 +55,9 @@ public abstract class  DefaultController {
     @FXML
     void showFAQ() {
         try {
-            router.OpenHelpMessage(HelpMessages.FAQ_MSG);
+            router.openHelpModal(HelpMessages.FAQ_MSG);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open Modal Dialog: " + exception.getMessage());
+            logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
             errorProperty.setValue("Could not open FAQ modal");
         }
@@ -67,15 +67,15 @@ public abstract class  DefaultController {
      * Shows the help message in a modal.
      */
     @FXML
-    void showModalDialog() {
+    void showHelp() {
         if (helpMessage == null) {
             throw new IllegalStateException("No help message set");
         }
 
         try {
-            router.OpenHelpMessage(helpMessage);
+            router.openHelpModal(helpMessage);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open Modal Dialog: " + exception.getMessage());
+            logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
             errorProperty.setValue("Could not open help modal");
         }

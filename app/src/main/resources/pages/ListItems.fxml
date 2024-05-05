@@ -17,7 +17,7 @@
             <menus>
                 <Menu text="Help">
                     <items>
-                        <MenuItem fx:id="showModalDialog" accelerator="F1" text="Show help" />
+                        <MenuItem fx:id="showHelp" accelerator="F1" text="Show help" />
                         <MenuItem mnemonicParsing="false" text="FAQ" />
                     </items>
                 </Menu>

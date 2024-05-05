@@ -19,7 +19,7 @@
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <MenuItem onAction="#showModalDialog" text="Show help"/>
+                    <MenuItem onAction="#showHelp" text="Show help"/>
                     <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ"/>
                 </Menu>
             </menus>

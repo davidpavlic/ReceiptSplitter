@@ -5,16 +5,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.TextArea;
 import javafx.stage.Stage;
 
-public class ModalDialogController {
-    @FXML private TextArea textMessage;
+public class HelpController {
+    @FXML private TextArea helpTextArea;
 
-    public void setTextMessage(String text){
-        textMessage.setText(text);
+    public void setHelpText(HelpMessages helpText){
+        helpTextArea.setText(helpText.getMessage());
     }
 
     @FXML
     public void confirm() {
-        Stage stage = (Stage) textMessage.getScene().getWindow();
+        Stage stage = (Stage) helpTextArea.getScene().getWindow();
         stage.close();
     }
 }

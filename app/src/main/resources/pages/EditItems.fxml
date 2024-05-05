@@ -16,7 +16,7 @@
         <MenuBar prefHeight="10.0" prefWidth="214.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <MenuItem fx:id="showModalDialog" accelerator="F1" text="Show help"/>
+                    <MenuItem fx:id="showHelp" accelerator="F1" text="Show help"/>
                     <MenuItem mnemonicParsing="false" text="showFAQ"/>
                 </Menu>
             </menus>

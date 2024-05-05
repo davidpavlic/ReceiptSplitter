@@ -7,12 +7,8 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-
-import java.io.IOException;
 
 public class ShowSplitController  extends DefaultController implements CanNavigate {
 
@@ -30,11 +26,7 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.YES) {
                 //TODO: Send out Mails
-                try {
-                    router.OpenTextModalDialog("Emails sent out successfully!", "Success");
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
+                switchScene(Pages.SHOW_RESULT_WINDOW);
                 alert.hide();
             }
         });
@@ -44,8 +36,4 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
     public void back() {
         switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
-
-    public void buttonPreviousPerson(){};
-
-    public void buttonNextPerson() {};
 }
