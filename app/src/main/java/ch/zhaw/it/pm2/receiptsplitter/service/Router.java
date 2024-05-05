@@ -1,11 +1,14 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -16,6 +19,7 @@ import javafx.util.Pair;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -36,22 +40,32 @@ public class Router {
      * @param stage the primary stage for this application
      * @throws IOException if an error occurs during scene initialization
      */
-    public Router(Stage stage) throws IOException {
+    public Router(Stage stage, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
+        Objects.requireNonNull(stage, "Stage cannot be null");
+        Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
+        Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
+
         this.stage = stage;
         for (Pages page : Pages.values()) {
-            addSceneMap(page, page.getPath());
+            addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
         }
+        contactRepository.loadContacts();
     }
 
     /**
-     * Switches to the specified scene.
+     * Switches to the specified scene and updates the state if it is InstanceOf IsObserver Interface.
      *
      * @param page the page to switch to
      * @throws IllegalStateException if the stage is null
      */
-    public void gotoScene(Pages page) throws IllegalStateException {
+    public void gotoScene(Pages page) {
+        Objects.requireNonNull(page, "Page cannot be null");
+
         if (stage != null) {
             stage.setScene(getScene(page));
+            if (getController(page) instanceof IsObserver observerController) {
+                observerController.update();
+            }
             stage.show();
         } else {
             throw new IllegalStateException("Stage is null, can not switch scene");
@@ -61,9 +75,9 @@ public class Router {
     /**
      * Switches to the specified scene and sets the last page for controllers that implement HasDynamicLastPage.
      *
-     * @param page the page to switch to
+     * @param page     the page to switch to
      * @param lastPage the last page to set
-     * @throws IllegalStateException if the stage is null
+     * @throws IllegalStateException    if the stage is null
      * @throws IllegalArgumentException if the controller does not implement HasDynamicLastPage
      */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
@@ -82,23 +96,27 @@ public class Router {
      * @param helpText the help message to display
      * @throws IllegalStateException if an error occurs during modal opening
      */
-    public void openHelpModal(HelpMessages helpText) throws IllegalStateException{
-        try {
-            Scene helpModalScene = getScene(Pages.HELP_MODAL);
+    public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
+        //TODO Implement this somewhere else?
+        Objects.requireNonNull(helpText, "Help message cannot be null");
 
-            HelpController controller = (HelpController) getController(Pages.HELP_MODAL);
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/HelpModal.fxml"));
+            Pane node = loader.load();
+
+            HelpController controller = loader.getController();
             controller.setHelpText(helpText);
-            controller.initialize(this);
 
             Stage dialogStage = new Stage();
+            Scene scene = new Scene(node);
             dialogStage.setTitle("Help");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(stage);
-            dialogStage.setScene(helpModalScene);
+            dialogStage.setScene(scene);
 
             dialogStage.showAndWait();
-        } catch (IllegalStateException exception) {
-            logger.severe("Could not open help modal: " + exception);
+        } catch (IllegalStateException | IOException exception) {
+            logger.severe("Could not open help modal: " + exception.getMessage());
             throw  exception;
         }
     }
@@ -131,17 +149,26 @@ public class Router {
     }
 
     /**
+     * Gets the scene map.
+     *
+     * @return the scene map
+     */
+    protected Map<Pages, Pair<Scene, DefaultController>> getSceneMap() {
+        return sceneMap;
+    }
+
+    /**
      * Adds a scene to the scene map.
      *
-     * @param page the page to add
+     * @param page        the page to add
      * @param pathToScene the path to the scene
      * @throws IOException if an error occurs during scene loading
      */
-    private void addSceneMap(Pages page, String pathToScene) throws IOException {
+    private void addSceneMap(Pages page, String pathToScene, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
         Pane node = loader.load();
         DefaultController controller = loader.getController();
-        controller.initialize(this);
+        controller.initialize(this, contactRepository, receiptProcessor);
 
         Scene scene = new Scene(node);
         sceneMap.put(page, new Pair<>(scene, controller));

@@ -1,30 +1,46 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 
-public class ContactListController extends DefaultController implements CanNavigate, CanReset {
+import java.io.IOException;
+import java.util.Arrays;
 
-    @FXML private TableColumn<?, ?> actionColumn;
-    @FXML private Button addContactButton;
-    @FXML private Button backButton;
-    @FXML private Button confirmButton;
-    @FXML private TableColumn<?, ?> emailColumn;
-    @FXML private TableColumn<?, ?> nameColumn;
-    @FXML private TableView<?> tableContactList;
+public class ContactListController extends DefaultController implements CanNavigate, CanReset, IsObserver {
+
+    @FXML private TableColumn<Contact, String> actionColumn;
+    @FXML private TableColumn<Contact, String> emailColumn;
+    @FXML private TableColumn<Contact, String> nameColumn;
+    @FXML private TableView<Contact> tableContactList;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
+        contactRepository.addObserver(this);
+        configureTable();
+    }
+
+    @Override
+    public void update() {
+        tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
+        tableContactList.refresh();
     }
 
     @FXML
@@ -35,9 +51,10 @@ public class ContactListController extends DefaultController implements CanNavig
     @FXML
     @Override
     public void confirm() {
-        switchScene(Pages.LIST_ITEMS_WINDOW);
+        switchScene(Pages.MAIN_WINDOW);
     }
 
+    @FXML
     @Override
     public void back() {
         switchScene(Pages.MAIN_WINDOW);
@@ -45,5 +62,69 @@ public class ContactListController extends DefaultController implements CanNavig
 
     @Override
     public void reset() {
+    }
+
+    private void configureTable() {
+        configureColumns();
+        configureActionColumn();
+    }
+
+    private void configureColumns() {
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
+        emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+    }
+
+    private void configureActionColumn() {
+        actionColumn.setMaxWidth(140);
+        actionColumn.setCellFactory(param -> createActionCell());
+    }
+
+    private TableCell<Contact, String> createActionCell() {
+        return new TableCell<>() {
+            final Button editButton = new Button("Edit");
+            final Button deleteButton = new Button("Delete");
+            final HBox hbox = new HBox(10, editButton, deleteButton);
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    configureButtons();
+                    setGraphic(hbox);
+                }
+            }
+
+            private void configureButtons() {
+                Contact contact = getTableView().getItems().get(getIndex());
+                editButton.setOnAction(e -> handleEditAction(contact));
+                deleteButton.setOnAction(e -> handleDeleteAction(contact));
+                deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
+            }
+        };
+    }
+
+    private void handleEditAction(Contact contact) {
+        contactRepository.setSelectedToEditContact(contact);
+        switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
+    }
+
+    private void handleDeleteAction(Contact contact) {
+        try {
+            if (!contactRepository.removeContact(contact.getEmail())) {
+                logError("Could not remove contact", null);
+            }
+        } catch (IOException e) {
+            logError("Error removing contact", e);
+        }
+    }
+
+    private void logError(String message, Exception e) {
+        logger.severe(message);
+        if (e != null) {
+            logger.fine(Arrays.toString(e.getStackTrace()));
+        }
+        // TODO: Show error message to user
     }
 }

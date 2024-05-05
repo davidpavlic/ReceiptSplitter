@@ -56,7 +56,7 @@
                             <Insets/>
                         </HBox.margin>
                     </Label>
-                    <ComboBox fx:id="selectUserDropdown" prefHeight="26.0" prefWidth="99.0"/>
+                    <ComboBox fx:id="selectContactDropdown" prefHeight="26.0" prefWidth="180.0"/>
                 </HBox>
             <Button onAction="#openCreateProfile" mnemonicParsing="false" text="Create new Profile" />
             </children>
