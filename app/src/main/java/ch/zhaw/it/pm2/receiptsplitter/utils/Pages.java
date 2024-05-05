@@ -8,6 +8,7 @@ public enum Pages {
     MAIN_WINDOW("/pages/MainWindow.fxml"),
     CONTACT_LIST_WINDOW("/pages/ContactList.fxml"),
     CREATE_PROFILE_WINDOW("/pages/NewContact.fxml"),
+    EDIT_PROFILE_WINDOW("/pages/EditContact.fxml"),
     SHOW_RESULT_WINDOW("/pages/ShowResult.fxml"),
     LIST_ITEMS_WINDOW("/pages/ListItems.fxml"),
     CHOOSE_PEOPLE_WINDOW("/pages/ChoosePeople.fxml"),

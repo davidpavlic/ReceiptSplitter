@@ -5,7 +5,7 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -17,9 +17,6 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.SHOW_SPLIT_WINDOW_MSG;
     }
-
-    @Override
-    public void refreshScene() {}
 
     @Override
     public void confirm() {

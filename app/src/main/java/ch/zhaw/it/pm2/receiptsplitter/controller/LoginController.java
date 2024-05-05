@@ -1,7 +1,8 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -15,9 +16,9 @@ import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
 
-public class LoginController extends DefaultController {
+public class LoginController extends DefaultController implements IsObserver{
     @FXML private Button confirmButton;
-    @FXML private ComboBox<Contact> selectUserDropdown;
+    @FXML private ComboBox<Contact> selectContactDropdown;
 
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -42,25 +43,50 @@ public class LoginController extends DefaultController {
 
     @FXML
     void confirm() {
-        contactRepository.setProfile(selectUserDropdown.getValue().getEmail());
+        if (selectContactDropdown.getValue() == null) {
+            logger.fine("No contact selected");
+            // TODO: Show error message
+            return;
+        }
+
+        String selectedEmail = selectContactDropdown.getValue().getEmail();
+        if (selectedEmail == null ||  selectedEmail.isEmpty()){
+            logger.fine("Email is empty");
+            //  TODO: Show error message
+            return;
+        }
+
+        boolean success = contactRepository.setProfile(selectedEmail);
+
+        if (!success){
+            logger.fine("Could not set profile");
+            // TODO: Show error message
+            return;
+        }
+
         switchScene(Pages.MAIN_WINDOW);
     }
 
     @Override
-    public void refreshScene() {
-        selectUserDropdown.getItems().clear();
-        selectUserDropdown.setPromptText("Please choose a profile");
-        selectUserDropdown.getItems().addAll(contactRepository.getContactList());
+    public void update() {
+        Contact exists = selectContactDropdown.getValue();
+        selectContactDropdown.getItems().clear();
+        selectContactDropdown.getItems().addAll(contactRepository.getContacts());
+        if (contactRepository.getProfile() != null) {
+            selectContactDropdown.setValue(contactRepository.getProfile());
+        } else {
+            selectContactDropdown.setValue(exists);
+        }
     }
 
     private void configureDropdown() {
-        // Add a listener to the selection modelclear
-        selectUserDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        selectContactDropdown.setPromptText("Please choose a profile");
+        selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             confirmButton.setDisable(newValue == null);
         });
 
         // Set the cell factory
-        selectUserDropdown.setCellFactory(new Callback<>() {
+        selectContactDropdown.setCellFactory(new Callback<>() {
             @Override
             public ListCell<Contact> call(ListView<Contact> param) {
                 return new ListCell<>() {
@@ -78,14 +104,14 @@ public class LoginController extends DefaultController {
         });
 
         // Set the button cell, which is the cell that is displayed when the ComboBox is not showing its list of items
-        selectUserDropdown.setButtonCell(new ListCell<>() {
+        selectContactDropdown.setButtonCell(new ListCell<>() {
             @Override
             protected void updateItem(Contact item, boolean empty) {
                 super.updateItem(item, empty);
                 if (item == null || empty) {
                     setText(null);
                 } else {
-                    setText(item.getDisplayName()); // Display the email
+                    setText(item.getDisplayName());
                 }
             }
         });
