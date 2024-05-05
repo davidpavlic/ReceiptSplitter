@@ -17,7 +17,7 @@ import javafx.util.Callback;
 
 public class LoginController extends DefaultController {
     @FXML private Button confirmButton;
-    @FXML private ComboBox<Contact> selectUserDropdown;
+    @FXML private ComboBox<Contact> selectContactDropdown;
 
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -42,27 +42,47 @@ public class LoginController extends DefaultController {
 
     @FXML
     void confirm() {
-        contactRepository.setProfile(selectUserDropdown.getValue().getEmail());
+        if (selectContactDropdown.getValue() == null) {
+            logger.fine("No contact selected");
+            // TODO: Show error message
+            return;
+        }
+
+        String selectedEmail = selectContactDropdown.getValue().getEmail();
+        if (selectedEmail == null ||  selectedEmail.isEmpty()){
+            logger.fine("Email is empty");
+            //  TODO: Show error message
+            return;
+        }
+
+        boolean success = contactRepository.setProfile(selectedEmail);
+
+        if (!success){
+            logger.fine("Could not set profile");
+            // TODO: Show error message
+            return;
+        }
+
         switchScene(Pages.MAIN_WINDOW);
     }
 
     @Override
     public void refreshScene() {
-        selectUserDropdown.getItems().clear();
-        selectUserDropdown.getItems().addAll(contactRepository.getContactList());
-        selectUserDropdown.setPromptText("Please choose a profile");
+        selectContactDropdown.getItems().clear();
+        selectContactDropdown.getItems().addAll(contactRepository.getContacts());
+        selectContactDropdown.setPromptText("Please choose a profile");
         if (contactRepository.getProfile() != null) {
-            selectUserDropdown.setValue(contactRepository.getProfile());
+            selectContactDropdown.setValue(contactRepository.getProfile());
         }
     }
 
     private void configureDropdown() {
-        selectUserDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+        selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             confirmButton.setDisable(newValue == null);
         });
 
         // Set the cell factory
-        selectUserDropdown.setCellFactory(new Callback<>() {
+        selectContactDropdown.setCellFactory(new Callback<>() {
             @Override
             public ListCell<Contact> call(ListView<Contact> param) {
                 return new ListCell<>() {
@@ -80,7 +100,7 @@ public class LoginController extends DefaultController {
         });
 
         // Set the button cell, which is the cell that is displayed when the ComboBox is not showing its list of items
-        selectUserDropdown.setButtonCell(new ListCell<>() {
+        selectContactDropdown.setButtonCell(new ListCell<>() {
             @Override
             protected void updateItem(Contact item, boolean empty) {
                 super.updateItem(item, empty);

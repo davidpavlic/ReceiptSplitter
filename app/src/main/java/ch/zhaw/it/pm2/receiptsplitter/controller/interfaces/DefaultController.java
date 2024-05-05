@@ -31,7 +31,7 @@ public abstract class  DefaultController {
         try {
             router.openHelpModal(HelpMessages.FAQ_MSG);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal, router returned IllegalStateException: " + exception);
+            logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
     }
@@ -41,10 +41,11 @@ public abstract class  DefaultController {
         if (helpMessage == null) {
             throw new IllegalStateException("No help message set");
         }
+
         try {
             router.openHelpModal(helpMessage);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal, router returned IllegalStateException: " + exception);
+            logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
     }
@@ -53,8 +54,9 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page);
         } catch (IllegalStateException exception) {
-            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getName() + ", " + exception);
+            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
+            throw exception;
         }
     }
 
@@ -62,8 +64,9 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page, lastPage);
         } catch (IllegalStateException | IllegalArgumentException exception) {
-            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getName() + ", " + exception);
+            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
+            throw exception;
         }
     }
 

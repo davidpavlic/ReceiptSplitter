@@ -13,6 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -60,17 +61,30 @@ public class EditContactController extends DefaultController implements CanNavig
         try {
             Contact newContact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
             contactRepository.updateContact(contactRepository.getSelectedToEditContact().getEmail(), newContact);
-        } catch (Exception e) {
-            e.printStackTrace();
+            reset();
+            back();
+        } catch (IllegalArgumentException illegalArgumentException) {
+            logger.severe(illegalArgumentException.getMessage());
+            emailErrorLabel.setText("Could not update contact: Email does not exist");
+        }  catch (IOException ioException) {
+            logger.severe(ioException.getMessage());
+            logger.fine(Arrays.toString(ioException.getStackTrace()));
+            emailErrorLabel.setText("An error occurred trying to access the contacts file.");
+        } catch (Exception exception) {
+            logger.severe("Error updating contact: " + exception.getMessage());
+            logger.fine(Arrays.toString(exception.getStackTrace()));
+            emailErrorLabel.setText("An unknown error occurred while updating the contact.");
         }
-        reset();
-        switchScene(lastPage);
     }
 
     @FXML
     @Override
     public void back() {
-        switchScene(lastPage);
+        try {
+            switchScene(lastPage);
+        } catch (IllegalStateException exception) {
+            emailErrorLabel.setText("Could not switch to " + lastPage.toString() + " Window");
+        }
     }
 
     @FXML
@@ -84,6 +98,7 @@ public class EditContactController extends DefaultController implements CanNavig
     private void updateUIBasedOnValidation(List<TextField> textFields) {
         boolean anyEmpty = textFields.stream()
                 .anyMatch(field -> field.getText().trim().isEmpty());
+
         boolean emailValid = EmailService.isValidMail(emailInput.getText());
 
         confirmButton.setDisable(anyEmpty || !emailValid);

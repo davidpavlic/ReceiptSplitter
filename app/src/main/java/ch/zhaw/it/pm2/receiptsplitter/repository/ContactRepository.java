@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 //TODO: JavaDoc und private methods Commenting
 public class ContactRepository {
     private final List<DefaultController> observers = new ArrayList<>();
-    private final List<Contact> contactList = new ArrayList<>();
+    private final List<Contact> contacts = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
     private Contact selectedToEditContact;
@@ -33,7 +33,7 @@ public class ContactRepository {
 
     //Loads the contacts from the file into the contact list
     public void loadContacts() throws IOException{
-        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contactList::add);
+        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
     }
 
     public void addObserver(DefaultController observer) {
@@ -51,7 +51,7 @@ public class ContactRepository {
 
     //The following methods represent CRUD operations for contacts adjusting the file, contactlist, selectedContact and selectedProfile
     public Contact findContactByEmail(String email) {
-        return contactList.stream()
+        return contacts.stream()
                 .filter(contact -> contact.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
@@ -62,12 +62,15 @@ public class ContactRepository {
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
 
         appendContactToContactFile(contact);
-        contactList.add(contact);
+        contacts.add(contact);
         notifyObservers();
         return true;
     }
 
     public boolean updateContact(String email, Contact newContact) throws IOException {
+        Objects.requireNonNull(email);
+        Objects.requireNonNull(newContact);
+
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
@@ -86,7 +89,7 @@ public class ContactRepository {
             throw new IllegalArgumentException("No record found with email: " + email);
 
         if(removeContactFromContactFile(email)) {
-            if (contactList.removeIf(contact -> contact.getEmail().equals(email))) {
+            if (contacts.removeIf(contact -> contact.getEmail().equals(email))) {
                 boolean removeSuccess = removeFromSelectedContacts(email);
                 notifyObservers();
                 return removeSuccess;
@@ -121,8 +124,8 @@ public class ContactRepository {
         return selectedProfile;
     }
 
-    public List<Contact> getContactList() {
-        return contactList;
+    public List<Contact> getContacts() {
+        return contacts;
     }
 
     public void setSelectedToEditContact(Contact selectedToEditContact) {
@@ -156,7 +159,7 @@ public class ContactRepository {
 
     //The following method is a helper method for updating a contact in the contact list
     private boolean updateContactInContactList(String email, Contact newContact){
-        for (Contact contact : contactList) {
+        for (Contact contact : contacts) {
             if (contact.getEmail().equals(email)) {
                 contact.setFirstName(newContact.getFirstName());
                 contact.setLastName(newContact.getLastName());
@@ -204,7 +207,13 @@ public class ContactRepository {
     }
 
     private void appendContactToContactFile(Contact contact) throws IOException {
+        String lastLine = Files.readAllLines(contactsFilePath).getLast();
+
         try (BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND)) {
+            if (!lastLine.isEmpty()){
+                writer.newLine();
+            }
+
             writer.write(parseContactToLine(contact));
         }
     }

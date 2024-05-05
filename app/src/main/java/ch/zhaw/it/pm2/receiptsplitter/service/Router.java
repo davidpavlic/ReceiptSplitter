@@ -104,7 +104,7 @@ public class Router {
 
             dialogStage.showAndWait();
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal: " + exception);
+            logger.severe("Could not open help modal: " + exception.getMessage());
             throw  exception;
         }
     }

@@ -39,7 +39,7 @@ public class ContactListController extends DefaultController implements CanNavig
 
     @Override
     public void refreshScene() {
-        tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContactList()));
+        tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
         tableContactList.refresh();
     }
 
@@ -80,37 +80,49 @@ public class ContactListController extends DefaultController implements CanNavig
                     @Override
                     protected void updateItem(String item, boolean empty) {
                         super.updateItem(item, empty);
+
                         if (empty) {
                             setGraphic(null);
-                        } else {
-                            hbox.setSpacing(10);
-                            editButton.setPrefWidth(60);
-                            deleteButton.setPrefWidth(60);
-
-                            editButton.setOnAction(event -> {
-                                contactRepository.setSelectedToEditContact(getTableView().getItems().get(getIndex()));
-                                try {
-                                    switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
-                                } catch (Exception e) {
-                                    logger.severe("Error Editing profile: " + e.getMessage());
-                                    logger.fine(Arrays.toString(e.getStackTrace()));
-                                }
-                            });
-
-                            deleteButton.setOnAction(event -> {
-                                Contact contact = getTableView().getItems().get(getIndex());
-                                try {
-                                    contactRepository.removeContact(contact.getEmail());
-                                } catch (IOException e) {
-                                    logger.severe("Error removing contact: " + e.getMessage());
-                                    logger.fine(Arrays.toString(e.getStackTrace()));
-                                }
-                            });
-
-                            Contact contact = getTableView().getItems().get(getIndex());
-                            deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
-                            setGraphic(hbox);
+                            return;
                         }
+
+                        hbox.setSpacing(10);
+                        editButton.setPrefWidth(60);
+                        deleteButton.setPrefWidth(60);
+
+                        var items = getTableView().getItems();
+                        var index = getIndex();
+                        Contact contact = items.get(index);
+
+                        editButton.setOnAction(event -> {
+                            contactRepository.setSelectedToEditContact(contact);
+                            try {
+                                switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
+                            } catch (IllegalStateException | IllegalArgumentException e) {
+                                logger.severe("Error Editing profile: " + e.getMessage());
+                                logger.fine(Arrays.toString(e.getStackTrace()));
+                                // TODO: Show error message to user
+                            }
+                        });
+
+                        deleteButton.setOnAction(event -> {
+                            try {
+                                boolean success = contactRepository.removeContact(contact.getEmail());
+
+                                if (!success) {
+                                    logger.severe("Could not remove contact");
+                                    // TODO: Show error message to user
+                                }
+
+                            } catch (IOException e) {
+                                logger.severe("Error removing contact: " + e.getMessage());
+                                logger.fine(Arrays.toString(e.getStackTrace()));
+                                // TODO: Show error message to user
+                            }
+                        });
+
+                        deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
+                        setGraphic(hbox);
                     }
                 };
             }
