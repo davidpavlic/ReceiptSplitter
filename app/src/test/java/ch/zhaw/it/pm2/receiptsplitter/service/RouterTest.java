@@ -134,7 +134,7 @@ public class RouterTest {
         HelpMessages invalidHelpMessage = null;
 
         // Act & Assert
-        assertThrows(NullPointerException.class, () -> router.openHelpModal(invalidHelpMessage));
+        assertThrows(NullPointerException.class, () -> router.OpenHelpMessage(invalidHelpMessage));
     }
 
     static Set<Pages> getValidPages() {

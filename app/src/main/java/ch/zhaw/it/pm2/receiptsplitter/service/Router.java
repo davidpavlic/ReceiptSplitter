@@ -1,7 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
-import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.ModalDialogController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
@@ -90,33 +90,49 @@ public class Router {
         gotoScene(page);
     }
 
+    public void OpenHelpMessage(HelpMessages helpMessage) throws IllegalStateException, IOException {
+        try {
+            openModalDialog(helpMessage.getMessage(), "Help");
+        } catch (IllegalStateException | IOException exception) {
+            logger.severe("Could not open help modal: " + exception.getMessage());
+        }
+    }
+
+    public void OpenTextModalDialog(String textMessage, String title) throws IllegalStateException, IOException {
+        try {
+            openModalDialog(textMessage, title);
+        } catch (IllegalStateException | IOException exception) {
+            logger.severe("Could not open modal dialog: " + exception.getMessage());
+        }
+    }
+
     /**
      * Opens a help modal with the specified help message.
      *
-     * @param helpText the help message to display
+     * @param textMessage the help message to display
      * @throws IllegalStateException if an error occurs during modal opening
      */
-    public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
-        //TODO Implement this somewhere else?
-        Objects.requireNonNull(helpText, "Help message cannot be null");
+    private void openModalDialog(String textMessage, String title) throws IllegalStateException, IOException {
+        Objects.requireNonNull(textMessage, "Help message cannot be null");
+        Objects.requireNonNull(title, "Title cannot be null");
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/HelpModal.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/ModalDialog.fxml"));
             Pane node = loader.load();
 
-            HelpController controller = loader.getController();
-            controller.setHelpText(helpText);
+            ModalDialogController controller = loader.getController();
+            controller.setTextMessage(textMessage);
 
             Stage dialogStage = new Stage();
             Scene scene = new Scene(node);
-            dialogStage.setTitle("Help");
+            dialogStage.setTitle(title);
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(stage);
             dialogStage.setScene(scene);
 
             dialogStage.showAndWait();
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal: " + exception.getMessage());
+            logger.severe("Could not open modal dialog: " + exception.getMessage());
             throw  exception;
         }
     }

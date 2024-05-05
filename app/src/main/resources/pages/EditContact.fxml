@@ -22,7 +22,7 @@
             <menus>
                 <Menu text="Help">
                     <items>
-                        <MenuItem onAction="#showHelp" text="Show help" />
+                        <MenuItem onAction="#showModalDialog" text="Show help" />
                         <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
                     </items>
                 </Menu>

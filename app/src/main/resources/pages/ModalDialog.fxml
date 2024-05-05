@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.HelpController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.ModalDialogController">
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
 
@@ -31,7 +31,7 @@
                     <Font name="System Bold Italic" size="22.0"/>
                 </font>
             </Label>
-            <TextArea editable="false" focusTraversable="false" minHeight="40" fx:id="helpTextArea" prefHeight="200.0"
+            <TextArea editable="false" focusTraversable="false" minHeight="40" fx:id="textMessage" prefHeight="200.0"
                       prefWidth="200.0">
                 <padding>
                     <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
