@@ -12,11 +12,12 @@ public class Receipt {
         setReceiptItemList(receiptItem);
     }
 
-    public List<ReceiptItem> getReceiptItemList() {
+    public List<ReceiptItem> getReceiptItems() {
         return receiptItemList;
     }
 
     public void setReceiptItemList(List<ReceiptItem> receiptItemList) throws IllegalArgumentException{
+
         ModelParamValidator.throwIfElementIsNull(receiptItemList, ReceiptErrorMessageType.LIST_NULL.toString());
         this.receiptItemList = receiptItemList;
     }
