@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
  */
 public class ReceiptProcessor {
     private Receipt receipt;
-    private List<ContactReceiptItem> contactReceiptItemList;
+    private List<ContactReceiptItem> contactReceiptItems;
 
     /**
      * Constructs a new ReceiptProcessor instance with an empty list of contact-receipt-item associations.
      */
     public ReceiptProcessor() {
-        this.contactReceiptItemList = new ArrayList<>();
+        this.contactReceiptItems = new ArrayList<>();
     }
 
     /**
@@ -28,8 +28,10 @@ public class ReceiptProcessor {
      * @param receipt the new receipt to be managed
      * @throws IllegalArgumentException if the provided receipt is null
      */
-    public void addReceipt(Receipt receipt){
-        ModelParamValidator.throwIfElementIsNull(receipt, "Receipt cannot be null.");
+    public void setReceipt(Receipt receipt){
+        if (receipt == null) {
+            throw new IllegalArgumentException("Receipt cannot be null");
+        }
         this.receipt = receipt;
     }
 
@@ -78,7 +80,7 @@ public class ReceiptProcessor {
      * @param receiptItem the ReceiptItem to be updated or added
      * @throws IllegalArgumentException if the receiptItem is null
      */
-    public void createOrUpdateReceiptItem(ReceiptItem receiptItem) throws Exception {
+    public void createOrUpdateReceiptItem(ReceiptItem receiptItem) {
         if (receiptItem == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
@@ -97,9 +99,8 @@ public class ReceiptProcessor {
      *
      * @param receiptItem the ReceiptItem to be removed
      * @throws IllegalArgumentException if the receiptItem is null
-     * @throws Exception if the item does not exist
      */
-    public void deleteReceiptItem(ReceiptItem receiptItem) throws Exception {
+    public void deleteReceiptItem(ReceiptItem receiptItem)  {
         if (receiptItem == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
@@ -119,7 +120,7 @@ public class ReceiptProcessor {
         if (!doesContactExist(contact)) {
             throw new IllegalArgumentException("Contact does not exist.");
         }
-        contactReceiptItemList.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(),  contact));
+        contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(),  contact));
     }
 
 
@@ -131,7 +132,7 @@ public class ReceiptProcessor {
      */
     @NotNull
     public List<ContactReceiptItem> getContactItemsByContact(String email) {
-        return contactReceiptItemList.stream()
+        return contactReceiptItems.stream()
                 .filter(contactReceiptItem -> contactReceiptItem.getContact().getEmail().equals(email))
                 .collect(Collectors.toList());
     }
@@ -144,7 +145,7 @@ public class ReceiptProcessor {
      * @return the total amount owed
      * @throws IllegalArgumentException if no items are associated with the contact or the contact does not exist
      */
-    public double calculateDebtByPerson(Contact contact) throws IllegalArgumentException {
+    public double calculateDebtByPerson(Contact contact)  {
         List<ContactReceiptItem> specificContactItemsList = getContactItemsByContact(contact.getEmail());
         if (specificContactItemsList.isEmpty()) {
             throw new IllegalArgumentException("The list is empty.");
@@ -161,19 +162,7 @@ public class ReceiptProcessor {
         return total;
     }
 
-    /**
-     * Checks if a contact exists in the contact-receipt-item list.
-     *
-     * @param contact the contact to verify
-     * @return true if the contact exists, false otherwise
-     */
-    boolean doesContactExist(Contact contact) {
-        if (contact == null) {
-            return false;
-        }
-        return contactReceiptItemList.stream()
-                .anyMatch(item -> item.getContact().equals(contact));
-    }
+
 
     /**
      * Retrieves the list of receipt items in an unmodifiable format to prevent external modifications.
@@ -190,7 +179,7 @@ public class ReceiptProcessor {
      * @return a list of ContactReceiptItems
      */
     public List<ContactReceiptItem> getContactReceiptItems(){
-        return contactReceiptItemList;
+        return contactReceiptItems;
     }
 
 
@@ -200,7 +189,21 @@ public class ReceiptProcessor {
      * @param contactReceiptItems the new list of ContactReceiptItem to replace the existing one
      */
     public  void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems){
-        this.contactReceiptItemList = contactReceiptItems;
+        this.contactReceiptItems = contactReceiptItems;
+    }
+
+    /**
+     * Checks if a contact exists in the contact-receipt-item list.
+     *
+     * @param contact the contact to verify
+     * @return true if the contact exists, false otherwise
+     */
+    protected boolean doesContactExist(Contact contact) {
+        if (contact == null) {
+            return false;
+        }
+        return contactReceiptItems.stream()
+                .anyMatch(item -> item.getContact().equals(contact));
     }
 }
 
