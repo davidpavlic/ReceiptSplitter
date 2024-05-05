@@ -29,6 +29,7 @@ public class LoginController extends DefaultController implements IsObserver{
         configureDropdown();
         confirmButton.setDisable(true);
         confirmButton.setOnAction(event -> confirm());
+        selectContactDropdown.setPromptText("Please choose a profile");
     }
 
     @FXML
@@ -69,11 +70,13 @@ public class LoginController extends DefaultController implements IsObserver{
 
     @Override
     public void update() {
+        Contact exists = selectContactDropdown.getValue();
         selectContactDropdown.getItems().clear();
         selectContactDropdown.getItems().addAll(contactRepository.getContacts());
-        selectContactDropdown.setPromptText("Please choose a profile");
         if (contactRepository.getProfile() != null) {
             selectContactDropdown.setValue(contactRepository.getProfile());
+        } else {
+            selectContactDropdown.setValue(exists);
         }
     }
 
