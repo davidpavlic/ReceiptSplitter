@@ -1,14 +1,14 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -19,6 +19,7 @@ import javafx.util.Pair;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
@@ -40,6 +41,10 @@ public class Router {
      * @throws IOException if an error occurs during scene initialization
      */
     public Router(Stage stage, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
+        Objects.requireNonNull(stage, "Stage cannot be null");
+        Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
+        Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
+
         this.stage = stage;
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
@@ -53,7 +58,9 @@ public class Router {
      * @param page the page to switch to
      * @throws IllegalStateException if the stage is null
      */
-    public void gotoScene(Pages page) throws IllegalStateException {
+    public void gotoScene(Pages page) {
+        Objects.requireNonNull(page, "Page cannot be null");
+
         if (stage != null) {
             stage.setScene(getScene(page));
             if (getController(page) instanceof IsObserver observerController) {
@@ -68,9 +75,9 @@ public class Router {
     /**
      * Switches to the specified scene and sets the last page for controllers that implement HasDynamicLastPage.
      *
-     * @param page the page to switch to
+     * @param page     the page to switch to
      * @param lastPage the last page to set
-     * @throws IllegalStateException if the stage is null
+     * @throws IllegalStateException    if the stage is null
      * @throws IllegalArgumentException if the controller does not implement HasDynamicLastPage
      */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
@@ -91,6 +98,8 @@ public class Router {
      */
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
         //TODO Implement this somewhere else?
+        Objects.requireNonNull(helpText, "Help message cannot be null");
+
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/pages/HelpModal.fxml"));
             Pane node = loader.load();
@@ -140,9 +149,18 @@ public class Router {
     }
 
     /**
+     * Gets the scene map.
+     *
+     * @return the scene map
+     */
+    protected Map<Pages, Pair<Scene, DefaultController>> getSceneMap() {
+        return sceneMap;
+    }
+
+    /**
      * Adds a scene to the scene map.
      *
-     * @param page the page to add
+     * @param page        the page to add
      * @param pathToScene the path to the scene
      * @throws IOException if an error occurs during scene loading
      */
