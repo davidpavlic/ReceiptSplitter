@@ -14,6 +14,8 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -47,9 +49,8 @@ public class Main extends Application {
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
-        if (!EnvConstants.areAllSet()) {
-            logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
-            throw new IllegalStateException();
+        if (!checkSystemConfigurations()) {
+            throw new IllegalStateException("Can not start Application, System Configurations are not correct.");
         } else {
             launch(args);
         }
@@ -79,6 +80,27 @@ public class Main extends Application {
         } catch (IllegalStateException exception) {
             logger.severe("Could not load the login window: " + exception);
         }
+    }
+
+    /**
+     * Checks if the system configurations are set correctly.
+     * <p>
+     * This method checks if all environment variables are set correctly and if the contacts.csv file exists.
+     * If any of these checks fail, it logs a severe message and returns false.
+     *
+     * @return true if all system configurations are set correctly, false otherwise
+     */
+    private static boolean checkSystemConfigurations() {
+        logger.info("Checking system configurations");
+        if (!EnvConstants.areAllSet()) {
+            logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
+            return false;
+        }
+        if (!Files.exists(Paths.get("contacts.csv"))) {
+            logger.severe("contacts.csv does not exist, please ensure to follow the documentation in the README.md file");
+            return false;
+        }
+        return true;
     }
 
 

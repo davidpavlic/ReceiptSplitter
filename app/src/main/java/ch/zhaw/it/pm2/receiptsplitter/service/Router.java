@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
 import ch.zhaw.it.pm2.receiptsplitter.Main;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
@@ -47,7 +48,7 @@ public class Router {
     }
 
     /**
-     * Switches to the specified scene.
+     * Switches to the specified scene and updates the state if it is InstanceOf IsObserver Interface.
      *
      * @param page the page to switch to
      * @throws IllegalStateException if the stage is null
@@ -55,7 +56,9 @@ public class Router {
     public void gotoScene(Pages page) throws IllegalStateException {
         if (stage != null) {
             stage.setScene(getScene(page));
-            getController(page).refreshScene();
+            if (getController(page) instanceof IsObserver observerController) {
+                observerController.update();
+            }
             stage.show();
         } else {
             throw new IllegalStateException("Stage is null, can not switch scene");

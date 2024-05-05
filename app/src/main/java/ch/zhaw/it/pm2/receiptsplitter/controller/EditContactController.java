@@ -7,6 +7,7 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -17,7 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset {
+public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -44,7 +45,7 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void refreshScene() {
+    public void update() {
         Contact contact = contactRepository.getSelectedToEditContact();
         emailInput.setText(contact.getEmail());
         firstNameInput.setText(contact.getFirstName());

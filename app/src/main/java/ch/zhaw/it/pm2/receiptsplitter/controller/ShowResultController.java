@@ -7,10 +7,5 @@ public class ShowResultController extends DefaultController {
     public void confirm() {
         switchScene(Pages.SHOW_SPLIT_WINDOW);
         }
-
-    @Override
-    public void refreshScene() {
-
-    }
 }
 

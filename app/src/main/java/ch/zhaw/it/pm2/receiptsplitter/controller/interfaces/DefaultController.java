@@ -11,6 +11,17 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 
+/**
+ * This abstract class provides a default implementation for a controller in the application.
+ * It includes common properties and methods that all controllers need, such as a logger, router, contactRepository, receiptProcessor, and helpMessage.
+ *
+ * Each controller that extends this class should call the initialize method to set up these common properties.
+ *
+ * The class also provides methods to show FAQ and help messages, and to switch scenes.
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public abstract class  DefaultController {
     protected final Logger logger = Logger.getLogger(DefaultController.class.getName());
     protected Router router;
@@ -18,6 +29,14 @@ public abstract class  DefaultController {
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
 
+
+    /**
+     * Initializes the controller with a router, contact repository, and receipt processor.
+     *
+     * @param router The router to be used for navigation.
+     * @param contactRepository The repository to be used for contact management.
+     * @param receiptProcessor The processor to be used for receipt processing.
+     */
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor){
         this.router = router;
         this.contactRepository = contactRepository;
@@ -26,6 +45,9 @@ public abstract class  DefaultController {
     }
 
 
+    /**
+     * Shows the FAQ message in a modal.
+     */
     @FXML
     void showFAQ() {
         try {
@@ -36,6 +58,9 @@ public abstract class  DefaultController {
         }
     }
 
+    /**
+     * Shows the help message in a modal.
+     */
     @FXML
     void showHelp() {
         if (helpMessage == null) {
@@ -50,6 +75,11 @@ public abstract class  DefaultController {
         }
     }
 
+    /**
+     * Switches the scene to the specified page.
+     *
+     * @param page The page to switch to.
+     */
     protected void switchScene(Pages page) {
         try {
             router.gotoScene(page);
@@ -60,6 +90,12 @@ public abstract class  DefaultController {
         }
     }
 
+    /**
+     * Switches the scene to the specified page, and sets the last page.
+     *
+     * @param page The page to switch to.
+     * @param lastPage The last page.
+     */
     protected void switchScene(Pages page, Pages lastPage) {
         try {
             router.gotoScene(page, lastPage);
@@ -69,6 +105,4 @@ public abstract class  DefaultController {
             throw exception;
         }
     }
-
-    public abstract void refreshScene();
 }

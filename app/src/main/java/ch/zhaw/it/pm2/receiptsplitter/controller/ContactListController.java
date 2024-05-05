@@ -3,6 +3,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -22,7 +23,7 @@ import javafx.util.Callback;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ContactListController extends DefaultController implements CanNavigate, CanReset {
+public class ContactListController extends DefaultController implements CanNavigate, CanReset ,IsObserver {
 
     @FXML private TableColumn<Contact, String> actionColumn;
     @FXML private TableColumn<Contact, String> emailColumn;
@@ -38,7 +39,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void refreshScene() {
+    public void update() {
         tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
         tableContactList.refresh();
     }
@@ -65,67 +66,70 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     private void configureTable() {
+        configureColumns();
+        configureActionColumn();
+    }
+
+    private void configureColumns() {
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("displayName"));
         emailColumn.setCellValueFactory(new PropertyValueFactory<>("email"));
+    }
 
+    private void configureActionColumn() {
         actionColumn.setMaxWidth(140);
-        actionColumn.setCellFactory(new Callback<>() {
+        actionColumn.setCellFactory(param -> createActionCell());
+    }
+
+    private TableCell<Contact, String> createActionCell() {
+        return new TableCell<>() {
+            final Button editButton = new Button("Edit");
+            final Button deleteButton = new Button("Delete");
+            final HBox hbox = new HBox(10, editButton, deleteButton);
+
             @Override
-            public TableCell<Contact, String> call(TableColumn<Contact, String> param) {
-                return new TableCell<>() {
-                    final Button editButton = new Button("Edit");
-                    final Button deleteButton = new Button("Delete");
-                    final HBox hbox = new HBox(editButton, deleteButton);
-
-                    @Override
-                    protected void updateItem(String item, boolean empty) {
-                        super.updateItem(item, empty);
-
-                        if (empty) {
-                            setGraphic(null);
-                            return;
-                        }
-
-                        hbox.setSpacing(10);
-                        editButton.setPrefWidth(60);
-                        deleteButton.setPrefWidth(60);
-
-                        var items = getTableView().getItems();
-                        var index = getIndex();
-                        Contact contact = items.get(index);
-
-                        editButton.setOnAction(event -> {
-                            contactRepository.setSelectedToEditContact(contact);
-                            try {
-                                switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
-                            } catch (IllegalStateException | IllegalArgumentException e) {
-                                logger.severe("Error Editing profile: " + e.getMessage());
-                                logger.fine(Arrays.toString(e.getStackTrace()));
-                                // TODO: Show error message to user
-                            }
-                        });
-
-                        deleteButton.setOnAction(event -> {
-                            try {
-                                boolean success = contactRepository.removeContact(contact.getEmail());
-
-                                if (!success) {
-                                    logger.severe("Could not remove contact");
-                                    // TODO: Show error message to user
-                                }
-
-                            } catch (IOException e) {
-                                logger.severe("Error removing contact: " + e.getMessage());
-                                logger.fine(Arrays.toString(e.getStackTrace()));
-                                // TODO: Show error message to user
-                            }
-                        });
-
-                        deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
-                        setGraphic(hbox);
-                    }
-                };
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    configureButtons();
+                    setGraphic(hbox);
+                }
             }
-        });
+
+            private void configureButtons() {
+                Contact contact = getTableView().getItems().get(getIndex());
+                editButton.setOnAction(e -> handleEditAction(contact));
+                deleteButton.setOnAction(e -> handleDeleteAction(contact));
+                deleteButton.setDisable(contact.equals(contactRepository.getProfile()));
+            }
+        };
+    }
+
+    private void handleEditAction(Contact contact) {
+        contactRepository.setSelectedToEditContact(contact);
+        try {
+            switchScene(Pages.EDIT_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
+        } catch (IllegalStateException | IllegalArgumentException e) {
+            logError("Error Editing profile", e);
+        }
+    }
+
+    private void handleDeleteAction(Contact contact) {
+        try {
+            if (!contactRepository.removeContact(contact.getEmail())) {
+                logError("Could not remove contact", null);
+            }
+        } catch (IOException e) {
+            logError("Error removing contact", e);
+        }
+    }
+
+    private void logError(String message, Exception e) {
+        logger.severe(message);
+        if (e != null) {
+            logger.fine(Arrays.toString(e.getStackTrace()));
+        }
+        // TODO: Show error message to user
     }
 }

@@ -46,9 +46,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     }
 
     @Override
-    public void refreshScene() {}
-
-    @Override
     public void confirm() {
         switchScene(Pages.LIST_ITEMS_WINDOW);
     }

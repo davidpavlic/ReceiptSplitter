@@ -19,9 +19,6 @@ public class ShowSplitController  extends DefaultController implements CanNaviga
     }
 
     @Override
-    public void refreshScene() {}
-
-    @Override
     public void confirm() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to send out the emails?", ButtonType.YES, ButtonType.NO);
         alert.setTitle("Confirmation");

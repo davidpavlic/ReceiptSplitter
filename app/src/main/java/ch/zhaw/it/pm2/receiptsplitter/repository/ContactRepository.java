@@ -1,7 +1,8 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,8 +17,8 @@ import java.util.stream.Collectors;
 
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
-public class ContactRepository {
-    private final List<DefaultController> observers = new ArrayList<>();
+public class ContactRepository implements IsObservable {
+    private final List<IsObserver> observers = new ArrayList<>();
     private final List<Contact> contacts = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
@@ -36,12 +37,18 @@ public class ContactRepository {
         Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
     }
 
-    public void addObserver(DefaultController observer) {
+    public void addObserver(IsObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(DefaultController observer) {
+    public void removeObserver(IsObserver observer) {
         observers.remove(observer);
+    }
+
+    public void notifyObservers() {
+        for (IsObserver observer : observers) {
+            observer.update();
+        }
     }
 
     //Checks if a contact exists
@@ -90,9 +97,9 @@ public class ContactRepository {
 
         if(removeContactFromContactFile(email)) {
             if (contacts.removeIf(contact -> contact.getEmail().equals(email))) {
-                boolean removeSuccess = removeFromSelectedContacts(email);
+                removeFromSelectedContacts(email);
                 notifyObservers();
-                return removeSuccess;
+                return true;
             }
         }
         return false;
@@ -151,12 +158,6 @@ public class ContactRepository {
         return false;
     }
 
-    private void notifyObservers() {
-        for (DefaultController observer : observers) {
-            observer.refreshScene();
-        }
-    }
-
     //The following method is a helper method for updating a contact in the contact list
     private boolean updateContactInContactList(String email, Contact newContact){
         for (Contact contact : contacts) {
@@ -196,10 +197,17 @@ public class ContactRepository {
         return found ? updatedLines : null;
     }
 
-    private boolean removeContactFromContactFile(String email) throws IOException{
+    private boolean removeContactFromContactFile(String email) throws IOException {
         List<String> contactListAllLines = Files.readAllLines(contactsFilePath);
-        List<String> contactListNotEmail = contactListAllLines.stream().filter(line -> !line.contains(email)).collect(Collectors.toList());
-        if(!contactListAllLines.equals(contactListNotEmail)){
+        List<String> contactListNotEmail = contactListAllLines.stream()
+                .filter(line -> !line.contains(email))
+                .collect(Collectors.toList());
+
+        if (!contactListAllLines.equals(contactListNotEmail)) {
+            // Remove the last line if it is empty
+            if (!contactListNotEmail.isEmpty() && contactListNotEmail.getLast().isEmpty()) {
+                contactListNotEmail.removeLast();
+            }
             Files.write(contactsFilePath, contactListNotEmail);
             return true;
         }

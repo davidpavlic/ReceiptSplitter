@@ -18,9 +18,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
         this.helpMessage = HelpMessages.LIST_ITEMS_WINDOW_MSG;
     }
 
-    @Override
-    public void refreshScene() {}
-
     @FXML
     @Override
     public void confirm() {

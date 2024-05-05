@@ -16,9 +16,6 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     }
 
     @Override
-    public void refreshScene() {}
-
-    @Override
     public void confirm() {
 
     }

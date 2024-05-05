@@ -1,6 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
@@ -15,7 +16,7 @@ import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
 
-public class LoginController extends DefaultController {
+public class LoginController extends DefaultController implements IsObserver{
     @FXML private Button confirmButton;
     @FXML private ComboBox<Contact> selectContactDropdown;
 
@@ -67,7 +68,7 @@ public class LoginController extends DefaultController {
     }
 
     @Override
-    public void refreshScene() {
+    public void update() {
         selectContactDropdown.getItems().clear();
         selectContactDropdown.getItems().addAll(contactRepository.getContacts());
         selectContactDropdown.setPromptText("Please choose a profile");

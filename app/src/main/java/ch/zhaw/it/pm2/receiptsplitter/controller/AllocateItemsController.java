@@ -26,9 +26,6 @@ public class AllocateItemsController extends DefaultController implements CanNav
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
     }
 
-    @Override
-    public void refreshScene() {}
-
     public void allocatePerson(int rowID){}
 
     public void deallocatePerson(int rowID){}

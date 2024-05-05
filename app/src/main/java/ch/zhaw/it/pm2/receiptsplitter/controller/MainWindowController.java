@@ -16,10 +16,6 @@ public class MainWindowController extends DefaultController {
         this.helpMessage = HelpMessages.MAIN_WINDOW_MSG;
     }
 
-    @Override
-    public void refreshScene() {
-    }
-
     @FXML
     public void openContactList() {
         switchScene(Pages.CONTACT_LIST_WINDOW);

@@ -44,9 +44,6 @@ public class NewContactController extends DefaultController implements CanNaviga
     }
 
     @Override
-    public void refreshScene() {}
-
-    @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }

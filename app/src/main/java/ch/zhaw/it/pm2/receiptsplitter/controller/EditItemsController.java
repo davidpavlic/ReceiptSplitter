@@ -18,10 +18,6 @@ public class EditItemsController extends DefaultController implements CanNavigat
     }
 
     @Override
-    public void refreshScene() {
-    }
-
-    @Override
     public void confirm() {
         switchScene(Pages.LIST_ITEMS_WINDOW);
     }
