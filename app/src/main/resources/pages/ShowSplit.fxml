@@ -18,7 +18,7 @@
     <center>
         <VBox>
             <HBox>
-                <Button onAction="#buttonPreviousPerson" text="⟨">
+                <Button fx:id="buttonPreviousPerson" text="⟨">
                <HBox.margin>
                   <Insets left="10.0" top="20.0" />
                </HBox.margin></Button>
@@ -34,7 +34,7 @@
                <opaqueInsets>
                   <Insets bottom="10.0" />
                </opaqueInsets></Pane>
-                <Button onAction="#buttonNextPerson" text="⟩">
+                <Button fx:id="buttonNextPerson" text="⟩">
                <HBox.margin>
                   <Insets right="10.0" top="20.0" />
                </HBox.margin></Button>
@@ -62,9 +62,9 @@
     </center>
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
-            <Button text="Back" HBox.hgrow="NEVER" />
+            <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
             <Pane HBox.hgrow="ALWAYS" />
-            <Button text="Confirm All" HBox.hgrow="NEVER" />
+            <Button onAction="#confirm" text="Confirm All" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
 </BorderPane>

@@ -5,6 +5,7 @@ package ch.zhaw.it.pm2.receiptsplitter;
 
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
+import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
@@ -49,10 +50,21 @@ public class Main extends Application {
     public static void main(String[] args) {
         configureLogging();
         logger.info("Starting the application");
+        testEmailService();
         if (!checkSystemConfigurations()) {
             throw new IllegalStateException("Can not start Application, System Configurations are not correct.");
         } else {
+            //testEmailService();
             launch(args);
+        }
+    }
+
+    private static void testEmailService() {
+        EmailService emailService = new EmailService();
+        try {
+            emailService.sendEmail("SimmondsRyan2002@gmail.com", "Test", "This is a test email");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
