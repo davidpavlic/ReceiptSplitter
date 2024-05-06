@@ -1,7 +1,8 @@
 # Team01-LightningMcKings-Projekt2-ReceiptSplitter
+
 ## Beschreibung
-Dieses Java Konsolen Programm startet bei Ausführung eine JavaFX Applikation um eine Quittung aufzuteilen.
-Dies ist ein Software Projekt im Rahmen des Moduls Software-Projekt-2.
+Dieses Java-Konsolen-Programm startet bei Ausführung eine JavaFX Applikation um eine Quittung aufzuteilen.
+Dies ist ein Software-Projekt im Rahmen des Moduls Software-Projekt-2.
 
 ### Abhängigkeiten
 Um das Programm auszuführen, benötigt es eine Java Umgebung.
@@ -18,8 +19,8 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 ```
 - Öffnen Sie das Projekt in ihrer IDE.
 - Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu. 
-- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und bennen Sie es als `contacts.csv`. 
-- Führen sie folgende Befehle aus um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
+- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und benennen Sie sie `contacts.csv`. 
+- Führen sie folgende Befehle aus, um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
 
 ### Linux/MacOS
 ```
@@ -33,7 +34,7 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 ```
 
 
-## Unit Test ausführen
+## Unit-Tests ausführen
 ### Linux/MacOS
 ```
 ./gradlew test
@@ -50,8 +51,7 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 - [Eclipse für java Umgebung einrichten](https://www.golinuxcloud.com/set-up-java-with-eclipse-ide/#Write_and_compile_your_first_Java_program_using_Eclipse_IDE)
 
 # Branching Modell
-Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist,
-bei dem ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch existiert.
+Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist. Hier existiert ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch.
 Dies ermöglicht es, die Entwicklung von Funktionen durchzuführen und nur stabile Versionen in den Master-Branch zu überführen.
 Es ist ein Mittelweg zwischen dem einfachen Feature-Branch und dem Hauptbranch "Master".
 
@@ -64,15 +64,51 @@ Für die Bearbeitung von Pull Requests (PRs) im Rahmen unseres Git-Develop-Workf
 
 ### Branch Naming
 - Feature Branches: `feat/<issue-number>-<short-description>`
+- Infrastructure Branches: `infra/<issue-number>-<short-description>`
 - Bugfix Branches: `fix/<issue-number>-<short-description>`
 - Hotfix Branches: `hotfix/<issue-number>-<short-description>`
 
 ## Überlegungen zu Struktur und Aufbau
-TODO
+
+### Grundsätze
+#### Übersichtlichkeit und Wartbarkeit
+Durch die klare Unterteilung in Pakete ist auf einen Blick erkennbar, wo bestimmte Funktionalitäten implementiert sind.
+Dies erleichtert nicht nur neue Entwickler im Projekt, sich zurechtzufinden, sondern vereinfacht auch die Wartung und das Testen des Codes.
+
+#### Skalierbarkeit
+Die modulare Natur der Struktur ermöglicht es, Teile der Anwendung unabhängig voneinander zu skalieren oder zu verbessern.
+Beispielsweise können neue Services oder Controller hinzugefügt werden, ohne bestehende Funktionalitäten zu stören.
+
+#### Ressourcen und FXML-Dateien
+Die klare Trennung der Benutzeroberflächendefinitionen (.fxml-Dateien) von der Logik (.java) erleichtert die Arbeit von Entwicklern,
+die parallel an diesen arbeiten können, ohne sich gegenseitig zu beeinflussen.
+
+### Trennung von Anliegen
+Die Anwendung wurde in verschiedene Pakete unterteilt, um die Trennung von Anliegen zu gewährleisten:
+
+- **interfaces**: Enthält Interfaces, die bestimmte Verhaltensweisen definieren, die von anderen Klassen implementiert werden können. 
+Dies fördert die lose Kopplung und macht den Code flexibler und einfacher zu warten.
+
+- **controller**: Hier sind alle Controller-Klassen untergebracht, die für die Verarbeitung der Benutzerinteraktion und die 
+Verbindung zwischen der Benutzeroberfläche und dem Modell verantwortlich sind.
+
+- **model**: Dieses Verzeichnis enthält Klassen, die die Datenstrukturen  der Anwendung repräsentieren. 
+Diese Trennung sorgt dafür, dass das Modell unabhängig von der Benutzeroberfläche entwickelt und verändert werden kann.
+
+- **repository**: Hier befinden sich Klassen, die den Zugriff auf Datenquellen abstrahieren, 
+was oft die Interaktion mit einer Datenbank beinhaltet.
+
+- **service**: Die Service-Schicht implementiert Logik, die sich über mehrere Modelle oder Bereiche erstreckt 
+und zentrale Funktionen für die Anwendung koordiniert.
+
+- **util**: Enthält Hilfsklassen und -funktionen, die in verschiedenen Teilen der Anwendung verwendet werden können.
+
+- **pages**: Enthält die FXML-Dateien und Controller-Klassen für die verschiedenen Seiten der JavaFX-Anwendung.
+
 
 
 ## Autoren
-Teamname: LightningMcKings
+Teamname: **LightningMcKings**
 
 Namen der Mitwirkenden:
 - David Pavlic
