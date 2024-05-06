@@ -44,14 +44,6 @@ public class ReceiptProcessor implements IsObservable {
      * @inheritDoc
      */
     @Override
-    public void removeObserver(IsObserver observer) {
-        observers.remove(observer);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    @Override
     public void notifyObservers() {
         // TODO: Separate the notify for receipt and contactReceiptItems changes
         for (IsObserver observer : observers) {

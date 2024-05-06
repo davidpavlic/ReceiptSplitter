@@ -6,7 +6,8 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockitoAnnotations;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,13 +17,13 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 
+@ExtendWith(MockitoExtension.class)
 class ReceiptProcessorTest {
     private ReceiptProcessor receiptProcessor;
     private Receipt receipt;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
         List<ReceiptItem> receiptItems = new ArrayList<>() {{
             add(new ReceiptItem(5.0f, "Tee", 1));
         }};
@@ -35,9 +36,7 @@ class ReceiptProcessorTest {
     @Test
     void setReceipt_NullInput_ThrowException() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> {
-            receiptProcessor.setReceipt(null);
-        });
+        assertThrows(IllegalArgumentException.class, () -> receiptProcessor.setReceipt(null));
     }
 
     @Test

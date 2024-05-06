@@ -40,14 +40,17 @@ public class ContactRepository implements IsObservable {
         }
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void addObserver(IsObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(IsObserver observer) {
-        observers.remove(observer);
-    }
-
+    /**
+     * @inheritDoc
+     */
     public void notifyObservers() {
         for (IsObserver observer : observers) {
             observer.update();
@@ -109,6 +112,7 @@ public class ContactRepository implements IsObservable {
     }
 
     //The following methods represent CRUD operations for selected contacts list
+    // TODO: Return type is not used for this and other methods. Maybe throw Exception instead? ReceiptProcessor is throwing Exception for such cases.
     public boolean addToSelectedContacts(String email){
         if(contactExists(email)){
             selectedContacts.add(findContactByEmail(email));

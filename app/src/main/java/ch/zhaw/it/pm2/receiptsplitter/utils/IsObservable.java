@@ -8,12 +8,6 @@ public interface IsObservable {
     void addObserver(IsObserver observer);
 
     /**
-     * Removes an observer from the list of observers.
-     * @param observer the observer to remove
-     */
-    void removeObserver(IsObserver observer);
-
-    /**
      * Notifies all observers.
      */
     void notifyObservers();
