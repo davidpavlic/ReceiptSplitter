@@ -5,7 +5,9 @@ Das Testkonzept basiert auf der Nutzung von Äquivalenzklassentests, um sicherzu
 Durch das Testen repräsentativer Instanzen aus jeder Klasse kann die Funktionsweise der Applikation effektiv überprüft werden, ohne jeden möglichen Eingabewert einzeln zu testen.
 
 Die ReceiptProcessor-Klasse wurde ausgewählt, weil ihre calculateDebtByContact-Methode kritisch für die Ablauflogik ist, indem sie berechnet, wie viel jeder Kontakt basierend auf den geteilten Belegen schuldet.
-Diese Methode muss mit gültigen und ungültigen Daten gründlich getestet werden, um ihre Robustheit zu gewährleisten. Eine Äquivalenzklasse, welche wir anfangs definiert hatten, fiel hier weg: Ungültige Daten.
+Diese Methode muss mit gültigen und ungültigen Daten gründlich getestet werden, um ihre Robustheit zu gewährleisten. 
+
+Eine Äquivalenzklasse, welche wir anfangs definiert hatten, fiel hier weg: Ungültige Daten.
 Dieses Szenario kann nicht getestet werden, da die Erstellung von Items, die bereits negative Beträge enthalten, aufgrund von Validierungsregeln im System nicht möglich ist. 
 Das System verhindert die Erstellung solcher Items, wodurch dieser Testfall nicht ausführbar ist. Stattdessen haben wir Tests für das ReceiptItem sowie ContactReceiptItem hinzugefügt.
 
@@ -16,7 +18,7 @@ Die ContactRepository-Klasse ist zentral für das Kontaktmanagement.
 Es ist notwendig, das Hinzufügen und Entfernen von Kontakten mit einer E-Mail-Validierungsregeln zu testen, um die Integrität der Kontaktinformationen zu gewährleisten. 
 Da wir die E-Mail-Validierung mit einem Regex in der Klasse implementiert haben, haben wir uns entschieden, die Tests für die Validierung der E-Mail-Adresse zu entfernen.
 
-Schliesslich ist die ImageExtractor-Klasse verantwortlich für die Extraktion von Text aus Bildern. Da wir dafür eine externe Library verwenden, haben wir auf das Testing dieser Klasse verzichtet.
+Die ImageExtractor-Klasse ist verantwortlich für die Extraktion von Text aus Bildern. Da wir dafür eine externe Library verwenden, haben wir auf das Unit-Testing dieser Klasse verzichtet und sie stattdessen mit manuellem Testing und verschiedenen Quittungen getestet.
 
 Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden in erwarteter Weise reagieren und dass Ausnahmen korrekt gehandhabt werden..
 
@@ -27,7 +29,7 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 
 **Methoden:** `Konstruktor, ungültige Parameter durch setPrice, setName, setAmount`
 
-### Gültige Äquivalenzklassen
+#### Gültige Äquivalenzklassen
 1. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
 
 #### Ungültige Äquivalenzklassen
@@ -49,7 +51,7 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 
 **Methoden:** `Konstruktor, ungültige Parameter durch setPrice, setName, setAmount`
 
-### Gültige Äquivalenzklassen
+#### Gültige Äquivalenzklassen
 1. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
 
 #### Ungültige Äquivalenzklassen
