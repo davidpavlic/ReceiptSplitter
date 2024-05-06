@@ -12,6 +12,7 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,19 +21,29 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ShowSplitController extends DefaultController implements CanNavigate, IsObserver {
-    @FXML private Button buttonPreviousPerson;
-    @FXML private Button buttonNextPerson;
-    @FXML private Text contactName;
-    @FXML private Text totalPrice;
+    @FXML
+    private Button buttonPreviousPerson;
+    @FXML
+    private Button buttonNextPerson;
+    @FXML
+    private Text contactName;
+    @FXML
+    private Text totalPrice;
 
-    @FXML private TableView<ContactReceiptItem> itemsTable;
-    @FXML private TableColumn<ContactReceiptItem, String> itemNameColumn;
-    @FXML private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
+    @FXML
+    private TableView<ContactReceiptItem> itemsTable;
+    @FXML
+    private TableColumn<ContactReceiptItem, String> itemNameColumn;
+    @FXML
+    private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
 
+    List<Contact> uniqueContacts;
     private Contact currentContact;
 
     @Override
@@ -74,12 +85,12 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @Override
     public void confirm() {
-        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Do you want to send out the emails?", ButtonType.YES, ButtonType.NO);
-        alert.setTitle("Confirmation");
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to send out the Request to the Recipients via Email?", ButtonType.YES, ButtonType.NO);
+        alert.setTitle("Please Confirm");
         alert.showAndWait().ifPresent(response -> {
             alert.hide();
             if (response == ButtonType.YES) {
-                buildAndSendEmail();
+                handleConfirmationAndEmails();
             }
         });
     }
@@ -106,7 +117,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         double totalAmount = receiptProcessor.calculateDebtByPerson(contact);
         totalPrice.setText("Total: " + String.format("%.2f", totalAmount));
 
-        List<Contact> uniqueContacts = receiptProcessor.getDistinctContacts();
+        this.uniqueContacts = receiptProcessor.getDistinctContacts();
         int currentIndex = uniqueContacts.indexOf(contact);
 
         buttonNextPerson.setDisable(currentIndex >= uniqueContacts.size() - 1);
@@ -115,8 +126,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @FXML
     private void nextPerson() {
-        List<Contact> uniqueContacts = receiptProcessor.getDistinctContacts();
-
         int currentIndex = uniqueContacts.indexOf(currentContact);
         if (currentIndex < uniqueContacts.size() - 1) {
             currentContact = uniqueContacts.get(currentIndex + 1);
@@ -126,8 +135,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @FXML
     private void previousPerson() {
-        List<Contact> uniqueContacts = receiptProcessor.getDistinctContacts();
-
         int currentIndex = uniqueContacts.indexOf(currentContact);
         if (currentIndex > 0) {
             currentContact = uniqueContacts.get(currentIndex - 1);
@@ -142,38 +149,74 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         return alert;
     }
 
-    private void buildAndSendEmail() {
-        String body = buildEmail();
-        if (sendEmails(body)) {
-            Alert alert = createAlert(Alert.AlertType.INFORMATION, "Emails Sent", "Emails have been sent out successfully", "The Request has been sent out successfully. Please make sure to check your Spam Folder");
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    alert.hide();
-                    switchScene(Pages.MAIN_WINDOW);
+    private void handleConfirmationAndEmails() {
+        CompletableFuture.supplyAsync(this::buildAndSendEmails)
+                .thenAccept(success -> {
+                    Platform.runLater(() -> {
+                        if (success) {
+                            Alert alert = createAlert(Alert.AlertType.INFORMATION, "Emails Sent", "Emails have been sent out successfully", "The Request has been sent out successfully. Please make sure to check your Spam Folder");
+                            alert.showAndWait().ifPresent(response -> {
+                                if (response == ButtonType.OK) {
+                                    alert.hide();
+                                    switchScene(Pages.MAIN_WINDOW);
+                                }
+                            });
+                        } else {
+                            Alert alert = createAlert(Alert.AlertType.ERROR, "Issue Sending Email", null, "We encountered an Issue while trying to send out the Request. Please try again later.");
+                            alert.showAndWait().ifPresent(response -> {
+                                if (response == ButtonType.OK) {
+                                    alert.hide();
+                                }
+                            });
+                        }
+                    });
+                });
+    }
+
+    private boolean buildAndSendEmails() {
+        EmailService emailService = new EmailService();
+        Contact currentProfile = contactRepository.getProfile();
+
+        for (Contact contact : uniqueContacts) {
+            String body = buildEmail(contact, currentProfile);
+            try {
+                boolean success = emailService.sendEmail(contact.getEmail(), "Receipt Splitter - You have a new Request", body);
+                if (!success) {
+                    return false;
                 }
-            });
-        } else {
-            Alert alert = createAlert(Alert.AlertType.ERROR, "Issue Sending Email", null, "We encountered an Issue while trying to send out the Request. Please try again later.");
-            alert.showAndWait().ifPresent(response -> {
-                if (response == ButtonType.OK) {
-                    alert.hide();
-                }
-            });
+            } catch (Exception e) {
+                logger.severe("Failed to send email: " + e.getMessage());
+                logger.fine(Arrays.toString(e.getStackTrace()));
+                return false;
+            }
         }
-    }
-
-    private String buildEmail() {
-        return "This is a test Body";
-    }
-
-    private boolean sendEmails(String body) {
         return true;
-   /*     EmailService emailService = new EmailService();
-        try {
-            return emailService.sendEmail(contactRepository.getProfile().getEmail(), "Receipt Splitter - You have a new Request", body);
-        } catch (Exception e) {
-            return false;
-        }*/
     }
 
+    private String buildEmail(Contact Recipient, Contact Requester) {
+        StringBuilder emailBody = new StringBuilder();
+
+        emailBody.append("<html><body>");
+        emailBody.append("<h1>Dear ").append(Recipient.getFirstName()).append(" - You have a new Request</h1>");
+        emailBody.append("<p>").append(Requester.getDisplayName()).append(" has sent you a Request, please see the detailed List below</p>");
+
+        emailBody.append("<ul>");
+        for (ContactReceiptItem item : receiptProcessor.getContactReceiptItems().stream()
+                .filter(i -> i.getContact().equals(Recipient))
+                .toList()) {
+            emailBody.append("<li>")
+                    .append(item.getName())
+                    .append(" - CHF")
+                    .append(String.format("%.2f", item.getPrice()))
+                    .append("</li>");
+        }
+        emailBody.append("</ul>");
+
+        emailBody.append("<p>Total: CHF")
+                .append(String.format("%.2f", receiptProcessor.calculateDebtByPerson(Recipient)))
+                .append("</p>");
+        emailBody.append("</body></html>");
+
+        return emailBody.toString();
+    }
 }

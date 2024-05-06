@@ -53,17 +53,7 @@ public class Main extends Application {
         if (!checkSystemConfigurations()) {
             throw new IllegalStateException("Can not start Application, System Configurations are not correct.");
         } else {
-            //testEmailService();
             launch(args);
-        }
-    }
-
-    private static void testEmailService() {
-        EmailService emailService = new EmailService();
-        try {
-            emailService.sendEmail("SimmondsRyan2002@gmail.com", "Test", "This is a test email");
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

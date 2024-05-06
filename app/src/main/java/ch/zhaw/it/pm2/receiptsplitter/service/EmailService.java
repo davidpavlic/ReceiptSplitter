@@ -6,9 +6,13 @@ import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class EmailService {
     private static final String EMAIL_SENDER = "noreplyreceiptsplitter@gmail.com";
-    private static final String SMTP_SERVER = "smtp.freesmtpservers.com";
+    private static final String SMTP_SERVER = "smtp.sendgrid.net";
     private static final int SMTP_PORT = 25;
     private static final String USERNAME = System.getProperty(EnvConstants.SMTP_USERNAME.getKey());
     private static final String PASSWORD = System.getProperty(EnvConstants.SMTP_API_KEY.getKey());
@@ -17,7 +21,8 @@ public class EmailService {
 
     private Mailer getSmtpServer() {
         return MailerBuilder
-                .withSMTPServer(SMTP_SERVER, SMTP_PORT)
+                .withSMTPServer(SMTP_SERVER, SMTP_PORT, USERNAME, PASSWORD)
+                .withSessionTimeout(20 * 1000)
                 .buildMailer();
     }
 
@@ -31,8 +36,9 @@ public class EmailService {
                     .from(EMAIL_SENDER)
                     .to(recipient)
                     .withSubject(subject)
-                    .withPlainText(body)
+                    .withHTMLText(body)
                     .buildEmail();
+
             mailer.sendMail(email);
         } catch (Exception exception) {
             throw new Exception("Failed to send email", exception);
