@@ -2,6 +2,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -11,13 +12,11 @@ import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.Background;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.util.converter.FloatStringConverter;
@@ -27,8 +26,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem.roundPrice;
+
 public class ListItemsController extends DefaultController implements CanNavigate, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
+
+    private static final String ADD_FAIL_ERROR_MESSAGE = "Could not add Receipt Item";
+    private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item";
+    private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
 
     @FXML private HBox errorMessageBox;
     @FXML private Label errorMessageLabel;
@@ -40,73 +45,98 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML private TableColumn<ReceiptItem, String> totalPriceColumn;
     @FXML private TableColumn<ReceiptItem, Void> actionColumn;
 
-    List<ReceiptItem> originalDataReceiptItems;
-    ObservableList<ReceiptItem> testDataReceiptItems;
+    private List<ReceiptItem> initialDataReceiptItems;
+    private List<ReceiptItem> dataReceiptItems;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.LIST_ITEMS_WINDOW_MSG;
+        receiptProcessor.addObserver(this);
         configureTable();
 
         errorProperty.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) showErrorMessage(newValue);
         });
+    }
 
-        originalDataReceiptItems = receiptProcessor.getReceiptItems();
-
-        List<ReceiptItem> receiptItems = new ArrayList<>();
-        receiptItems.add(new ReceiptItem(1.0F, "Test Item 1", 1));
-        receiptItems.add(new ReceiptItem(2.0F, "Test Item 2", 2));
-        receiptItems.add(new ReceiptItem(3.0F, "Test Item 3", 3));
-        receiptItems.add(new ReceiptItem(4.0F, "Test Item 4", 4));
-        receiptItems.add(new ReceiptItem(5.0F, "Test Item 5", 5));
-
-        testDataReceiptItems = FXCollections.observableArrayList(receiptItems);
+    /**
+     * @inheritDoc
+     */
+    @Override
+    public void onBeforeStage() {
+        initialDataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
+        dataReceiptItems = new ArrayList<>(receiptProcessor.getFullCopyReceiptItems());
     }
 
     @Override
     public void update() {
-        tableReceiptItems.setItems(FXCollections.observableArrayList(testDataReceiptItems));
-        tableReceiptItems.refresh();
+        dataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
+        updateTable();
     }
 
     @FXML
     public void addReceiptItem() {
-        // TODO: Use ReceiptProcessor to add a new receipt item
-        // TODO: Modify with logic from Observable ReceiptProcessor
-        List<ReceiptItem> copyReceiptItems = new ArrayList<>(testDataReceiptItems);
-        copyReceiptItems.add(RECEIPT_ITEM_PLACEHOLDER_DATA);
 
-        testDataReceiptItems = FXCollections.observableArrayList(copyReceiptItems);
-        tableReceiptItems.setItems(testDataReceiptItems);
-        tableReceiptItems.refresh();
+        boolean placeholderExists = dataReceiptItems.stream().anyMatch(item -> RECEIPT_ITEM_PLACEHOLDER_DATA.getName().equals(item.getName()));
+
+        if (placeholderExists) {
+            showErrorMessage("You can only add one placeholder item at a time");
+            return;
+        }
+
+        try {
+            ReceiptItem receiptItem = new ReceiptItem(
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getPrice(),
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getName(),
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getAmount());
+
+            receiptProcessor.addReceiptItem(receiptItem);
+        } catch (IllegalArgumentException e) {
+            logError(ADD_FAIL_ERROR_MESSAGE, e);
+            showErrorMessage(ADD_FAIL_ERROR_MESSAGE);
+        }
     }
 
+    /**
+     * @inheritDoc Switches to the choose people window.
+     */
     @FXML
     @Override
     public void confirm() {
         switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
+    /**
+     * @inheritDoc Switches back to the main window.
+     */
     @FXML
     @Override
     public void back() {
         switchScene(Pages.MAIN_WINDOW);
     }
 
+    /**
+     * Resets the receipt items to the initial state.
+     */
     @FXML
     public void reset() {
-        testDataReceiptItems = (ObservableList<ReceiptItem>) originalDataReceiptItems;
-        update();
+        receiptProcessor.setReceiptItems(Receipt.fullCopyReceiptItems(initialDataReceiptItems));
     }
 
+    /**
+     * Closes the error message box.
+     */
     @FXML
     public void closeErrorMessage() {
         errorMessageBox.setVisible(false);
         errorMessageBox.setManaged(false);
         errorProperty.set(null);
     }
+
 
     private void showErrorMessage(String message) {
         errorMessageLabel.setText(message);
@@ -127,10 +157,25 @@ public class ListItemsController extends DefaultController implements CanNavigat
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
         nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         nameColumn.setOnEditCommit(event -> {
-            if (event.getOldValue().equals(event.getNewValue())) return;
+            String newName = event.getNewValue();
+            if (event.getOldValue().equals(newName)) return;
+
+            boolean nameAlreadyExists = dataReceiptItems.stream().anyMatch(item -> item.getName().equals(newName));
+            if (nameAlreadyExists) {
+                showErrorMessage("This name already exists");
+                tableReceiptItems.refresh();
+                return;
+            }
 
             ReceiptItem item = event.getRowValue();
-            item.setName(event.getNewValue());
+            String oldName = event.getOldValue();
+            item.setName(newName);
+
+            boolean updateSuccess = updateReceiptItem(oldName, item);
+            if (!updateSuccess) {
+                item.setName(oldName);
+                tableReceiptItems.refresh();
+            }
         });
     }
 
@@ -155,14 +200,14 @@ public class ListItemsController extends DefaultController implements CanNavigat
             }
 
             item.setAmount(amount);
-            tableReceiptItems.refresh();
+            updateReceiptItem(item.getName(), item);
         });
     }
 
     private void configureUnitPriceColumn() {
         unitPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            return new SimpleStringProperty((item.getPrice() / item.getAmount()) + " CHF");
+            return new SimpleStringProperty(roundPrice(item.getPrice() / item.getAmount()) + " CHF");
         });
 
         unitPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -175,14 +220,14 @@ public class ListItemsController extends DefaultController implements CanNavigat
             if (unitPrice.isEmpty()) return;
 
             item.setPrice(unitPrice.get() * item.getAmount());
-            tableReceiptItems.refresh();
+            updateReceiptItem(item.getName(), item);
         });
     }
 
     private void configureTotalPriceColumn() {
         totalPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            return new SimpleStringProperty(item.getPrice() + " CHF");
+            return new SimpleStringProperty(roundPrice(item.getPrice()) + " CHF");
         });
 
         totalPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -196,7 +241,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
             if (totalPrice.isEmpty()) return;
 
             item.setPrice(totalPrice.get());
-            tableReceiptItems.refresh();
+            updateReceiptItem(item.getName(), item);
         });
     }
 
@@ -222,8 +267,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
             }
 
             private void configureButtons() {
-                // set background to light red
-                deleteButton.setStyle("-fx-background-color: #ff8080; -fx-border-color: #ff0000; -fx-border-radius: 5px;");
+                deleteButton.getStyleClass().add("delete-button");
                 deleteButton.textFillProperty().setValue(Color.WHITE);
                 ReceiptItem receiptItem = getTableView().getItems().get(getIndex());
                 deleteButton.setOnAction(e -> handleDeleteAction(receiptItem));
@@ -232,15 +276,17 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     private void handleDeleteAction(ReceiptItem receiptItem) {
-        // TODO: Modify with logic from Observable ReceiptProcessor
-        List<ReceiptItem> copyReceiptItems = new ArrayList<>(testDataReceiptItems);
-        if (!copyReceiptItems.remove(receiptItem)) {
-            errorProperty.setValue("Could not remove contact");
-        }
+        try {
+            boolean removeSuccess = receiptProcessor.deleteReceiptItemByName(receiptItem.getName());
 
-        testDataReceiptItems = FXCollections.observableArrayList(copyReceiptItems);
-        tableReceiptItems.setItems(testDataReceiptItems);
-        tableReceiptItems.refresh();
+            if (!removeSuccess) {
+                logger.warning(DELETE_FAIL_ERROR_MESSAGE + receiptItem.getName());
+                errorProperty.setValue(DELETE_FAIL_ERROR_MESSAGE);
+            }
+        } catch (IllegalArgumentException e) {
+            logError(DELETE_FAIL_ERROR_MESSAGE, e);
+            showErrorMessage(DELETE_FAIL_ERROR_MESSAGE);
+        }
     }
 
     private Optional<Float> extractPrice(String priceInput, ReceiptItem item) {
@@ -254,11 +300,29 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
         if (price < 0) {
             showErrorMessage("You can only enter positive numbers in this cell");
-            tableReceiptItems.refresh();
+
             return Optional.empty();
         }
 
         return Optional.of(price);
+    }
+
+    private boolean updateReceiptItem(String oldName, ReceiptItem item) {
+        try {
+            receiptProcessor.updateReceiptItemByName(oldName, item);
+            return true;
+        } catch (IllegalArgumentException e) {
+            logError(UPDATE_FAIL_ERROR_MESSAGE, e);
+            showErrorMessage(UPDATE_FAIL_ERROR_MESSAGE);
+            return false;
+        }
+    }
+
+    private void updateTable() {
+        var sortOrder = new ArrayList<>(tableReceiptItems.getSortOrder());
+        tableReceiptItems.setItems(FXCollections.observableArrayList(dataReceiptItems));
+        tableReceiptItems.refresh();
+        tableReceiptItems.getSortOrder().setAll(sortOrder);
     }
 
     private class TableViewIntegerStringConverter extends IntegerStringConverter {
@@ -311,5 +375,4 @@ public class ListItemsController extends DefaultController implements CanNavigat
             return Float.MIN_VALUE;
         }
     }
-
 }
