@@ -121,7 +121,7 @@ public class ReceiptTest {
     void setReceiptList_InvalidAttributes_ThrowsException(List<ReceiptItem> receiptItemList){
         //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> receipt.setReceiptItemList(receiptItemList));
+                () -> receipt.setReceiptItems(receiptItemList));
         assertEquals(ReceiptErrorMessageType.LIST_NULL.toString(), exception.getMessage());
     }
 

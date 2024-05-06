@@ -2,77 +2,89 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 //TODO: JavaDoc
 public class Receipt {
 
-    private List<ReceiptItem> receiptItemList;
+    private List<ReceiptItem> receiptItems;
 
     public Receipt(List<ReceiptItem> receiptItem) {
-        setReceiptItemList(receiptItem);
+        setReceiptItems(receiptItem);
     }
 
     public List<ReceiptItem> getReceiptItems() {
-        return receiptItemList;
+        return receiptItems;
     }
 
-    public void setReceiptItemList(List<ReceiptItem> receiptItemList) throws IllegalArgumentException{
+    public void setReceiptItems(List<ReceiptItem> receiptItems) throws IllegalArgumentException{
 
-        ModelParamValidator.throwIfElementIsNull(receiptItemList, ReceiptErrorMessageType.LIST_NULL.toString());
-        this.receiptItemList = receiptItemList;
+        ModelParamValidator.throwIfElementIsNull(receiptItems, ReceiptErrorMessageType.LIST_NULL.toString());
+        this.receiptItems = receiptItems;
     }
 
     public ReceiptItem getReceiptItem(int index) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
-        return receiptItemList.get(index);
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        return receiptItems.get(index);
     }
 
     public float getReceiptTotal(){
-        return (float) receiptItemList.stream().mapToDouble(ReceiptItem::getPrice).sum();
+        return (float) receiptItems.stream().mapToDouble(ReceiptItem::getPrice).sum();
     }
 
     public void addReceiptItem(ReceiptItem receiptItem) throws IllegalArgumentException{
         ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
-        receiptItemList.add(receiptItem);
+        receiptItems.add(receiptItem);
     }
 
     public void updateReceiptItem(int index, ReceiptItem receiptItem) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
-        receiptItemList.set(index, receiptItem);
+        receiptItems.set(index, receiptItem);
     }
 
     public void deleteReceiptItem(int index) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
-        receiptItemList.remove(index);
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        receiptItems.remove(index);
     }
 
     public void sortByPriceLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getPrice));
+        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getPrice));
     }
 
     public void sortByPriceHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getPrice).reversed());
+        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getPrice).reversed());
     }
 
     public void sortByNameLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparing(ReceiptItem::getName));
+        sortReceiptItemsBy(Comparator.comparing(ReceiptItem::getName));
     }
 
     public void sortByNameHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparing(ReceiptItem::getName).reversed());
+        sortReceiptItemsBy(Comparator.comparing(ReceiptItem::getName).reversed());
     }
 
     public void sortByAmountLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getAmount));
+        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getAmount));
     }
 
     public void sortByAmountHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getAmount).reversed());
+        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getAmount).reversed());
     }
 
-    private void sortReceiptItemListBy(Comparator<ReceiptItem> comparator) {
-        receiptItemList.sort(comparator);
+    /**
+     * Full copy of receipt items with the elements copied.
+     * @param receiptItems List of receipt items to be copied.
+     * @return List of copied receipt items.
+     */
+    public static List<ReceiptItem> fullCopyReceiptItems(List<ReceiptItem> receiptItems) {
+        return receiptItems.stream().
+                map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
+                .collect(Collectors.toList());
+    }
+
+    private void sortReceiptItemsBy(Comparator<ReceiptItem> comparator) {
+        receiptItems.sort(comparator);
     }
 
     protected enum ReceiptErrorMessageType {
