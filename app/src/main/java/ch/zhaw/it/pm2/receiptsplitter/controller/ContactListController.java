@@ -29,34 +29,56 @@ public class ContactListController extends DefaultController implements CanNavig
     @FXML private TableColumn<Contact, String> emailColumn;
     @FXML private TableColumn<Contact, String> nameColumn;
     @FXML private TableView<Contact> tableContactList;
+
     private Pages lastPage;
 
+    /**
+     * Initializes the Controller with the necessary dependencies and initial data.
+     * Configures the contact list table too.
+     *
+     * @param router The router to be used for navigation.
+     * @param contactRepository The repository to be used for contact management.
+     * @param receiptProcessor The processor to be used for receipt processing.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
         contactRepository.addObserver(this);
-        this.lastPage = Pages.MAIN_WINDOW;
+        this.lastPage = Pages.MAIN_WINDOW; // Default last page
         configureTable();
     }
 
+    /**
+     * @inheritDoc Updates the contact list table.
+     */
     @Override
     public void update() {
         tableContactList.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
         tableContactList.refresh();
     }
 
+    /**
+     * @inheritDoc Switches to the create profile window.
+     */
     @FXML
     public void openCreateProfile() {
         router.gotoScene(Pages.CREATE_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
     }
 
+    /**
+     * @inheritDoc Switches to the main window.
+     */
     @FXML
     @Override
     public void confirm() {
         switchScene(Pages.MAIN_WINDOW);
     }
 
+    /**
+     * @inheritDoc Switches to the last page.
+     *
+     */
     @FXML
     @Override
     public void back() {
@@ -64,7 +86,17 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void reset() {}
+    public void reset() {} // TODO: Implement? Or remove?
+
+    /**
+     * @inheritDoc Sets the last page.
+     *
+     * @param page The last page.
+     */
+    @Override
+    public void setLastPage(Pages page) {
+        this.lastPage = page;
+    }
 
     private void configureTable() {
         configureColumns();
@@ -128,10 +160,5 @@ public class ContactListController extends DefaultController implements CanNavig
             logger.fine(Arrays.toString(e.getStackTrace()));
         }
         // TODO: Show error message to user
-    }
-
-    @Override
-    public void setLastPage(Pages page) {
-        this.lastPage = page;
     }
 }
