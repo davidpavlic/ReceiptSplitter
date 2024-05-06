@@ -4,6 +4,8 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -17,9 +19,11 @@ import java.util.stream.Collectors;
  * The ReceiptItems added to the Receipt should be unique by name.
  *
  */
-public class ReceiptProcessor {
+public class ReceiptProcessor implements IsObservable {
     private Receipt receipt;
     private List<ContactReceiptItem> contactReceiptItems;
+
+    private final List<IsObserver> observers = new ArrayList<>();
 
     /**
      * Constructs a new ReceiptProcessor instance with an empty list of contact-receipt-item associations.
@@ -29,64 +33,40 @@ public class ReceiptProcessor {
     }
 
     /**
-     * Adds or replaces the current receipt. If a receipt is already present, it will be replaced.
-     *
-     * @param receipt the new receipt to be managed
-     * @throws IllegalArgumentException if the provided receipt is null
+     * @inheritDoc
      */
-    public void setReceipt(Receipt receipt) {
-        if (receipt == null) {
-            throw new IllegalArgumentException("Receipt cannot be null");
-        }
-        this.receipt = receipt;
+    @Override
+    public void addObserver(IsObserver observer) {
+        observers.add(observer);
     }
-
 
     /**
-     * Splits bulk items in the receipt into individual items to handle scenarios where items bought together
-     * need to be billed separately.
-     *
-     * @return a list of individually split ReceiptItems
+     * @inheritDoc
      */
-    public List<ReceiptItem> splitReceiptItems() {
-        List<ReceiptItem> splitReceiptItems = new ArrayList<>();
-        List<ReceiptItem> receiptItems = getReceiptItems();
-
-        for (ReceiptItem receiptItem : receiptItems) {
-            List<ReceiptItem> splitReceiptItem = splitIntoIndividualReceiptItems(receiptItem);
-            splitReceiptItems.addAll(splitReceiptItem);
-        }
-        return splitReceiptItems;
+    @Override
+    public void removeObserver(IsObserver observer) {
+        observers.remove(observer);
     }
-
 
     /**
-     * Splits a single ReceiptItem into multiple items based on its quantity, setting each item's quantity to 1.
-     *
-     * @param receiptItem the ReceiptItem to be split
-     * @return a list of individual ReceiptItems
+     * @inheritDoc
      */
-    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) {
-        List<ReceiptItem> splitReceiptItem = new ArrayList<>();
-        int amount = receiptItem.getAmount();
-
-        for (int counter = 0; counter < amount; counter++) {
-            splitReceiptItem.add(new ReceiptItem(receiptItem.getPrice() / amount, receiptItem.getName(), 1));
+    @Override
+    public void notifyObservers() {
+        // TODO: Separate the notify for receipt and contactReceiptItems changes
+        for (IsObserver observer : observers) {
+            observer.update();
         }
-
-        return splitReceiptItem;
     }
-
 
     /**
      * Adds a new ReceiptItem to the list of receipt items.
      * Validates the ReceiptItem to have a unique name and not be null.
      *
      * @param receiptItem the new ReceiptItem to be added
-     * @return true if the item was added, false otherwise
      * @throws IllegalArgumentException if the receiptItem is null or already exists
      */
-    public boolean addReceiptItem(ReceiptItem receiptItem) {
+    public void addReceiptItem(ReceiptItem receiptItem) {
         if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
@@ -95,7 +75,8 @@ public class ReceiptProcessor {
             throw new IllegalArgumentException("Receipt item already exists.");
         }
 
-        return receiptItems.add(receiptItem);
+        receiptItems.add(receiptItem);
+        notifyObservers();
     }
 
 
@@ -120,6 +101,8 @@ public class ReceiptProcessor {
         receiptItem.setAmount(newReceiptItem.getAmount());
         receiptItem.setName(newReceiptItem.getName());
         receiptItem.setPrice(newReceiptItem.getPrice());
+
+        notifyObservers();
     }
 
 
@@ -143,7 +126,11 @@ public class ReceiptProcessor {
 
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         ReceiptItem itemToRemove = receiptItemOptional.get();
-        return receiptItems.remove(itemToRemove);
+        boolean removeSuccess = receiptItems.remove(itemToRemove);
+
+        if (removeSuccess) notifyObservers();
+
+        return removeSuccess;
     }
 
     /**
@@ -151,10 +138,9 @@ public class ReceiptProcessor {
      *
      * @param contact     the contact to be associated
      * @param receiptItem the ReceiptItem to associate
-     * @return true if the association was successful, false otherwise
      * @throws IllegalArgumentException if the receiptItem is null or doesn't exist
      */
-    public boolean createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
+    public void createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
         if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
         boolean receiptItemExists = receipt.getReceiptItems().stream().anyMatch(item -> item.getName().equals(receiptItem.getName()));
@@ -162,7 +148,25 @@ public class ReceiptProcessor {
             throw new IllegalArgumentException("Receipt item does not exist.");
         }
 
-        return contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(), contact));
+        contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(), contact));
+        notifyObservers();
+    }
+
+    /**
+     * Splits bulk items in the receipt into individual items to handle scenarios where items bought together
+     * need to be billed separately.
+     *
+     * @return a list of individually split ReceiptItems
+     */
+    public List<ReceiptItem> splitReceiptItems() {
+        List<ReceiptItem> splitReceiptItems = new ArrayList<>();
+        List<ReceiptItem> receiptItems = getReceiptItems();
+
+        for (ReceiptItem receiptItem : receiptItems) {
+            List<ReceiptItem> splitReceiptItem = splitIntoIndividualReceiptItems(receiptItem);
+            splitReceiptItems.addAll(splitReceiptItem);
+        }
+        return splitReceiptItems;
     }
 
     /**
@@ -214,6 +218,19 @@ public class ReceiptProcessor {
     }
 
     /**
+     * Adds or replaces the current receipt. If a receipt is already present, it will be replaced.
+     *
+     * @param receipt the new receipt to be managed
+     * @throws IllegalArgumentException if the provided receipt is null
+     */
+    public void setReceipt(Receipt receipt) {
+        if (receipt == null) {
+            throw new IllegalArgumentException("Receipt cannot be null");
+        }
+        this.receipt = receipt;
+    }
+
+    /**
      * Returns the current list of all associated contact-receipt items.
      *
      * @return a list of ContactReceiptItems
@@ -222,7 +239,6 @@ public class ReceiptProcessor {
         return contactReceiptItems;
     }
 
-
     /**
      * Updates the internal list of contact-receipt items with a new list.
      *
@@ -230,6 +246,23 @@ public class ReceiptProcessor {
      */
     public void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems) {
         this.contactReceiptItems = contactReceiptItems;
+    }
+
+    /**
+     * Splits a single ReceiptItem into multiple items based on its quantity, setting each item's quantity to 1.
+     *
+     * @param receiptItem the ReceiptItem to be split
+     * @return a list of individual ReceiptItems
+     */
+    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) {
+        List<ReceiptItem> splitReceiptItem = new ArrayList<>();
+        int amount = receiptItem.getAmount();
+
+        for (int counter = 0; counter < amount; counter++) {
+            splitReceiptItem.add(new ReceiptItem(receiptItem.getPrice() / amount, receiptItem.getName(), 1));
+        }
+
+        return splitReceiptItem;
     }
 }
 

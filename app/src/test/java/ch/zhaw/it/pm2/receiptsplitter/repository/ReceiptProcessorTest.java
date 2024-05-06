@@ -76,10 +76,9 @@ class ReceiptProcessorTest {
         ReceiptItem newItem = new ReceiptItem(5.0f, "Kaffee", 1);
 
         // Act
-        boolean isSuccessful = receiptProcessor.addReceiptItem(newItem);
+        receiptProcessor.addReceiptItem(newItem);
 
         // Assert
-        assertTrue(isSuccessful, "The addition of the item should be successful.");
         assertTrue(items.contains(newItem), "The new item should be added to the list.");
         assertEquals(sizeBefore + 1, items.size(), "The size of the list should be incremented by 1.");
     }
@@ -133,12 +132,11 @@ class ReceiptProcessorTest {
         Contact validContact = getValidContact();
 
         // Act
-        boolean isSuccessful = receiptProcessor.createContactReceiptItem(validContact, item);
+        receiptProcessor.createContactReceiptItem(validContact, item);
 
         // Assert
         ContactReceiptItem createdItem = receiptProcessor.getContactReceiptItems().getFirst();
 
-        assertTrue(isSuccessful, "The creation of the contact receipt item should be successful.");
         assertEquals(sizeBefore + 1, receiptProcessor.getContactReceiptItems().size(), "The size of the list should be incremented by 1.");
         assertEquals(item.getName(), createdItem.getName(), "The name of the item should match the name of the created item.");
         assertEquals(item.getPrice(), createdItem.getPrice(), "The price of the item should match the price of the created item.");
