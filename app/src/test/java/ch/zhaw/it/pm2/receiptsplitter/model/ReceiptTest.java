@@ -62,7 +62,7 @@ public class ReceiptTest {
 
         //Assert
         assertEquals(receiptSizeBefore + 1, receipt.getReceiptItems().size());
-        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(3));
+        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(receiptSizeBefore));
     }
 
     @Test

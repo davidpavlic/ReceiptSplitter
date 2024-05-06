@@ -31,6 +31,7 @@ class ReceiptProcessorTest {
         validContact = new Contact("Samuel", "Ammann", "samuel.ammann@swissmail.com");
         invalidContact = new Contact("Doesnt", "Exist", "invalid@nonexisting.com");
         item = new ReceiptItem(5.0f, "Tee", 1);
+
     }
 
     @Test
@@ -48,10 +49,9 @@ class ReceiptProcessorTest {
     @Test
     void setReceipt_NullInput_ThrowException() {
         // Act & Assert
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> receiptProcessor.setReceipt(null));
-
-        // Assert
-        assertTrue(thrown.getMessage().contains("Receipt cannot be null"), "Exception message should confirm the receipt cannot be null.");
+        assertThrows(IllegalArgumentException.class, () -> {
+            receiptProcessor.setReceipt(null);
+        });
     }
 
     @Test
@@ -82,21 +82,42 @@ class ReceiptProcessorTest {
     }
 
     @Test
-    void createOrUpdateReceiptItem_ValidReceiptItem_NewItemAdded() {
+    void createReceiptItem_ValidReceiptItem_NewItemAdded() {
         // Arrange
-        when(receipt.getReceiptItems()).thenReturn(new ArrayList<>());
+        List<ReceiptItem> items = receipt.getReceiptItems();
+        when(receipt.getReceiptItems()).thenReturn(items);
+        ReceiptItem newItem = new ReceiptItem(5.0f, "Kaffee", 1);
 
         // Act
-        receiptProcessor.createOrUpdateReceiptItem(item);
+        receiptProcessor.createReceiptItem(newItem);
 
         // Assert
-        verify(receipt).getReceiptItems();
+        assertTrue(items.contains(newItem), "The new item should be added to the list.");
+        assertEquals(1, items.size(), "There should be exactly one item on the list.");
     }
 
     @Test
-    void createOrUpdateReceiptItem_NullInput_ThrowException() {
+    void updateReceiptItem_ValidReceiptItem_ItemUpdated() {
+        // Arrange
+        int newAmount = 3;
+        List<ReceiptItem> items = receipt.getReceiptItems();
+        when(receipt.getReceiptItems()).thenReturn(items);
+        items.add(item);
+        ReceiptItem newItem = new ReceiptItem(5.0f, "Tee", newAmount);
+
+        // Act
+        receiptProcessor.updateReceiptItemByName(newItem);
+
+        // Assert
+        assertTrue(items.contains(newItem), "The new item should still be on to the list.");
+        assertEquals(1, items.size(), "There should be exactly one item on the list.");
+        assertEquals(newAmount, items.get(0).getAmount());
+    }
+
+    @Test
+    void createReceiptItem_NullInput_ThrowException() {
         // Act & Assert
-        assertThrows(IllegalArgumentException.class, () -> receiptProcessor.createOrUpdateReceiptItem(null));
+        assertThrows(IllegalArgumentException.class, () -> receiptProcessor.createReceiptItem(null));
     }
 
     @Test

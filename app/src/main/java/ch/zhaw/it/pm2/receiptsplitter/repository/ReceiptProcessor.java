@@ -2,9 +2,7 @@ package ch.zhaw.it.pm2.receiptsplitter.repository;
 import ch.zhaw.it.pm2.receiptsplitter.model.*;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -74,23 +72,51 @@ public class ReceiptProcessor {
 
 
     /**
-     * Replaces or adds a ReceiptItem to the list of receipt items.
-     * If the item exists, it is updated; otherwise, it is added.
+     * Adds a new ReceiptItem to the list of receipt items.
+     * Validates the ReceiptItem to have a unique name and not be null.
+     * Throws an exception if the item already exists or is null.
      *
-     * @param receiptItem the ReceiptItem to be updated or added
-     * @throws IllegalArgumentException if the receiptItem is null
+     * @param receiptItem the new ReceiptItem to be added
+     * @throws IllegalArgumentException if the receiptItem is null or already exists
      */
-    public void createOrUpdateReceiptItem(ReceiptItem receiptItem) {
+    public void createReceiptItem(ReceiptItem receiptItem) {
         if (receiptItem == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
-        int index = receiptItems.indexOf(receiptItem);
-        if (index != -1) {
-            receiptItems.set(index, receiptItem);
-        } else {
-            receiptItems.add(receiptItem);
+        boolean receiptItemExists = receiptItems.stream().anyMatch(item -> item.getName().equals(receiptItem.getName()));
+        if (receiptItemExists) {
+            throw new IllegalArgumentException("Receipt item already exists.");
         }
+
+        receiptItems.add(receiptItem);
+    }
+
+
+    /**
+     * Updates an existing ReceiptItem in the list of receipt items.
+     * Throws an exception if the item does not exist or is null.
+     *
+     * @param newRreceiptItem the ReceiptItem to be updated
+     * @throws IllegalArgumentException if the receiptItem is null or does not exist
+     */
+    public void updateReceiptItemByName(String oldName, ReceiptItem newRreceiptItem) {
+        Objects.requireNonNull(oldName);
+
+        if (newRreceiptItem == null) {
+            throw new IllegalArgumentException("Receipt item cannot be null.");
+        }
+        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
+        Optional<ReceiptItem> receiptItemOptional = receiptItems.stream().filter(item -> item.getName().equals(oldName)).findFirst();
+
+        if (receiptItemOptional.isEmpty()) {
+            throw new IllegalArgumentException("Receipt item does not exist.");
+        }
+
+        ReceiptItem receiptItem = receiptItemOptional.get();
+        receiptItem.setAmount(newRreceiptItem.getAmount());
+        receiptItem.setName(newRreceiptItem.getName());
+        receiptItem.setPrice(newRreceiptItem.getPrice());
     }
 
 
@@ -156,18 +182,21 @@ public class ReceiptProcessor {
             }
             total += contactReceiptItem.getPrice();
         }
+
         return total;
     }
 
 
 
     /**
-     * Retrieves the list of receipt items in an unmodifiable format to prevent external modifications.
+     * Retrieves the list of receipt items as a copy with every item being copied too, to prevent direct modification.
      *
-     * @return an unmodifiable list of receipt items
+     * @return a copied list of receipt items wih its items copied
      */
     public List<ReceiptItem> getReceiptItems() {
-        return Collections.unmodifiableList(receipt.getReceiptItems());
+        return receipt.getReceiptItems().stream().
+                map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
+                .collect(Collectors.toList());
     }
 
     /**
