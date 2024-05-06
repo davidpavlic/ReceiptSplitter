@@ -15,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -41,14 +40,8 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
         contactRepository.addObserver(this);
 
-        contactRows.addListener((ListChangeListener<HBox>) c -> {
-            boolean allComboBoxesHaveValue = contactRows.stream()
-                    .map(this::getComboBoxFromRow)
-                    .allMatch(comboBox -> comboBox.getValue() != null);
-            confirmButton.setDisable(!(allComboBoxesHaveValue && contactRows.size() >= 2) || isContactSelectedMoreThanOnce());
-        });
-
         confirmButton.setOnAction(e -> confirm());
+        configureConfirmButton();
         createAndAddNewRow();
     }
 
@@ -100,13 +93,13 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     }
 
     private void updateFirstContactRow() {
-        HBox row = contactRows.getFirst();
-        ComboBox<Contact> comboBox = getComboBoxFromRow(row);
+        HBox firstRow = contactRows.getFirst();
+        ComboBox<Contact> comboBox = getComboBoxFromRow(firstRow);
         comboBox.setItems(FXCollections.observableArrayList(activeProfile));
         comboBox.setValue(activeProfile);
         comboBox.setDisable(true);
 
-        Button deleteButton = getButtonFromRow(row);
+        Button deleteButton = getButtonFromRow(firstRow);
         deleteButton.setDisable(true);
     }
 
@@ -114,13 +107,12 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         HBox hbox = new HBox(10);
         ComboBox<Contact> comboBox = new ComboBox<>();
         ContactDropdownConfigurer.configureComboBox(comboBox);
+        comboBox.setPromptText("Select a contact");
+        comboBox.setItems(FXCollections.observableArrayList(availableContacts));
 
         Label emailLabel = new Label();
         Button deleteButton = new Button("-");
         deleteButton.setPrefWidth(30);
-
-        comboBox.setPromptText("Select a contact");
-        comboBox.setItems(FXCollections.observableArrayList(availableContacts));
 
         //Add Listener to ComboBox for Disabling Confirm Button
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -147,6 +139,20 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         return hbox;
     }
 
+    private void clearContactRows() {
+        contactRows.clear();
+        contactListContainer.getChildren().removeIf(node -> node instanceof HBox);
+    }
+
+    private void configureConfirmButton() {
+        contactRows.addListener((ListChangeListener<HBox>) c -> {
+            boolean allComboBoxesHaveValue = contactRows.stream()
+                    .map(this::getComboBoxFromRow)
+                    .allMatch(comboBox -> comboBox.getValue() != null);
+            confirmButton.setDisable(!(allComboBoxesHaveValue && contactRows.size() >= 2) || isContactSelectedMoreThanOnce());
+        });
+    }
+
     private boolean isContactSelectedMoreThanOnce() {
         List<Contact> selectedContacts = new ArrayList<>();
         for (HBox row : contactRows) {
@@ -163,16 +169,11 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         return false;
     }
 
-    private void clearContactRows() {
-        contactRows.clear();
-        contactListContainer.getChildren().removeIf(node -> node instanceof HBox);
-    }
-
     private ComboBox<Contact> getComboBoxFromRow(HBox row) {
         return (ComboBox<Contact>) row.getChildren().get(1);
     }
 
     private Button getButtonFromRow(HBox row) {
-        return (Button) row.getChildren().get(0);
+        return (Button) row.getChildren().getFirst();
     }
 }
