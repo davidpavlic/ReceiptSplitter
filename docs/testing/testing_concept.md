@@ -20,7 +20,7 @@ Da wir die E-Mail-Validierung mit einem Regex in der Klasse implementiert haben,
 
 Die ImageExtractor-Klasse ist verantwortlich für die Extraktion von Text aus Bildern. Da wir dafür eine externe Library verwenden, haben wir auf das Unit-Testing dieser Klasse verzichtet und sie stattdessen mit manuellem Testing und verschiedenen Quittungen getestet.
 
-Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden in erwarteter Weise reagieren und dass Ausnahmen korrekt gehandhabt werden..
+Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden in erwarteter Weise reagieren und dass Ausnahmen korrekt gehandhabt werden.
 
 
 ## Äquivalenzklassen
