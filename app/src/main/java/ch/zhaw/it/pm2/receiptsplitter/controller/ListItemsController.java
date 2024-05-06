@@ -59,8 +59,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void confirm() {
-        errorProperty.setValue("Not implemented yet.");
-        //        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
     @FXML
