@@ -64,8 +64,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void reset() {
-    }
+    public void reset() {}
 
     private void configureTable() {
         configureColumns();

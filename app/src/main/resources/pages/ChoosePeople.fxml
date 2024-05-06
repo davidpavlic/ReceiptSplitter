@@ -25,12 +25,15 @@
     </top>
     <center>
         <VBox fx:id="contactListContainer" spacing="10" style="-fx-padding: 10;">
-         <Label alignment="CENTER" contentDisplay="CENTER" minHeight="-Infinity" minWidth="-Infinity" text="Please choose the People you want to Include" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-            <font>
-               <Font name="System Bold" size="18.0" />
-            </font>
-         </Label>
-            <Button fx:id="addNameBtn" minWidth="30" onAction="#handleAddNameBtnAction" text="+">
+            <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Please choose the people you want to Split the Receipt" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                <font>
+                    <Font name="System Bold Italic" size="18.0"/>
+                </font>
+                <VBox.margin>
+                    <Insets bottom="10.0"/>
+                </VBox.margin>
+            </Label>
+            <Button minWidth="30" onAction="#createAndAddNewRow" text="+">
             <VBox.margin>
                <Insets top="5.0" />
             </VBox.margin></Button>

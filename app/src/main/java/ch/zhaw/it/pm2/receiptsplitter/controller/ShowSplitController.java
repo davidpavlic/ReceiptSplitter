@@ -60,6 +60,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     public void update() {
+        if (receiptProcessor.getDistinctContacts().isEmpty()) {
+            return;
+        }
         currentContact = receiptProcessor.getDistinctContacts().get(0);
         populateTableWithContactItems(currentContact);
     }

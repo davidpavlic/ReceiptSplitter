@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -31,7 +32,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     private Button confirmButton;
     private final ObservableList<HBox> contactRows = FXCollections.observableArrayList();
     private Contact activeProfile;
-    private ObservableList<Contact> availableContacts = FXCollections.observableArrayList();
+    private final List<Contact> availableContacts = new ArrayList<>();
 
 
     @Override
@@ -42,62 +43,90 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
 
         contactRows.addListener((ListChangeListener<HBox>) c -> {
             boolean allComboBoxesHaveValue = contactRows.stream()
-                    .map(hBox -> (ComboBox<Contact>) hBox.getChildren().get(0))
+                    .map(this::getComboBoxFromRow)
                     .allMatch(comboBox -> comboBox.getValue() != null);
-            confirmButton.setDisable(!(allComboBoxesHaveValue && contactRows.size() >= 2));
+            confirmButton.setDisable(!(allComboBoxesHaveValue && contactRows.size() >= 2) || isContactSelectedMoreThanOnce());
         });
 
         confirmButton.setOnAction(e -> confirm());
-        setupInitialContactRow();
+        createAndAddNewRow();
     }
 
-    private void setupInitialContactRow() {
-        HBox row = createContactRow();
-        contactRows.add(row);
-        contactListContainer.getChildren().add(row);
-    }
-
-    private void updateFirstContactRow() {
-        HBox row = contactRows.get(0);
-        ComboBox<Contact> comboBox = (ComboBox<Contact>) row.getChildren().get(0);
-        comboBox.setItems(FXCollections.observableArrayList(activeProfile));
-        comboBox.setValue(activeProfile);
-        comboBox.setDisable(true);
-
-        Label emailLabel = (Label) row.getChildren().get(1);
-        emailLabel.setText(activeProfile.getEmail());
-
-        Button deleteButton = (Button) row.getChildren().get(2);
-        deleteButton.setDisable(true);
+    @Override
+    public void confirm() {
+        for (HBox row : contactRows) {
+            ComboBox<Contact> comboBox = getComboBoxFromRow(row);
+            Contact contact = comboBox.getValue();
+            if (contact != null) {
+                contactRepository.addToSelectedContacts(contact.getEmail());
+            }
+        }
+        switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
     }
 
     @FXML
-    private void handleAddNameBtnAction() {
+    public void openContactList() {
+        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_PEOPLE_WINDOW);
+    }
+
+    @Override
+    public void back() {
+        switchScene(Pages.LIST_ITEMS_WINDOW);
+    }
+
+    @Override
+    public void reset() {
+        clearContactRows();
+        createAndAddNewRow();
+        updateFirstContactRow();
+    }
+
+    @Override
+    public void update() {
+        clearContactRows();
+        activeProfile = contactRepository.getProfile();
+        availableContacts.clear();
+        availableContacts.addAll(contactRepository.getContacts());
+        availableContacts.remove(activeProfile);
+        createAndAddNewRow();
+        updateFirstContactRow();
+    }
+
+    @FXML
+    private void createAndAddNewRow() {
         HBox newRow = createContactRow();
         contactRows.add(newRow);
         contactListContainer.getChildren().add(newRow);
     }
 
+    private void updateFirstContactRow() {
+        HBox row = contactRows.getFirst();
+        ComboBox<Contact> comboBox = getComboBoxFromRow(row);
+        comboBox.setItems(FXCollections.observableArrayList(activeProfile));
+        comboBox.setValue(activeProfile);
+        comboBox.setDisable(true);
+
+        Button deleteButton = getButtonFromRow(row);
+        deleteButton.setDisable(true);
+    }
+
     private HBox createContactRow() {
         HBox hbox = new HBox(10);
-
         ComboBox<Contact> comboBox = new ComboBox<>();
-        comboBox.setPromptText("Select a contact");
         ContactDropdownConfigurer.configureComboBox(comboBox);
 
         Label emailLabel = new Label();
         Button deleteButton = new Button("-");
+        deleteButton.setPrefWidth(30);
 
-        if (availableContacts != null) {
-            comboBox.setItems(availableContacts);
-        }
+        comboBox.setPromptText("Select a contact");
+        comboBox.setItems(FXCollections.observableArrayList(availableContacts));
 
         //Add Listener to ComboBox for Disabling Confirm Button
         comboBox.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue != null) {
                 emailLabel.setText(newValue.getEmail());
                 contactRows.set(contactRows.indexOf(hbox), hbox);
-                availableContacts.remove(newValue);
             }
         });
 
@@ -109,54 +138,41 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         });
 
         deleteButton.setOnAction(e -> {
-            Contact removedContact = comboBox.getValue();
-            if (removedContact != null) {
-                availableContacts.add(removedContact);
-            }
             contactListContainer.getChildren().remove(hbox);
             contactRows.remove(hbox);
         });
 
-        hbox.getChildren().addAll(comboBox, emailLabel, deleteButton);
+        hbox.prefWidthProperty().bind(comboBox.widthProperty());
+        hbox.getChildren().addAll(deleteButton, comboBox, emailLabel);
         return hbox;
     }
 
-    @Override
-    public void confirm() {
+    private boolean isContactSelectedMoreThanOnce() {
+        List<Contact> selectedContacts = new ArrayList<>();
         for (HBox row : contactRows) {
-            ComboBox<Contact> comboBox = (ComboBox<Contact>) row.getChildren().get(0);
-            Contact contact = comboBox.getValue();
-            if (contact != null) {
-                contactRepository.addToSelectedContacts(contact.getEmail());
+            ComboBox<Contact> comboBox = getComboBoxFromRow(row);
+            Contact selectedContact = comboBox.getValue();
+            if (selectedContact != null) {
+                if (selectedContacts.contains(selectedContact)) {
+                    return true;
+                } else {
+                    selectedContacts.add(selectedContact);
+                }
             }
         }
-        switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
+        return false;
     }
 
-    @Override
-    public void back() {
-        switchScene(Pages.LIST_ITEMS_WINDOW);
-    }
-
-    @Override
-    public void reset() {
+    private void clearContactRows() {
         contactRows.clear();
         contactListContainer.getChildren().removeIf(node -> node instanceof HBox);
-        setupInitialContactRow();
-        update();
     }
 
-    @FXML
-    public void openContactList() {
-        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_PEOPLE_WINDOW);
+    private ComboBox<Contact> getComboBoxFromRow(HBox row) {
+        return (ComboBox<Contact>) row.getChildren().get(1);
     }
 
-    @Override
-    public void update() {
-        activeProfile = contactRepository.getProfile();
-        availableContacts.clear();
-        availableContacts.addAll(contactRepository.getContacts());
-        availableContacts.remove(activeProfile);
-        updateFirstContactRow();
+    private Button getButtonFromRow(HBox row) {
+        return (Button) row.getChildren().get(0);
     }
 }
