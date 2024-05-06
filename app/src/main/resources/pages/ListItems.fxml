@@ -42,18 +42,23 @@
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
-            <HBox fx:id="errorMessageBox" alignment="CENTER" managed="false" prefHeight="31.0" prefWidth="386.0" styleClass="errormessage-box" visible="false">
-                <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer to help center the label horizontally -->
-                <Label fx:id="errorMessageLabel" styleClass="errormessage-label" />
-                <Pane HBox.hgrow="ALWAYS" /> <!-- Another spacer to keep the label centered horizontally -->
-                <Button fx:id="closeErrorMessageButton" onAction="#closeErrorMessage" styleClass="errormessage-close-button" text="x" HBox.hgrow="NEVER" />
-            </HBox>
+         <Label text="Edit Items">
+            <font>
+               <Font name="System Bold Italic" size="26.0" />
+            </font>
+            <VBox.margin>
+               <Insets top="10.0" />
+            </VBox.margin>
+         </Label>
          <HBox alignment="CENTER_RIGHT" prefHeight="66.0" prefWidth="386.0">
             <children>
                <Button mnemonicParsing="false" onAction="#addReceiptItem" text="+">
                   <font>
                      <Font name="System Bold" size="12.0" />
                   </font>
+                  <HBox.margin>
+                     <Insets bottom="10.0" />
+                  </HBox.margin>
                </Button>
             </children>
             <VBox.margin>

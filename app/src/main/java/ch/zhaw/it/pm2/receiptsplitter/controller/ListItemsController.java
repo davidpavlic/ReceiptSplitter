@@ -40,6 +40,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML private TableColumn<ReceiptItem, String> totalPriceColumn;
     @FXML private TableColumn<ReceiptItem, Void> actionColumn;
 
+    List<ReceiptItem> originalDataReceiptItems;
     ObservableList<ReceiptItem> testDataReceiptItems;
 
     @Override
@@ -52,7 +53,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
             if (newValue != null) showErrorMessage(newValue);
         });
 
-        // TODO: Cache the initial state of the receipt items in ReceiptProcessor
+        originalDataReceiptItems = receiptProcessor.getReceiptItems();
 
         List<ReceiptItem> receiptItems = new ArrayList<>();
         receiptItems.add(new ReceiptItem(1.0F, "Test Item 1", 1));
@@ -96,7 +97,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     @FXML
     public void reset() {
-        // TODO: Reset the receipt items in ReceiptProcessor to the initial state which was cached on initialization
+        testDataReceiptItems = (ObservableList<ReceiptItem>) originalDataReceiptItems;
+        update();
     }
 
     @FXML
