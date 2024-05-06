@@ -5,7 +5,6 @@ package ch.zhaw.it.pm2.receiptsplitter;
 
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
