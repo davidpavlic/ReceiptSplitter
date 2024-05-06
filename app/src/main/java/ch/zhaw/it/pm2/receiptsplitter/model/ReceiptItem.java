@@ -40,6 +40,15 @@ public class ReceiptItem {
         this.amount = amount;
     }
 
+    /**
+     * Rounds the price to two decimal places.
+     * @param price the price to round
+     * @return the rounded price
+     */
+    public static float roundPrice(float price) {
+        return Math.round(price * 100.0) / 100.0f;
+    }
+
     protected enum ReceiptItemErrorMessageType {
         NAME_EMPTY("Name must not be empty."),
         PRICE_ZERO_OR_LOWER("Price must not be zero or lower."),

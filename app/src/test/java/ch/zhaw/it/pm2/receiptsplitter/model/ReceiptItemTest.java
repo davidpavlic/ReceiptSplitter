@@ -94,6 +94,24 @@ public class ReceiptItemTest {
         assertEquals(ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
+    @Test
+    void roundPrice_PriceWithMoreThanTwoDecimalPlaces_RoundedPrice() {
+        //Arrange
+        float firstPrice = 9.999F;
+        float secondPrice = 9.994F;
+        float thirdPrice = 5.456666F;
+
+        //Act
+        float firstPriceRounded = ReceiptItem.roundPrice(firstPrice);
+        float secondPriceRounded = ReceiptItem.roundPrice(secondPrice);
+        float thirdPriceRounded = ReceiptItem.roundPrice(thirdPrice);
+
+        //Assert
+        assertEquals(10.0F, firstPriceRounded);
+        assertEquals(9.99F, secondPriceRounded);
+        assertEquals(5.46F, thirdPriceRounded);
+    }
+
     private void assertReceiptItemAttributes(float price, String name, int amount) {
         assertEquals(price, receiptItem.getPrice());
         assertEquals(name, receiptItem.getName());
