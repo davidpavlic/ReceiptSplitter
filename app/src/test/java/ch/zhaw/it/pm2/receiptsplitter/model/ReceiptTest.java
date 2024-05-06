@@ -55,41 +55,43 @@ public class ReceiptTest {
     void addReceiptItem_ValidAttributes_ReceiptItemAdded() {
         //Arrange
         ReceiptItem localReceiptItem = new ReceiptItem(4F, "Entry", 4);
-        int receiptSizeBefore = receipt.getReceiptItemList().size();
+        int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act
         receipt.addReceiptItem(localReceiptItem);
 
         //Assert
-        assertEquals(receiptSizeBefore + 1, receipt.getReceiptItemList().size());
-        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(3));
+        assertEquals(receiptSizeBefore + 1, receipt.getReceiptItems().size());
+        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(receiptSizeBefore));
     }
 
     @Test
     void updateReceiptItem_ValidAttributes_ReceiptItemUpdated() {
         //Arrange
+        int index = 1;
         ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
-        int receiptSizeBefore = receipt.getReceiptItemList().size();
+        int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act
-        receipt.updateReceiptItem(1, localContact);
+        receipt.updateReceiptItem(index, localContact);
 
         //Assert
-        assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
-        assertReceiptItemAttributes(localContact, receipt.getReceiptItem(1));
+        assertEquals(receiptSizeBefore, receipt.getReceiptItems().size());
+        assertReceiptItemAttributes(localContact, receipt.getReceiptItem(index));
     }
 
     @Test
-    void deleteReceiptItem_ValidAttributes_ReceiptItemDeleted() {
+    void deleteReceiptItem_ValidIndex_ReceiptItemDeleted() {
         //Arrange
-        int receiptSizeBefore = receipt.getReceiptItemList().size();
-        receipt.deleteReceiptItem(0);
+        int index = 0;
+        int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act
-        assertEquals(receiptSizeBefore - 1, receipt.getReceiptItemList().size());
+        receipt.deleteReceiptItem(index);
 
         //Assert
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(0));
+        assertEquals(receiptSizeBefore - 1, receipt.getReceiptItems().size());
+        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(index));
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(1));
     }
 
@@ -136,13 +138,13 @@ public class ReceiptTest {
     @NullSource
     void addReceiptList_InvalidAttributes_ThrowsException(ReceiptItem receiptItem) {
         //Arrange
-        int receiptSizeBefore = receipt.getReceiptItemList().size();
+        int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.addReceiptItem(receiptItem));
         assertEquals(ReceiptErrorMessageType.ITEM_NULL.toString(), exception.getMessage());
-        assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
+        assertEquals(receiptSizeBefore, receipt.getReceiptItems().size());
     }
 
     @ParameterizedTest
@@ -161,13 +163,13 @@ public class ReceiptTest {
     @ValueSource(ints = {3, -1})
     void deleteReceiptItem_InvalidIndex_ThrowsException(int index) {
         //Arrange
-        int receiptSizeBefore = receipt.getReceiptItemList().size();
+        int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> receipt.deleteReceiptItem(index));
         assertEquals(ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString(), exception.getMessage());
-        assertEquals(receiptSizeBefore, receipt.getReceiptItemList().size());
+        assertEquals(receiptSizeBefore, receipt.getReceiptItems().size());
     }
 
     private void assertReceiptItemAttributes(ReceiptItem expected, ReceiptItem actual) {
