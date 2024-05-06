@@ -30,6 +30,7 @@ public class ReceiptProcessor implements IsObservable {
      */
     public ReceiptProcessor() {
         this.contactReceiptItems = new ArrayList<>();
+        this.receipt = new Receipt(new ArrayList<>());
     }
 
     /**
@@ -54,6 +55,7 @@ public class ReceiptProcessor implements IsObservable {
     /**
      * Adds a new ReceiptItem to the list of receipt items.
      * Validates the ReceiptItem to have a unique name and not be null.
+     * Notifies observers of the change.
      *
      * @param receiptItem the new ReceiptItem to be added
      * @throws IllegalArgumentException if the receiptItem is null or already exists
@@ -74,9 +76,10 @@ public class ReceiptProcessor implements IsObservable {
 
     /**
      * Updates an existing ReceiptItem in the list of receipt items.
+     * Notifies observers of the change.
      *
      * @param newReceiptItem the ReceiptItem to be updated
-     * @throws IllegalArgumentException if the newReceiptItem is null, the old name is null or the item with the old name does not exist.
+     * @throws IllegalArgumentException if the newReceiptItem is null, the old name is null, the item with the old name does not exist or the new name already exists.
      */
     public void updateReceiptItemByName(String oldName, ReceiptItem newReceiptItem) {
         if (oldName == null) throw new IllegalArgumentException("Old name cannot be null.");
@@ -87,6 +90,13 @@ public class ReceiptProcessor implements IsObservable {
 
         if (receiptItemOptional.isEmpty()) {
             throw new IllegalArgumentException("Receipt item does not exist.");
+        }
+
+        if (!oldName.equals(newReceiptItem.getName())) {
+            boolean newNameExists = receiptItems.stream().anyMatch(item -> item.getName().equals(newReceiptItem.getName()));
+            if (newNameExists) {
+                throw new IllegalArgumentException("Receipt item with the new specified name already exists.");
+            }
         }
 
         ReceiptItem receiptItem = receiptItemOptional.get();
@@ -100,6 +110,7 @@ public class ReceiptProcessor implements IsObservable {
 
     /**
      * Removes a specified ReceiptItem from the list.
+     * Notifies observers of the change.
      *
      * @param name the name of the ReceiptItem to be removed
      * @return true if the item was removed, false otherwise
@@ -127,6 +138,7 @@ public class ReceiptProcessor implements IsObservable {
 
     /**
      * Associates a contact with a ReceiptItem.
+     * Notifies observers of the change.
      *
      * @param contact     the contact to be associated
      * @param receiptItem the ReceiptItem to associate
@@ -152,7 +164,7 @@ public class ReceiptProcessor implements IsObservable {
      */
     public List<ReceiptItem> splitReceiptItems() {
         List<ReceiptItem> splitReceiptItems = new ArrayList<>();
-        List<ReceiptItem> receiptItems = getReceiptItems();
+        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
 
         for (ReceiptItem receiptItem : receiptItems) {
             List<ReceiptItem> splitReceiptItem = splitIntoIndividualReceiptItems(receiptItem);
@@ -197,16 +209,24 @@ public class ReceiptProcessor implements IsObservable {
         return total;
     }
 
-
     /**
      * Retrieves the list of receipt items as a copy with every item being copied too, to prevent direct modification.
      *
      * @return a copied list of receipt items wih its items copied
      */
-    public List<ReceiptItem> getReceiptItems() {
-        return receipt.getReceiptItems().stream().
-                map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
-                .collect(Collectors.toList());
+    public List<ReceiptItem> getFullCopyReceiptItems() {
+        return Receipt.fullCopyReceiptItems(receipt.getReceiptItems());
+    }
+
+    /**
+     * Sets a new list of receipt items to replace the existing one.
+     * Notifies observers of the change.
+     *
+     * @param receiptItems the new list of receipt items
+     */
+    public void setReceiptItems(List<ReceiptItem> receiptItems) {
+        receipt.setReceiptItems(receiptItems);
+        notifyObservers();
     }
 
     /**
