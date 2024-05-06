@@ -1,12 +1,16 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageExtractor;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ImageReceiptExtractorException;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptOCR;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -24,7 +28,7 @@ import java.nio.file.StandardCopyOption;
 
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
     private File selectedFile;
-    private ImageExtractor imageExtractor;
+    private ImageReceiptExtractor imageExtractor;
     private Receipt currentReceipt;
 
     @FXML private Pane dragAndDropPane;
@@ -33,13 +37,14 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
         confirmButton.setOnAction(event -> confirm() );
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
+
     @Override
     public void confirm() {
         switchScene(Pages.LIST_ITEMS_WINDOW);
@@ -92,10 +97,15 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             //currentReceipt = new Receipt();
             //TODO Upload Receipt correctly
             System.out.println("Receipt uploaded successfully!");
+            ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
+
+            // TODO: Map the extracted data response to the currentReceipt object and save it in ReceiptProcessor
+        } catch (ImageReceiptExtractorException e) {
+            System.err.println("Error extracting receipt: " + e.getMessage());
+            // TODO: Show user error message
         } catch (IOException ioException) {
             System.err.println("Error uploading receipt: " + ioException.getMessage());
+            // TODO: Show user error message
         }
-
-        String extractedImage =  imageExtractor.extractOCR(file);
     }
 }

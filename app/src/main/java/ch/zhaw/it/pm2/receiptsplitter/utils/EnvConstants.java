@@ -2,7 +2,9 @@ package ch.zhaw.it.pm2.receiptsplitter.utils;
 
 public enum EnvConstants {
     SMTP_USERNAME("SMTP_USERNAME"),
-    SMTP_API_KEY("SMTP_API_KEY");
+    SMTP_API_KEY("SMTP_API_KEY"),
+    AZURE_AI_FORM_RECOGNIZER_ENDPOINT("AZURE_AI_FORM_RECOGNIZER_ENDPOINT"),
+    AZURE_AI_FORM_RECOGNIZER_KEY("AZURE_AI_FORM_RECOGNIZER_KEY");
 
     private final String key;
 
