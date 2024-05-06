@@ -65,7 +65,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="153.0">
                <children>
-                      <Text fx:id="totalLabel" text="Total: " textAlignment="RIGHT">
+                      <Text text="Total: " textAlignment="RIGHT">
                           <HBox.margin>
                               <Insets bottom="2.0" right="20.0" top="10" />
                           </HBox.margin>
