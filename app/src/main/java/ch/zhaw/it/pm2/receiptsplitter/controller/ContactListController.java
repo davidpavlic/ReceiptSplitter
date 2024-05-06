@@ -119,12 +119,4 @@ public class ContactListController extends DefaultController implements CanNavig
             logError("Error removing contact", e);
         }
     }
-
-    private void logError(String message, Exception e) {
-        logger.severe(message);
-        if (e != null) {
-            logger.fine(Arrays.toString(e.getStackTrace()));
-        }
-        // TODO: Show error message to user
-    }
 }

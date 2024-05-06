@@ -111,4 +111,17 @@ public abstract class  DefaultController {
             errorProperty.setValue("Could not switch to " + page + " Window");
         }
     }
+
+    /**
+     * Logs an error message and exception stack trace.
+     *
+     * @param message The error message.
+     * @param exception The exception.
+     */
+    protected void logError(String message, Exception exception) {
+        logger.severe(message);
+        if (exception != null) {
+            logger.fine(Arrays.toString(exception.getStackTrace()));
+        }
+    }
 }
