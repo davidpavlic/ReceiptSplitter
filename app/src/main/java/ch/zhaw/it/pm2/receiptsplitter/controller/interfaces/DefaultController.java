@@ -48,6 +48,12 @@ public abstract class  DefaultController {
         this.helpMessage = HelpMessages.LOGIN_WINDOW_MSG;
     }
 
+    /**
+     * Executes code before the stage  is loaded.
+     */
+    public void onBeforeStage() {
+        // Empty method to be overridden by subclasses
+    }
 
     /**
      * Shows the FAQ message in a modal.

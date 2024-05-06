@@ -31,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class Router {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    final Stage stage;
+    private final Stage stage;
     private final Map<Pages, Pair<Scene, DefaultController>> sceneMap = new HashMap<>();
 
     /**
@@ -64,6 +64,7 @@ public class Router {
         Objects.requireNonNull(page, "Page cannot be null");
 
         if (stage != null) {
+            getController(page).onBeforeStage();
             stage.setScene(getScene(page));
             if (getController(page) instanceof IsObserver observerController) {
                 observerController.update();
@@ -84,6 +85,8 @@ public class Router {
      */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
         DefaultController controller = getController(page);
+        controller.onBeforeStage();
+
         if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
             dynamicLastPageController.setLastPage(lastPage);
         } else {
