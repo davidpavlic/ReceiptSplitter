@@ -106,7 +106,7 @@ public class ReceiptProcessor implements IsObservable {
         for (int counter = 0; counter < amount; counter++) {
             splitReceiptItem.add(new ReceiptItem(receiptItem.getPrice() / amount, receiptItem.getName(), 1));
         }
-
+        notifyObservers();
         return splitReceiptItem;
     }
 
@@ -129,6 +129,7 @@ public class ReceiptProcessor implements IsObservable {
         } else {
             receiptItems.add(receiptItem);
         }
+        notifyObservers();
     }
 
 
@@ -144,6 +145,7 @@ public class ReceiptProcessor implements IsObservable {
         }
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         receiptItems.remove(receiptItem);
+        notifyObservers();
     }
 
 
@@ -156,6 +158,7 @@ public class ReceiptProcessor implements IsObservable {
      */
     public void createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
         contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(), contact));
+        notifyObservers();
     }
 
 
