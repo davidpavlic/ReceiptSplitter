@@ -187,6 +187,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         Contact currentProfile = contactRepository.getProfile();
 
         for (Contact contact : uniqueContacts) {
+            if (contact.equals(currentProfile)) {
+                continue;
+            }
             String body = buildEmail(contact, currentProfile);
             try {
                 boolean success = emailService.sendEmail(contact.getEmail(), "Receipt Splitter - You have a new Request", body);
