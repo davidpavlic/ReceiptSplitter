@@ -41,19 +41,18 @@ Methode, die getestet wird: `gotoScene(enum: Enum)`
 
 #### Gültige Äquivalenzklassen
 
-1. Die Methode wird mit einem gültigen Enum aufgerufen und die richtige Scene wird instanziert.
+1. Die Methode wird mit einem gültigen Enum aufgerufen und die richtige Scene wird instanziiert.
 
 #### Ungültige Äquivalenzklassen
 
-2. Die Methode wird mit einem ungültigen Enum aufgerufen (Enum, welcher nicht mit einem File verbunden ist).
-3. Die Methode wird mit einem "null" Enum aufgerufen.
+2. Die Methode wird mit einem "null" Enum aufgerufen.
 
-| Äquivalenzklasse   | Methoden Parameter                                    | Initialer Objekt Zustand                           | Erwartetes Ergebnis                              |
-|--------------------|-------------------------------------------------------|----------------------------------------------------|--------------------------------------------------|
-| 1: Gültiger Enum   | Enum, welcher mit einer Java FXML Datei verbunden ist | Stage und sceneMap mit gültigen Werten instanziert | Die richtige Scene wird instanziert              |
-| 2: Ungültiger Enum | Enum, welcher nicht mit einem File verbunden ist        | Stage und sceneMap mit gültigen Werten instanziert | Es wird eine InvalidArgumentException aufgerufen |
-| 2: Ungültiger Enum | Enum, welcher nicht mit einem File verbunden ist                 | SceneMap ist leer                                  | Es wird eine InvalidArgumentException aufgerufen |
-| 3: Null Enum       | Null                                                  | any                                                | Es wird eine IllegalArgumentException aufgerufen |
+TODO: Äquivalenzklassen ändern mit Constructor Test Cases
+
+| Äquivalenzklasse  | Methoden Parameter                                    | Initialer Objekt Zustand                           | Erwartetes Ergebnis                         |
+|-------------------|-------------------------------------------------------|----------------------------------------------------|---------------------------------------------|
+| 1: Gültiger Enum  | Enum, welcher mit einer Java FXML Datei verbunden ist | Stage und sceneMap mit gültigen Werten instanziert | Die richtige Scene wird instanziert         |
+| 2: Null Enum      | Null                                                  | any                                                | Es wird eine NullPointerException geworfen  |
 
 ## Klasse ContactRepository
 Methode, die getestet wird: `addContact(name: String, email: String)`

@@ -1,6 +1,12 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.*;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
@@ -22,13 +28,12 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @FXML
     private Button addNameBtn;
     private List<HBox> contactRows = new ArrayList<>();
-    private ContactRepository contactRepository;
     private Router router;
     private  List<Contact> contactList;
 
-    public void initialize(Router router) {
-        this.router = router;
-        this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
+    @Override
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
         contactList = contactRepository.getContactList();
         setupInitialContactRow();;
     }
@@ -77,7 +82,6 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
             Button deleteButton = (Button) row.getChildren().get(2);
             deleteButton.setDisable(contactRows.size() == 1);
         });
-    }
 
     @Override
     public void confirm() {

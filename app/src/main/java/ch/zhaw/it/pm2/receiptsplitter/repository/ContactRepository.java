@@ -1,6 +1,8 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -15,10 +17,12 @@ import java.util.stream.Collectors;
 
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
-public class ContactRepository {
-    private final List<Contact> contactList = new ArrayList<>();
+public class ContactRepository implements IsObservable {
+    private final List<IsObserver> observers = new ArrayList<>();
+    private final List<Contact> contacts = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
     private Contact selectedProfile;
+    private Contact selectedToEditContact;
 
     private static final String DELIMITER = ";";
     private final Path contactsFilePath;
@@ -30,7 +34,21 @@ public class ContactRepository {
 
     //Loads the contacts from the file into the contact list
     public void loadContacts() throws IOException{
-        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contactList::add);
+        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
+    }
+
+    public void addObserver(IsObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(IsObserver observer) {
+        observers.remove(observer);
+    }
+
+    public void notifyObservers() {
+        for (IsObserver observer : observers) {
+            observer.update();
+        }
     }
 
     //Checks if a contact exists
@@ -40,7 +58,7 @@ public class ContactRepository {
 
     //The following methods represent CRUD operations for contacts adjusting the file, contactlist, selectedContact and selectedProfile
     public Contact findContactByEmail(String email) {
-        return contactList.stream()
+        return contacts.stream()
                 .filter(contact -> contact.getEmail().equals(email))
                 .findFirst()
                 .orElse(null);
@@ -51,13 +69,23 @@ public class ContactRepository {
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
 
         appendContactToContactFile(contact);
-        return contactList.add(contact);
+        contacts.add(contact);
+        notifyObservers();
+        return true;
     }
 
-    public boolean updateContact(String email, Contact newContact) throws IllegalArgumentException, IOException {
+    public boolean updateContact(String email, Contact newContact) throws IOException {
+        Objects.requireNonNull(email);
+        Objects.requireNonNull(newContact);
+
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
-        return updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact);
+
+        if(updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
+            notifyObservers();
+            return true;
+        }
+        return false;
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
@@ -67,9 +95,13 @@ public class ContactRepository {
         if(!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
-        if(removeContactFromContactFile(email))
-            return contactList.removeIf(contact -> contact.getEmail().equals(email)) && removeFromSelectedContacts(email);
-
+        if(removeContactFromContactFile(email)) {
+            if (contacts.removeIf(contact -> contact.getEmail().equals(email))) {
+                removeFromSelectedContacts(email);
+                notifyObservers();
+                return true;
+            }
+        }
         return false;
     }
 
@@ -91,12 +123,20 @@ public class ContactRepository {
         return selectedContacts;
     }
 
+    public Contact getSelectedToEditContact() {
+        return selectedToEditContact;
+    }
+
     public Contact getProfile(){
         return selectedProfile;
     }
 
-    public List<Contact> getContactList() {
-        return contactList;
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public void setSelectedToEditContact(Contact selectedToEditContact) {
+        this.selectedToEditContact = selectedToEditContact;
     }
 
     //Setters
@@ -120,7 +160,7 @@ public class ContactRepository {
 
     //The following method is a helper method for updating a contact in the contact list
     private boolean updateContactInContactList(String email, Contact newContact){
-        for (Contact contact : contactList) {
+        for (Contact contact : contacts) {
             if (contact.getEmail().equals(email)) {
                 contact.setFirstName(newContact.getFirstName());
                 contact.setLastName(newContact.getLastName());
@@ -157,19 +197,33 @@ public class ContactRepository {
         return found ? updatedLines : null;
     }
 
-    private boolean removeContactFromContactFile(String email) throws IOException{
+    private boolean removeContactFromContactFile(String email) throws IOException {
         List<String> contactListAllLines = Files.readAllLines(contactsFilePath);
-        List<String> contactListNotEmail = contactListAllLines.stream().filter(line -> !line.contains(email)).collect(Collectors.toList());
-        if(!contactListAllLines.equals(contactListNotEmail)){
+        List<String> contactListNotEmail = contactListAllLines.stream()
+                .filter(line -> !line.contains(email))
+                .collect(Collectors.toList());
+
+        if (!contactListAllLines.equals(contactListNotEmail)) {
+            // Remove the last line if it is empty
+            if (!contactListNotEmail.isEmpty() && contactListNotEmail.getLast().isEmpty()) {
+                contactListNotEmail.removeLast();
+            }
             Files.write(contactsFilePath, contactListNotEmail);
             return true;
         }
         return false;
     }
 
-    private void appendContactToContactFile(Contact contact) throws IOException{
-        BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND);
-        writer.write(parseContactToLine(contact));
+    private void appendContactToContactFile(Contact contact) throws IOException {
+        String lastLine = Files.readAllLines(contactsFilePath).getLast();
+
+        try (BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND)) {
+            if (!lastLine.isEmpty()){
+                writer.newLine();
+            }
+
+            writer.write(parseContactToLine(contact));
+        }
     }
 
     //The following methods parse between line and contact
@@ -182,9 +236,9 @@ public class ContactRepository {
     }
 
     private String parseContactToLine(Contact contact) {
-        return String.format("%s%s%s%s%s%s%n",
+        return String.format("%s%s%s%s%s",
                 contact.getFirstName(), DELIMITER,
                 contact.getLastName(), DELIMITER,
-                contact.getEmail(), DELIMITER);
+                contact.getEmail());
     }
 }

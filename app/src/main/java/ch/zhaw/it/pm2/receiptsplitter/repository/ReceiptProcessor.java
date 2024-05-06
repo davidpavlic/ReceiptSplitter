@@ -1,5 +1,11 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
-import ch.zhaw.it.pm2.receiptsplitter.model.*;
+
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -11,9 +17,10 @@ import java.util.stream.Collectors;
 /**
  * Manages receipt-related operations including item management and allocation to contacts.
  */
-public class ReceiptProcessor {
+public class ReceiptProcessor implements IsObservable {
     private Receipt receipt;
     private List<ContactReceiptItem> contactReceiptItems;
+    private List<IsObserver> observers;
 
     /**
      * Constructs a new ReceiptProcessor instance with an empty list of contact-receipt-item associations.
@@ -28,11 +35,42 @@ public class ReceiptProcessor {
      * @param receipt the new receipt to be managed
      * @throws IllegalArgumentException if the provided receipt is null
      */
-    public void setReceipt(Receipt receipt){
+    public void setReceipt(Receipt receipt) {
         if (receipt == null) {
             throw new IllegalArgumentException("Receipt cannot be null");
         }
         this.receipt = receipt;
+    }
+
+
+    /**
+     * Adds an observer to the list of observers.
+     *
+     * @param observer the observer to be added
+     */
+    @Override
+    public void addObserver(IsObserver observer) {
+        observers.add(observer);
+    }
+
+    /**
+     * Removes an observer from the list of observers.
+     *
+     * @param observer the observer to be removed
+     */
+    @Override
+    public void removeObserver(IsObserver observer) {
+        observers.remove(observer);
+    }
+
+    /**
+     * Notifies all observers by calling their update method.
+     */
+    @Override
+    public void notifyObservers() {
+        for (IsObserver observer : observers) {
+            observer.update();
+        }
     }
 
 
@@ -42,8 +80,8 @@ public class ReceiptProcessor {
      *
      * @return a list of individually split ReceiptItems
      */
-    public List<ReceiptItem> splitReceiptItems(){
-        List< ReceiptItem> splitReceiptItems = new ArrayList<>();
+    public List<ReceiptItem> splitReceiptItems() {
+        List<ReceiptItem> splitReceiptItems = new ArrayList<>();
         List<ReceiptItem> receiptItems = getReceiptItems();
 
         for (ReceiptItem receiptItem : receiptItems) {
@@ -61,15 +99,15 @@ public class ReceiptProcessor {
      * @return a list of individual ReceiptItems
      * @throws IllegalArgumentException if the receipt item's amount is less than 1
      */
-    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) throws IllegalArgumentException{
+    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) throws IllegalArgumentException {
         List<ReceiptItem> splitReceiptItem = new ArrayList<>();
         int amount = receiptItem.getAmount();
 
         for (int counter = 0; counter < amount; counter++) {
             splitReceiptItem.add(new ReceiptItem(receiptItem.getPrice() / amount, receiptItem.getName(), 1));
         }
-
-        return  splitReceiptItem;
+        notifyObservers();
+        return splitReceiptItem;
     }
 
 
@@ -91,6 +129,7 @@ public class ReceiptProcessor {
         } else {
             receiptItems.add(receiptItem);
         }
+        notifyObservers();
     }
 
 
@@ -100,12 +139,13 @@ public class ReceiptProcessor {
      * @param receiptItem the ReceiptItem to be removed
      * @throws IllegalArgumentException if the receiptItem is null
      */
-    public void deleteReceiptItem(ReceiptItem receiptItem)  {
+    public void deleteReceiptItem(ReceiptItem receiptItem) {
         if (receiptItem == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         receiptItems.remove(receiptItem);
+        notifyObservers();
     }
 
 
@@ -116,8 +156,9 @@ public class ReceiptProcessor {
      * @param receiptItem the ReceiptItem to associate
      * @throws IllegalArgumentException if the contact does not exist or receiptItem is null
      */
-    public void  createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
-        contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(),  contact));
+    public void createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
+        contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(), contact));
+        notifyObservers();
     }
 
 
@@ -142,7 +183,7 @@ public class ReceiptProcessor {
      * @return the total amount owed
      * @throws IllegalArgumentException if no items are associated with the contact or the contact does not exist
      */
-    public double calculateDebtByPerson(Contact contact)  {
+    public double calculateDebtByPerson(Contact contact) {
         List<ContactReceiptItem> specificContactItemsList = getContactItemsByContact(contact.getEmail());
         if (specificContactItemsList.isEmpty()) {
             throw new IllegalArgumentException("The list is empty.");
@@ -160,7 +201,6 @@ public class ReceiptProcessor {
     }
 
 
-
     /**
      * Retrieves the list of receipt items in an unmodifiable format to prevent external modifications.
      *
@@ -175,8 +215,15 @@ public class ReceiptProcessor {
      *
      * @return a list of ContactReceiptItems
      */
-    public List<ContactReceiptItem> getContactReceiptItems(){
+    public List<ContactReceiptItem> getContactReceiptItems() {
         return contactReceiptItems;
+    }
+
+    public List<Contact> getDistinctContacts() {
+        return contactReceiptItems.stream()
+                .map(ContactReceiptItem::getContact)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
 
@@ -185,7 +232,7 @@ public class ReceiptProcessor {
      *
      * @param contactReceiptItems the new list of ContactReceiptItem to replace the existing one
      */
-    public  void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems){
+    public void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems) {
         this.contactReceiptItems = contactReceiptItems;
     }
 
