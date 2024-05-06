@@ -17,9 +17,9 @@ import javafx.fxml.FXML;
 /**
  * This abstract class provides a default implementation for a controller in the application.
  * It includes common properties and methods that all controllers need, such as a logger, router, contactRepository, receiptProcessor, and helpMessage.
- *
+ * <p>
  * Each controller that extends this class should call the initialize method to set up these common properties.
- *
+ * <p>
  * The class also provides methods to show FAQ and help messages, and to switch scenes.
  *
  * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
