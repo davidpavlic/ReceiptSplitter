@@ -1,13 +1,21 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
-import ch.zhaw.it.pm2.receiptsplitter.model.*;
+
+import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
+import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
 /**
  * Manages receipt-related operations including item management and allocation to contacts.
+ * The ReceiptItems added to the Receipt should be unique by name.
+ *
  */
 public class ReceiptProcessor {
     private Receipt receipt;
@@ -26,7 +34,7 @@ public class ReceiptProcessor {
      * @param receipt the new receipt to be managed
      * @throws IllegalArgumentException if the provided receipt is null
      */
-    public void setReceipt(Receipt receipt){
+    public void setReceipt(Receipt receipt) {
         if (receipt == null) {
             throw new IllegalArgumentException("Receipt cannot be null");
         }
@@ -40,8 +48,8 @@ public class ReceiptProcessor {
      *
      * @return a list of individually split ReceiptItems
      */
-    public List<ReceiptItem> splitReceiptItems(){
-        List< ReceiptItem> splitReceiptItems = new ArrayList<>();
+    public List<ReceiptItem> splitReceiptItems() {
+        List<ReceiptItem> splitReceiptItems = new ArrayList<>();
         List<ReceiptItem> receiptItems = getReceiptItems();
 
         for (ReceiptItem receiptItem : receiptItems) {
@@ -57,9 +65,8 @@ public class ReceiptProcessor {
      *
      * @param receiptItem the ReceiptItem to be split
      * @return a list of individual ReceiptItems
-     * @throws IllegalArgumentException if the receipt item's amount is less than 1
      */
-    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) throws IllegalArgumentException{
+    private List<ReceiptItem> splitIntoIndividualReceiptItems(ReceiptItem receiptItem) {
         List<ReceiptItem> splitReceiptItem = new ArrayList<>();
         int amount = receiptItem.getAmount();
 
@@ -67,45 +74,41 @@ public class ReceiptProcessor {
             splitReceiptItem.add(new ReceiptItem(receiptItem.getPrice() / amount, receiptItem.getName(), 1));
         }
 
-        return  splitReceiptItem;
+        return splitReceiptItem;
     }
 
 
     /**
      * Adds a new ReceiptItem to the list of receipt items.
      * Validates the ReceiptItem to have a unique name and not be null.
-     * Throws an exception if the item already exists or is null.
      *
      * @param receiptItem the new ReceiptItem to be added
+     * @return true if the item was added, false otherwise
      * @throws IllegalArgumentException if the receiptItem is null or already exists
      */
-    public void createReceiptItem(ReceiptItem receiptItem) {
-        if (receiptItem == null) {
-            throw new IllegalArgumentException("Receipt item cannot be null.");
-        }
+    public boolean addReceiptItem(ReceiptItem receiptItem) {
+        if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
+
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         boolean receiptItemExists = receiptItems.stream().anyMatch(item -> item.getName().equals(receiptItem.getName()));
         if (receiptItemExists) {
             throw new IllegalArgumentException("Receipt item already exists.");
         }
 
-        receiptItems.add(receiptItem);
+        return receiptItems.add(receiptItem);
     }
 
 
     /**
      * Updates an existing ReceiptItem in the list of receipt items.
-     * Throws an exception if the item does not exist or is null.
      *
-     * @param newRreceiptItem the ReceiptItem to be updated
-     * @throws IllegalArgumentException if the receiptItem is null or does not exist
+     * @param newReceiptItem the ReceiptItem to be updated
+     * @throws IllegalArgumentException if the newReceiptItem is null, the old name is null or the item with the old name does not exist.
      */
-    public void updateReceiptItemByName(String oldName, ReceiptItem newRreceiptItem) {
-        Objects.requireNonNull(oldName);
+    public void updateReceiptItemByName(String oldName, ReceiptItem newReceiptItem) {
+        if (oldName == null) throw new IllegalArgumentException("Old name cannot be null.");
+        if (newReceiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
-        if (newRreceiptItem == null) {
-            throw new IllegalArgumentException("Receipt item cannot be null.");
-        }
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         Optional<ReceiptItem> receiptItemOptional = receiptItems.stream().filter(item -> item.getName().equals(oldName)).findFirst();
 
@@ -114,38 +117,53 @@ public class ReceiptProcessor {
         }
 
         ReceiptItem receiptItem = receiptItemOptional.get();
-        receiptItem.setAmount(newRreceiptItem.getAmount());
-        receiptItem.setName(newRreceiptItem.getName());
-        receiptItem.setPrice(newRreceiptItem.getPrice());
+        receiptItem.setAmount(newReceiptItem.getAmount());
+        receiptItem.setName(newReceiptItem.getName());
+        receiptItem.setPrice(newReceiptItem.getPrice());
     }
 
 
     /**
      * Removes a specified ReceiptItem from the list.
      *
-     * @param receiptItem the ReceiptItem to be removed
-     * @throws IllegalArgumentException if the receiptItem is null
+     * @param name the name of the ReceiptItem to be removed
+     * @return true if the item was removed, false otherwise
+     * @throws IllegalArgumentException if the name is null or if the item does not exist
      */
-    public void deleteReceiptItem(ReceiptItem receiptItem)  {
-        if (receiptItem == null) {
+    public boolean deleteReceiptItemByName(String name) {
+        if (name == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
-        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
-        receiptItems.remove(receiptItem);
-    }
 
+        Optional<ReceiptItem> receiptItemOptional = receipt.getReceiptItems().stream().filter(item -> item.getName().equals(name)).findFirst();
+
+        if (receiptItemOptional.isEmpty()) {
+            throw new IllegalArgumentException("Receipt item does not exist.");
+        }
+
+        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
+        ReceiptItem itemToRemove = receiptItemOptional.get();
+        return receiptItems.remove(itemToRemove);
+    }
 
     /**
      * Associates a contact with a ReceiptItem.
      *
-     * @param contact the contact to be associated
+     * @param contact     the contact to be associated
      * @param receiptItem the ReceiptItem to associate
-     * @throws IllegalArgumentException if the contact does not exist or receiptItem is null
+     * @return true if the association was successful, false otherwise
+     * @throws IllegalArgumentException if the receiptItem is null or doesn't exist
      */
-    public void  createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
-        contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(),  contact));
-    }
+    public boolean createContactReceiptItem(Contact contact, ReceiptItem receiptItem) {
+        if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
+        boolean receiptItemExists = receipt.getReceiptItems().stream().anyMatch(item -> item.getName().equals(receiptItem.getName()));
+        if (!receiptItemExists) {
+            throw new IllegalArgumentException("Receipt item does not exist.");
+        }
+
+        return contactReceiptItems.add(new ContactReceiptItem(receiptItem.getPrice(), receiptItem.getName(), contact));
+    }
 
     /**
      * Retrieves all ContactReceiptItems associated with a given contact's email.
@@ -166,26 +184,22 @@ public class ReceiptProcessor {
      *
      * @param contact the contact for which to calculate total debt
      * @return the total amount owed
-     * @throws IllegalArgumentException if no items are associated with the contact or the contact does not exist
+     * @throws IllegalArgumentException if no items are associated with the contact.
      */
-    public double calculateDebtByPerson(Contact contact)  {
-        List<ContactReceiptItem> specificContactItemsList = getContactItemsByContact(contact.getEmail());
-        if (specificContactItemsList.isEmpty()) {
+    public double calculateDebtByPerson(Contact contact) {
+        List<ContactReceiptItem> contactItemsByContact = getContactItemsByContact(contact.getEmail());
+        if (contactItemsByContact.isEmpty()) {
             throw new IllegalArgumentException("The list is empty.");
         }
 
         double total = 0;
 
-        for (ContactReceiptItem contactReceiptItem : specificContactItemsList) {
-            if (!doesContactExist(contactReceiptItem.getContact())) {
-                throw new IllegalArgumentException("Contact does not exist.");
-            }
+        for (ContactReceiptItem contactReceiptItem : contactItemsByContact) {
             total += contactReceiptItem.getPrice();
         }
 
         return total;
     }
-
 
 
     /**
@@ -204,7 +218,7 @@ public class ReceiptProcessor {
      *
      * @return a list of ContactReceiptItems
      */
-    public List<ContactReceiptItem> getContactReceiptItems(){
+    public List<ContactReceiptItem> getContactReceiptItems() {
         return contactReceiptItems;
     }
 
@@ -214,22 +228,8 @@ public class ReceiptProcessor {
      *
      * @param contactReceiptItems the new list of ContactReceiptItem to replace the existing one
      */
-    public  void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems){
+    public void setContactReceiptItems(List<ContactReceiptItem> contactReceiptItems) {
         this.contactReceiptItems = contactReceiptItems;
-    }
-
-    /**
-     * Checks if a contact exists in the contact-receipt-item list.
-     *
-     * @param contact the contact to verify
-     * @return true if the contact exists, false otherwise
-     */
-    private boolean doesContactExist(Contact contact) {
-        if (contact == null) {
-            return false;
-        }
-        return contactReceiptItems.stream()
-                .anyMatch(item -> item.getContact().equals(contact));
     }
 }
 
