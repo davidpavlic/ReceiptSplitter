@@ -42,6 +42,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     private TableColumn<ContactReceiptItem, String> itemNameColumn;
     @FXML
     private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
+    @FXML
+    private ProgressIndicator spinner;
+
 
     List<Contact> uniqueContacts;
     private Contact currentContact;
@@ -115,7 +118,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         contactName.setText(contact.getDisplayName());
 
         double totalAmount = receiptProcessor.calculateDebtByPerson(contact);
-        totalPrice.setText("Total: " + String.format("%.2f", totalAmount));
+        totalPrice.setText("Total: " + String.format("%.2f", totalAmount) + " CHF");
 
         this.uniqueContacts = receiptProcessor.getDistinctContacts();
         int currentIndex = uniqueContacts.indexOf(contact);
@@ -142,6 +145,11 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         }
     }
 
+    private void setSpinnerActive(boolean active) {
+        spinner.setVisible(active);
+        spinner.getScene().getRoot().setDisable(active);
+    }
+
     private Alert createAlert(Alert.AlertType alertType, String title, String header, String message) {
         Alert alert = new Alert(alertType, message, ButtonType.OK);
         alert.setTitle(title);
@@ -150,27 +158,28 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     private void handleConfirmationAndEmails() {
+        setSpinnerActive(true);
         CompletableFuture.supplyAsync(this::buildAndSendEmails)
-                .thenAccept(success -> {
-                    Platform.runLater(() -> {
-                        if (success) {
-                            Alert alert = createAlert(Alert.AlertType.INFORMATION, "Emails Sent", "Emails have been sent out successfully", "The Request has been sent out successfully. Please make sure to check your Spam Folder");
-                            alert.showAndWait().ifPresent(response -> {
-                                if (response == ButtonType.OK) {
-                                    alert.hide();
-                                    switchScene(Pages.MAIN_WINDOW);
-                                }
-                            });
-                        } else {
-                            Alert alert = createAlert(Alert.AlertType.ERROR, "Issue Sending Email", null, "We encountered an Issue while trying to send out the Request. Please try again later.");
-                            alert.showAndWait().ifPresent(response -> {
-                                if (response == ButtonType.OK) {
-                                    alert.hide();
-                                }
-                            });
-                        }
-                    });
-                });
+                .thenAccept(success -> Platform.runLater(() -> {
+                    if (success) {
+                        setSpinnerActive(false);
+                        Alert alert = createAlert(Alert.AlertType.INFORMATION, "Emails Sent", "Emails have been sent out successfully", "The Request has been sent out successfully. Please make sure to check your Spam Folder");
+                        alert.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                alert.hide();
+                                switchScene(Pages.MAIN_WINDOW);
+                            }
+                        });
+                    } else {
+                        setSpinnerActive(false);
+                        Alert alert = createAlert(Alert.AlertType.ERROR, "Issue Sending Email", null, "We encountered an Issue while trying to send out the Request. Please try again later.");
+                        alert.showAndWait().ifPresent(response -> {
+                            if (response == ButtonType.OK) {
+                                alert.hide();
+                            }
+                        });
+                    }
+                }));
     }
 
     private boolean buildAndSendEmails() {

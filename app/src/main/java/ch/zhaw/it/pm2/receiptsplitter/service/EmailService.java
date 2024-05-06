@@ -41,7 +41,7 @@ public class EmailService {
 
             mailer.sendMail(email);
         } catch (Exception exception) {
-            throw new Exception("Failed to send email", exception);
+            throw new Exception("There was an issue when trying to send out the Email", exception);
         }
         return true;
     }
