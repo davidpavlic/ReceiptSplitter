@@ -49,6 +49,13 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 - [IntelliJ für java Umgebung einrichten](https://www.jetbrains.com/help/idea/run-java-applications.html#run_application)
 - [Eclipse für java Umgebung einrichten](https://www.golinuxcloud.com/set-up-java-with-eclipse-ide/#Write_and_compile_your_first_Java_program_using_Eclipse_IDE)
 
+
+ # Know Issues
+## Email Versand
+Der Email Versand funktioniert nicht in jedem Netzwerk. Manchmal kann es dazu kommen, dass die Firewall des Gerätes oder des Netzwerks den Versand blockiert.
+Wir haben ein Timeout von 20 Sekunden gesetzt, falls der Versand nicht funktioniert. In diesem Fall wird eine Fehlermeldung ausgegeben.
+Im ZHAW Netzwert funktioniert der Versand jedoch. Dies wurde bei allen Authoren dieses Projekts getestet.
+
 # Branching Modell
 Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist,
 bei dem ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch existiert.
