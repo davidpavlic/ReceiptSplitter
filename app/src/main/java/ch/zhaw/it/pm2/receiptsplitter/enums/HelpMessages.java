@@ -13,10 +13,17 @@ public enum HelpMessages {
     EDIT_ITEMS_WINDOW_MSG("Edit Items Window \n\nPlease review the Receipt which we have interpreted. \nYou can also edit the items if necessary."),
     SHOW_SPLIT_WINDOW_MSG("Show Split Window \n\nPlease review the split of the receipt. \nBy clicking confirm, you will send out the request via Email."),
     LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nYou can also edit the items if necessary."),
-    FAQ_MSG("FAQ - Frequently Asked Questions\n\n " +
-            "1. How Can I Create a Contact?\n Either in the Login Window or in the Contact List Page you can create a new Profile \n\n " +
-            "2. How Can I add a Receipt? \n In the Main Window, please navigate to the button `Add Receipt`\n\n" +
-            "3. I sent out a request via Email but the Contacts didn't receive it\n Please make sure that the Email of the Recipients are correct and check the Spam Folder "),;
+    FAQ_MSG("""
+            FAQ - Frequently Asked Questions
+
+            1. How Can I Create a Contact?
+             Either in the Login Window or in the Contact List Page you can create a new Profile
+
+            2. How Can I add a Receipt?
+             In the Main Window, please navigate to the button `Add Receipt`
+
+            3. I sent out a request via Email but the Contacts didn't receive it
+             Please make sure that the Email of the Recipients are correct and check the Spam Folder""");
 
     private final String message;
 

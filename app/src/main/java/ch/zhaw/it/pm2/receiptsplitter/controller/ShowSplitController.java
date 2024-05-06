@@ -4,7 +4,6 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
-import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
@@ -20,33 +19,29 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.text.Text;
 
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ShowSplitController extends DefaultController implements CanNavigate, IsObserver {
-    @FXML
-    private Button buttonPreviousPerson;
-    @FXML
-    private Button buttonNextPerson;
-    @FXML
-    private Text contactName;
-    @FXML
-    private Text totalPrice;
+    // TODO: Implement Error Box after merge with feat/26
 
-    @FXML
-    private TableView<ContactReceiptItem> itemsTable;
-    @FXML
-    private TableColumn<ContactReceiptItem, String> itemNameColumn;
-    @FXML
-    private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
-    @FXML
-    private ProgressIndicator spinner;
+    @FXML private Button buttonPreviousPerson;
+    @FXML private Button buttonNextPerson;
+    @FXML private Text contactName;
+    @FXML private Text totalPrice;
 
+    @FXML private Button backButton;
+    @FXML private Button confirmButton;
 
-    List<Contact> uniqueContacts;
+    @FXML private TableView<ContactReceiptItem> itemsTable;
+    @FXML private TableColumn<ContactReceiptItem, String> itemNameColumn;
+    @FXML private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
+    @FXML private ProgressIndicator spinner;
+
+    private List<Contact> uniqueContacts;
     private Contact currentContact;
 
     @Override
@@ -56,14 +51,24 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         contactRepository.addObserver(this);
         buttonNextPerson.setOnAction(event -> nextPerson());
         buttonPreviousPerson.setOnAction(event -> previousPerson());
+        buttonNextPerson.setDisable(true);
+        buttonPreviousPerson.setDisable(true);
+
         configureTable();
+
+        totalPrice.setText("0.00 CHF");
+        uniqueContacts = new ArrayList<>();
     }
 
+    /**
+     * @inheritDoc Updates the TableView with the ContactItems of the first Contact in the list.
+     */
+    @Override
     public void update() {
         if (receiptProcessor.getDistinctContacts().isEmpty()) {
             return;
         }
-        currentContact = receiptProcessor.getDistinctContacts().get(0);
+        currentContact = receiptProcessor.getDistinctContacts().getFirst();
         populateTableWithContactItems(currentContact);
     }
 
@@ -79,6 +84,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         });
     }
 
+    /**
+     * @inheritDoc Switches to the Main Window.
+     */
     @Override
     public void back() {
         switchScene(Pages.MAIN_WINDOW);
@@ -99,7 +107,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         contactName.setText(contact.getDisplayName());
 
         double totalAmount = receiptProcessor.calculateDebtByPerson(contact);
-        totalPrice.setText("Total: " + String.format("%.2f", totalAmount) + " CHF");
+
+        // TODO: Use logic of ListItemsController for rounded price.
+        totalPrice.setText(String.format("%.2f", totalAmount) + " CHF");
 
         this.uniqueContacts = receiptProcessor.getDistinctContacts();
         int currentIndex = uniqueContacts.indexOf(contact);
@@ -110,6 +120,10 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @FXML
     private void nextPerson() {
+        if (uniqueContacts.isEmpty()) {
+            return;
+        }
+
         int currentIndex = uniqueContacts.indexOf(currentContact);
         if (currentIndex < uniqueContacts.size() - 1) {
             currentContact = uniqueContacts.get(currentIndex + 1);
@@ -119,6 +133,10 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @FXML
     private void previousPerson() {
+        if (uniqueContacts.isEmpty()) {
+            return;
+        }
+
         int currentIndex = uniqueContacts.indexOf(currentContact);
         if (currentIndex > 0) {
             currentContact = uniqueContacts.get(currentIndex - 1);
@@ -128,7 +146,11 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     private void setSpinnerActive(boolean active) {
         spinner.setVisible(active);
-        spinner.getScene().getRoot().setDisable(active);
+        backButton.setDisable(active);
+        confirmButton.setDisable(active);
+        itemsTable.setDisable(active);
+        buttonNextPerson.setDisable(active);
+        buttonPreviousPerson.setDisable(active);
     }
 
     private Alert createAlert(Alert.AlertType alertType, String title, String header, String message) {
@@ -142,8 +164,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         setSpinnerActive(true);
         CompletableFuture.supplyAsync(this::buildAndSendEmails)
                 .thenAccept(success -> Platform.runLater(() -> {
+                    setSpinnerActive(false);
+
                     if (success) {
-                        setSpinnerActive(false);
                         Alert alert = createAlert(Alert.AlertType.INFORMATION, "Emails Sent", "Emails have been sent out successfully", "The Request has been sent out successfully. Please make sure to check your Spam Folder");
                         alert.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.OK) {
@@ -152,7 +175,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                             }
                         });
                     } else {
-                        setSpinnerActive(false);
                         Alert alert = createAlert(Alert.AlertType.ERROR, "Issue Sending Email", null, "We encountered an Issue while trying to send out the Request. Please try again later.");
                         alert.showAndWait().ifPresent(response -> {
                             if (response == ButtonType.OK) {
@@ -178,6 +200,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                     return false;
                 }
             } catch (Exception e) {
+                // TODO: logError() after merge
                 logger.severe("Failed to send email: " + e.getMessage());
                 logger.fine(Arrays.toString(e.getStackTrace()));
                 return false;

@@ -20,25 +20,29 @@
         <VBox>
             <HBox>
                 <Button fx:id="buttonPreviousPerson" text="⟨">
-               <HBox.margin>
-                  <Insets left="10.0" top="20.0" />
-               </HBox.margin></Button>
+                    <HBox.margin>
+                        <Insets left="10.0" top="20.0" />
+                    </HBox.margin>
+                </Button>
                 <Pane HBox.hgrow="ALWAYS" />
                 <Text fx:id="contactName" text="Max Mustermann" textAlignment="CENTER">
-               <font>
-                  <Font size="30.0" />
-               </font>
-               <HBox.margin>
-                  <Insets bottom="20.0" top="10.0" />
-               </HBox.margin></Text>
+                    <font>
+                        <Font size="30.0" />
+                    </font>
+                    <HBox.margin>
+                        <Insets bottom="20.0" top="10.0" />
+                    </HBox.margin>
+                </Text>
                 <Pane HBox.hgrow="ALWAYS">
-               <opaqueInsets>
-                  <Insets bottom="10.0" />
-               </opaqueInsets></Pane>
+                    <opaqueInsets>
+                        <Insets bottom="10.0" />
+                    </opaqueInsets>
+                </Pane>
                 <Button fx:id="buttonNextPerson" text="⟩">
-               <HBox.margin>
-                  <Insets right="10.0" top="20.0" />
-               </HBox.margin></Button>
+                    <HBox.margin>
+                        <Insets right="10.0" top="20.0" />
+                    </HBox.margin>
+                </Button>
             </HBox>
             <TableView fx:id="itemsTable">
                 <columns>
@@ -50,25 +54,43 @@
                 </columnResizePolicy>
             </TableView>
             <HBox alignment="CENTER_RIGHT">
-               <ProgressIndicator fx:id="spinner" prefHeight="27.0" prefWidth="38.0" visible="false">
-               <HBox.margin>
-                  <Insets top="10.0" />
-               </HBox.margin></ProgressIndicator>
-                <Text fx:id="totalPrice" text="10.50" textAlignment="RIGHT">
-               <HBox.margin>
-                  <Insets bottom="2.0" right="20.0" top="10" />
-               </HBox.margin>
-               <font>
-                  <Font size="16.0" />
-               </font></Text>
+            <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" HBox.hgrow="ALWAYS">
+               <children>
+                      <ProgressIndicator fx:id="spinner" prefHeight="27.0" prefWidth="38.0" visible="false">
+                          <HBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                          </HBox.margin>
+                      </ProgressIndicator>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="34.0" prefWidth="153.0">
+               <children>
+                      <Text text="Total: " textAlignment="RIGHT">
+                          <HBox.margin>
+                              <Insets bottom="2.0" right="20.0" top="10" />
+                          </HBox.margin>
+                          <font>
+                              <Font size="16.0" />
+                          </font>
+                      </Text>
+                  <Text fx:id="totalPrice" text="0.00 CHF" textAlignment="RIGHT">
+                      <HBox.margin>
+                          <Insets bottom="2.0" right="20.0" top="10" />
+                      </HBox.margin>
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Text>
+               </children>
+            </HBox>
             </HBox>
         </VBox>
     </center>
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
-            <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
+            <Button fx:id="backButton" onAction="#back" text="Back" HBox.hgrow="NEVER" />
             <Pane HBox.hgrow="ALWAYS" />
-            <Button onAction="#confirm" text="Confirm All" HBox.hgrow="NEVER" />
+            <Button fx:id="confirmButton" onAction="#confirm" text="Confirm All" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
 </BorderPane>

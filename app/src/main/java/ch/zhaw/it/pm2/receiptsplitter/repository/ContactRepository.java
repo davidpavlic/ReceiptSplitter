@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
@@ -32,17 +33,22 @@ public class ContactRepository implements IsObservable {
 
     //Loads the contacts from the file into the contact list
     public void loadContacts() throws IOException{
-        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
+        try(Stream<String> lines = Files.lines(contactsFilePath)){
+            lines.map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
+        }
     }
 
+    /**
+     * @inheritDoc
+     */
+    @Override
     public void addObserver(IsObserver observer) {
         observers.add(observer);
     }
 
-    public void removeObserver(IsObserver observer) {
-        observers.remove(observer);
-    }
-
+    /**
+     * @inheritDoc
+     */
     public void notifyObservers() {
         for (IsObserver observer : observers) {
             observer.update();
@@ -104,6 +110,7 @@ public class ContactRepository implements IsObservable {
     }
 
     //The following methods represent CRUD operations for selected contacts list
+    // TODO: Return type is not used for this and other methods. Maybe throw Exception instead? ReceiptProcessor is throwing Exception for such cases.
     public boolean addToSelectedContacts(String email){
         if(contactExists(email)){
             selectedContacts.add(findContactByEmail(email));
