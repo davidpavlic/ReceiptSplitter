@@ -32,12 +32,8 @@
             <HBox spacing="10">
                 <ComboBox fx:id="nameDropdown" minWidth="100" prefHeight="26.0" prefWidth="170.0" />
                 <Label fx:id="emailLabel" minWidth="163.0" prefHeight="18.0" prefWidth="163.0" />
-                <Button minWidth="30" onAction="#deleteContact" text="-">
-               <HBox.margin>
-                  <Insets right="10.0" />
-               </HBox.margin></Button>
             </HBox>
-            <Button fx:id="addNameBtn" minWidth="30" text="+">
+            <Button fx:id="addNameBtn" minWidth="30" text="+" onAction="#handleAddNameBtnAction">
             <VBox.margin>
                <Insets top="5.0" />
             </VBox.margin></Button>

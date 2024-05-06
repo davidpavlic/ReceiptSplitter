@@ -24,10 +24,13 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     private List<HBox> contactRows = new ArrayList<>();
     private ContactRepository contactRepository;
     private Router router;
+    private  List<Contact> contactList;
 
     public void initialize(Router router) {
         this.router = router;
-        this.helpMessage = HelpMessages.MAIN_WINDOW_MSG;
+        this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
+        contactList = contactRepository.getContactList();
+        setupInitialContactRow();;
     }
 
     private void setupInitialContactRow() {
@@ -37,6 +40,13 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         updateDeleteButtons();
     }
 
+    @FXML
+    private void handleAddNameBtnAction() {
+        HBox newRow = createContactRow();
+        contactRows.add(newRow);
+        contactListContainer.getChildren().add(newRow);
+        updateDeleteButtons();
+    }
     private HBox createContactRow() {
         HBox hbox = new HBox(10);
         ComboBox<Contact> comboBox = new ComboBox<>();
@@ -44,7 +54,14 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         Button deleteButton = new Button("-");
 
         comboBox.setItems(FXCollections.observableArrayList(contactRepository.getContactList()));
-        comboBox.setOnAction(e -> emailLabel.setText(comboBox.getValue().getEmail()));
+        comboBox.setOnAction(e -> {
+            Contact selected = comboBox.getValue();
+            if (selected != null) {
+                emailLabel.setText(selected.getEmail());
+            }
+        });
+
+        // Delete Button for every new row
         deleteButton.setOnAction(e -> {
             contactListContainer.getChildren().remove(hbox);
             contactRows.remove(hbox);
@@ -55,24 +72,11 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         return hbox;
     }
 
-    @FXML
-    private void addContactRow() {
-        HBox newRow = createContactRow();
-        contactRows.add(newRow);
-        contactListContainer.getChildren().add(newRow);
-        updateDeleteButtons();
-    }
-
     private void updateDeleteButtons() {
         contactRows.forEach(row -> {
             Button deleteButton = (Button) row.getChildren().get(2);
             deleteButton.setDisable(contactRows.size() == 1);
         });
-    }
-
-    @FXML
-    private void deleteContact() {
-  //TODO implement delete Row
     }
 
     @Override
@@ -92,6 +96,8 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
 
     @Override
     public void reset() {
-        //TODO reset
+        contactListContainer.getChildren().clear();
+        contactRows.clear();
+        setupInitialContactRow();
     }
 }
