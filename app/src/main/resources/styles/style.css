@@ -1,0 +1,20 @@
+.errormessage-box {
+    -fx-background-color: #ffb09c;
+}
+
+.errormessage-label {
+    -fx-text-fill: red;
+    -fx-alignment: CENTER;
+}
+
+.errormessage-close-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.errormessage-close-button:hover {
+    -fx-background-color: #ffcccc; /* Light red background on hover */
+    -fx-text-fill: black; /* Change text color on hover for better contrast */
+}

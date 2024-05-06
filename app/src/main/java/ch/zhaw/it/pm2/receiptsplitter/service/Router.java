@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -47,7 +48,8 @@ public class Router {
 
         this.stage = stage;
         for (Pages page : Pages.values()) {
-            addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
+            URL styleSheet = getClass().getResource("/styles/style.css");
+            addSceneMap(page, page.getPath(), contactRepository, receiptProcessor, styleSheet);
         }
         contactRepository.loadContacts();
     }
@@ -109,6 +111,7 @@ public class Router {
 
             Stage dialogStage = new Stage();
             Scene scene = new Scene(node);
+
             dialogStage.setTitle("Help");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(stage);
@@ -164,13 +167,17 @@ public class Router {
      * @param pathToScene the path to the scene
      * @throws IOException if an error occurs during scene loading
      */
-    private void addSceneMap(Pages page, String pathToScene, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
+    private void addSceneMap(Pages page, String pathToScene, ContactRepository contactRepository, ReceiptProcessor receiptProcessor, URL styleSheet) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
         Pane node = loader.load();
         DefaultController controller = loader.getController();
         controller.initialize(this, contactRepository, receiptProcessor);
 
         Scene scene = new Scene(node);
+        if (styleSheet != null) {
+            scene.getStylesheets().add(styleSheet.toExternalForm());
+        }
+
         sceneMap.put(page, new Pair<>(scene, controller));
     }
 }
