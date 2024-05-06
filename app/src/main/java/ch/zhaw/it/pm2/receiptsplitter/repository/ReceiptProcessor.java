@@ -210,6 +210,18 @@ public class ReceiptProcessor implements IsObservable {
     }
 
     /**
+     * Retrieves the distinct Contacts of the contact-receipt items.
+     *
+     * @return List of distinct Contacts
+     */
+    public List<Contact> getDistinctContacts() {
+        return contactReceiptItems.stream()
+                .map(ContactReceiptItem::getContact)
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Adds or replaces the current receipt. If a receipt is already present, it will be replaced.
      *
      * @param receipt the new receipt to be managed

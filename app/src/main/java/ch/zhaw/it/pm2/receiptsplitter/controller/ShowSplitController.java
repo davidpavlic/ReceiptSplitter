@@ -54,34 +54,15 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.SHOW_SPLIT_WINDOW_MSG;
         contactRepository.addObserver(this);
-        //TODO: Remove this
-        try {
-            setupTestData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         buttonNextPerson.setOnAction(event -> nextPerson());
         buttonPreviousPerson.setOnAction(event -> previousPerson());
         configureTable();
-
-    }
-
-    private void setupTestData() throws IOException {
-        ReceiptItem item1 = new ReceiptItem(10, "Coffee", 1);
-        ReceiptItem item2 = new ReceiptItem(15, "Pommes", 1);
-        ReceiptItem item3 = new ReceiptItem(5, "Water", 2);
-        ReceiptItem item4 = new ReceiptItem(20, "Cake", 2);
-        ReceiptItem item5 = new ReceiptItem(20, "Schweine Fleisch", 3);
-
-        // Create two ContactReceiptItem objects
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item1);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item2);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item3);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(1), item4);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(1), item5);
     }
 
     public void update() {
+        if (receiptProcessor.getDistinctContacts().isEmpty()) {
+            return;
+        }
         currentContact = receiptProcessor.getDistinctContacts().get(0);
         populateTableWithContactItems(currentContact);
     }
