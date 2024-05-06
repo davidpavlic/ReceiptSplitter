@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 //TODO: Slight Refactoring
 //TODO: JavaDoc und private methods Commenting
@@ -34,7 +35,9 @@ public class ContactRepository implements IsObservable {
 
     //Loads the contacts from the file into the contact list
     public void loadContacts() throws IOException{
-        Files.lines(contactsFilePath).map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
+        try(Stream<String> lines = Files.lines(contactsFilePath)){
+            lines.map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
+        }
     }
 
     public void addObserver(IsObserver observer) {
