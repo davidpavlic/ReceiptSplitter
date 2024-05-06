@@ -45,11 +45,12 @@ public class Router {
         Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
         Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
 
+        contactRepository.loadContacts();
+
         this.stage = stage;
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
         }
-        contactRepository.loadContacts();
     }
 
     /**
@@ -109,6 +110,11 @@ public class Router {
 
             Stage dialogStage = new Stage();
             Scene scene = new Scene(node);
+
+            dialogStage.setWidth(500);
+            dialogStage.setHeight(400);
+            dialogStage.setMinWidth(460);
+            dialogStage.setMinHeight(360);
             dialogStage.setTitle("Help");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(stage);

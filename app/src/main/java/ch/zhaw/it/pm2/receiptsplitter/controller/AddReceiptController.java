@@ -39,7 +39,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
-        this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
+        this.helpMessage = HelpMessages.ADD_RECEIPT_WINDOW_MSG;
         confirmButton.setOnAction(event -> confirm() );
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
