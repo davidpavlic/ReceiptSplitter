@@ -40,6 +40,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     @FXML
     public void addReceipt() {
         //TODO Implement addReceipt
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
 
