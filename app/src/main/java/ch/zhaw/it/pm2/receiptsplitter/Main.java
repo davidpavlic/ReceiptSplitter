@@ -3,11 +3,11 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -17,7 +17,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -100,7 +99,22 @@ public class Main extends Application {
         }
 
         Path contactsFile = Paths.get("contacts.csv");
-        if (!Files.exists(contactsFile)) {
+        if (Files.exists(contactsFile)) {
+            return true;
+        }
+
+        // Check if local.contacts.csv file exists and copy it to contacts.csv, otherwise create an empty contacts.csv file
+        Path localContactsFile = Paths.get("../local.contacts.csv");
+
+        if (Files.exists(localContactsFile)) {
+            logger.info("contacts.csv file not found, copying local.contacts.csv file");
+            try {
+                Files.copy(localContactsFile, contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not copy local.contacts.csv file: " + e);
+                return false;
+            }
+        } else {
             logger.info("creating empty contacts.csv file");
             try {
                 Files.createFile(contactsFile);
@@ -109,6 +123,7 @@ public class Main extends Application {
                 return false;
             }
         }
+
         return true;
     }
 
