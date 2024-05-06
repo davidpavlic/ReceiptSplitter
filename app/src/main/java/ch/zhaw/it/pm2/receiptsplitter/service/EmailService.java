@@ -1,14 +1,10 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.email.EmailBuilder;
 import org.simplejavamail.mailer.MailerBuilder;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 public class EmailService {
     private static final String EMAIL_SENDER = "noreplyreceiptsplitter@gmail.com";
@@ -47,7 +43,6 @@ public class EmailService {
     }
 
     public static boolean isValidMail(String email) {
-        //TODO make this nonStatic and use one isValidMail method
         return email.trim().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
     }
 }

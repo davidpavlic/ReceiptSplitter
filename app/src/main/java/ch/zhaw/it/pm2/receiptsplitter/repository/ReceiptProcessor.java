@@ -4,8 +4,6 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -68,6 +66,9 @@ public class ReceiptProcessor implements IsObservable {
      */
     @Override
     public void notifyObservers() {
+        if (observers == null) {
+            return;
+        }
         for (IsObserver observer : observers) {
             observer.update();
         }

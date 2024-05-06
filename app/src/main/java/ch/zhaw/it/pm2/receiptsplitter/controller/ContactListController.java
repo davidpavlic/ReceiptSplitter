@@ -3,13 +3,14 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -22,18 +23,20 @@ import javafx.scene.layout.HBox;
 import java.io.IOException;
 import java.util.Arrays;
 
-public class ContactListController extends DefaultController implements CanNavigate, CanReset, IsObserver {
+public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
 
     @FXML private TableColumn<Contact, String> actionColumn;
     @FXML private TableColumn<Contact, String> emailColumn;
     @FXML private TableColumn<Contact, String> nameColumn;
     @FXML private TableView<Contact> tableContactList;
+    private Pages lastPage;
 
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CONTACT_LIST_WINDOW_MSG;
         contactRepository.addObserver(this);
+        this.lastPage = Pages.MAIN_WINDOW;
         configureTable();
     }
 
@@ -57,7 +60,7 @@ public class ContactListController extends DefaultController implements CanNavig
     @FXML
     @Override
     public void back() {
-        switchScene(Pages.MAIN_WINDOW);
+        switchScene(lastPage);
     }
 
     @Override
@@ -126,5 +129,10 @@ public class ContactListController extends DefaultController implements CanNavig
             logger.fine(Arrays.toString(e.getStackTrace()));
         }
         // TODO: Show error message to user
+    }
+
+    @Override
+    public void setLastPage(Pages page) {
+        this.lastPage = page;
     }
 }

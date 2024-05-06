@@ -1,8 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

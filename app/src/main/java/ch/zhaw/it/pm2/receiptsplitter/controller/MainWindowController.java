@@ -2,10 +2,10 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -29,7 +29,7 @@ public class MainWindowController extends DefaultController implements IsObserve
 
     @FXML
     public void openContactList() {
-        switchScene(Pages.CONTACT_LIST_WINDOW);
+        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.MAIN_WINDOW);
     }
 
     @FXML
@@ -39,7 +39,7 @@ public class MainWindowController extends DefaultController implements IsObserve
 
     @FXML
     public void addReceipt() {
-        switchScene(Pages.SHOW_SPLIT_WINDOW);
+        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
 

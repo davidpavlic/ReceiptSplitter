@@ -9,9 +9,9 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -54,31 +54,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.SHOW_SPLIT_WINDOW_MSG;
         contactRepository.addObserver(this);
-        //TODO: Remove this
-        try {
-            setupTestData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         buttonNextPerson.setOnAction(event -> nextPerson());
         buttonPreviousPerson.setOnAction(event -> previousPerson());
         configureTable();
-
-    }
-
-    private void setupTestData() throws IOException {
-        ReceiptItem item1 = new ReceiptItem(10, "Coffee", 1);
-        ReceiptItem item2 = new ReceiptItem(15, "Pommes", 1);
-        ReceiptItem item3 = new ReceiptItem(5, "Water", 2);
-        ReceiptItem item4 = new ReceiptItem(20, "Cake", 2);
-        ReceiptItem item5 = new ReceiptItem(20, "Schweine Fleisch", 3);
-
-        // Create two ContactReceiptItem objects
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item1);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item2);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(0), item3);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(1), item4);
-        receiptProcessor.createContactReceiptItem(contactRepository.getContacts().get(1), item5);
     }
 
     public void update() {

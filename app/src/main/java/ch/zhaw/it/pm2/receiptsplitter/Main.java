@@ -6,8 +6,8 @@ package ch.zhaw.it.pm2.receiptsplitter;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -96,9 +97,16 @@ public class Main extends Application {
             logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
             return false;
         }
-        if (!Files.exists(Paths.get("contacts.csv"))) {
-            logger.severe("contacts.csv does not exist, please ensure to follow the documentation in the README.md file");
-            return false;
+
+        Path contactsFile = Paths.get("contacts.csv");
+        if (!Files.exists(contactsFile)) {
+            logger.info("creating empty contacts.csv file");
+            try {
+                Files.createFile(contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not create contacts.csv file: " + e);
+                return false;
+            }
         }
         return true;
     }
