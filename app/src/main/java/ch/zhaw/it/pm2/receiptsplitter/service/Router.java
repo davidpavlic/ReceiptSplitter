@@ -46,9 +46,9 @@ public class Router {
         Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
         Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
 
+        URL styleSheet = getClass().getResource("/styles/style.css");
         this.stage = stage;
         for (Pages page : Pages.values()) {
-            URL styleSheet = getClass().getResource("/styles/style.css");
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor, styleSheet);
         }
         contactRepository.loadContacts();
