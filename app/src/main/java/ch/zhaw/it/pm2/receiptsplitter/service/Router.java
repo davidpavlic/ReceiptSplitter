@@ -45,11 +45,12 @@ public class Router {
         Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
         Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
 
+        contactRepository.loadContacts();
+
         this.stage = stage;
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
         }
-        contactRepository.loadContacts();
     }
 
     /**

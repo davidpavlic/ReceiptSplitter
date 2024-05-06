@@ -1,6 +1,8 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.utils.ContactDropdownConfigurer;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
+import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
@@ -10,26 +12,136 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.ComboBoxTableCell;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.util.Callback;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
-public class AllocateItemsController extends DefaultController implements CanNavigate, CanReset  {
-    @FXML private TableView<ReceiptItem> contactItemTable;
-    @FXML private TableColumn<ReceiptItem, String> itemColumn;
-    @FXML private TableColumn<ReceiptItem, Contact> contactColumn;
+
+public class AllocateItemsController extends DefaultController {
+    @FXML private TableView<Combination> contactItemTable;
+    @FXML private TableColumn<Combination, String> itemColumn;
+    @FXML private TableColumn<Combination, String> dropdown;
+
+    ObservableList<Combination> contactList = FXCollections.observableArrayList();
 
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
-        this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
+        loadItems();
     }
+
+    private void loadItems() {
+        // Populate a list of all available contacts
+        ObservableList<String> contacts = FXCollections.observableArrayList("One", "Two", "Three");
+
+        List<Combination> receiptItems = new ArrayList<>();
+        for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
+            for (int index = 0; index < receiptItem.getAmount(); index++) {
+                receiptItems.add(new Combination(receiptItem.getName(), contacts.get(0), contacts));
+            }
+        }
+
+        contactItemTable.setItems(FXCollections.observableArrayList(receiptItems));
+        itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
+        dropdown.setCellValueFactory(cellData -> cellData.getValue().usersProperty());
+
+        // Use a custom cell factory for the ComboBox column
+        dropdown.setCellFactory(new ComboBoxTableCellFactory(contacts));
+    }
+
+    // Custom TableCell factory for ComboBox
+    private static class ComboBoxTableCellFactory implements Callback<TableColumn<Combination, String>, TableCell<Combination, String>> {
+        private final ObservableList<String> contacts;
+
+        public ComboBoxTableCellFactory(ObservableList<String> contacts) {
+            this.contacts = contacts;
+        }
+
+        @Override
+        public TableCell<Combination, String> call(TableColumn<Combination, String> param) {
+            return new ComboBoxTableCell();
+        }
+
+        private class ComboBoxTableCell extends TableCell<Combination, String> {
+            private final ComboBox<String> comboBox;
+
+            public ComboBoxTableCell() {
+                comboBox = new ComboBox<>(contacts);
+                comboBox.setPrefWidth(140.0);
+                comboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+                    if (getTableRow() != null && getTableRow().getItem() != null) {
+                        getTableRow().getItem().setUsers(newVal);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(String item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setGraphic(null);
+                } else {
+                    comboBox.setValue(item);
+                    setGraphic(comboBox);
+                }
+            }
+        }
+    }
+
+    // Data model class for a table row
+    public static class Combination {
+        private final SimpleStringProperty receiptItem;
+        private final SimpleStringProperty users;
+        private final ObservableList<String> availableContacts;
+
+        public Combination(String receiptItem, String users, ObservableList<String> availableContacts) {
+            this.receiptItem = new SimpleStringProperty(receiptItem);
+            this.users = new SimpleStringProperty(users);
+            this.availableContacts = availableContacts;
+        }
+
+        public String getReceiptItem() {
+            return receiptItem.get();
+        }
+
+        public void setReceiptItem(String receiptItem) {
+            this.receiptItem.set(receiptItem);
+        }
+
+        public SimpleStringProperty receiptItemProperty() {
+            return receiptItem;
+        }
+
+        public String getUsers() {
+            return users.get();
+        }
+
+        public void setUsers(String users) {
+            this.users.set(users);
+        }
+
+        public SimpleStringProperty usersProperty() {
+            return users;
+        }
+    }
+
 
     public void allocatePerson(int rowID){}
 
     public void deallocatePerson(int rowID){}
-
+       /*
     @Override
     public void confirm() {
         switchScene(Pages.SHOW_SPLIT_WINDOW);
@@ -43,7 +155,7 @@ public class AllocateItemsController extends DefaultController implements CanNav
     @Override
     public void reset() {}
     //TODO Implement initialize method after Contact Repository is implemented
-       /*
+
     @Override
     public void initialize(Router router) {
 
@@ -67,4 +179,4 @@ public class AllocateItemsController extends DefaultController implements CanNav
 
         }
         */
-    }
+}

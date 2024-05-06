@@ -39,10 +39,10 @@
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="contactItemTable" fixedCellSize="1.0" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="contactItemTable">
               <columns>
-                <TableColumn fx:id="itemColumn" prefWidth="232.00006711483002" text="Item" />
-                <TableColumn fx:id="contactColumn" prefWidth="154.39996337890625" text="Contact" />
+                <TableColumn fx:id="itemColumn" text="Item" />
+                <TableColumn fx:id="dropdown" text="Contacts" />
               </columns>
             </TableView>
          </children>
