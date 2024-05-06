@@ -1,6 +1,6 @@
 # Testkonzept
 
-## Einleitung
+## Übersicht
 Das Testkonzept basiert auf der Nutzung von Äquivalenzklassentests, um sicherzustellen, dass die Methoden in verschiedenen Szenarien wie erwartet funktionieren.
 Durch das Testen repräsentativer Instanzen aus jeder Klasse kann die Funktionsweise der Applikation effektiv überprüft werden, ohne jeden möglichen Eingabewert einzeln zu testen.
 
@@ -13,13 +13,13 @@ Die Router-Klasse regelt die Navigation innerhalb der Applikation.
 Das Testen der gotoScene-Methode ist wesentlich, um sicherzustellen, dass die korrekten Ansichten geladen werden und keine unerwarteten Fehler auftreten, wenn ungültige oder null Enums übergeben werden.
 
 Die ContactRepository-Klasse ist zentral für das Kontaktmanagement.
-Es ist notwendig, das Hinzufügen und Entfernen von Kontakten mit verschiedenen E-Mail-Validierungsregeln zu testen, um die Integrität der Kontaktinformationen zu gewährleisten.
+Es ist notwendig, das Hinzufügen und Entfernen von Kontakten mit einer E-Mail-Validierungsregeln zu testen, um die Integrität der Kontaktinformationen zu gewährleisten. 
+Da wir die E-Mail-Validierung mit einem Regex in der Klasse implementiert haben, haben wir uns entschieden, die Tests für die Validierung der E-Mail-Adresse zu entfernen.
 
 Schliesslich ist die ImageExtractor-Klasse verantwortlich für die Extraktion von Text aus Bildern. Da wir dafür eine externe Library verwenden, haben wir auf das Testing dieser Klasse verzichtet.
 
 Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden in erwarteter Weise reagieren und dass Ausnahmen korrekt gehandhabt werden..
 
-# Testkonzept
 
 ## Äquivalenzklassen
 
@@ -37,12 +37,12 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 
 
 #### Testtabellen
-| Äquivalenzklasse               | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung     | Erwartetes Ergebnis |
-|--------------------------------|-----|--------------|----------------------------|---------------------|
-| 1: Gültige Attribute           |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, positive Anzahl | Keine Voraussetzung | Objekt wird korrekt erstellt |
-| 2: Negativer Preis             |  setPrice_NegativePrice_ThrowsException| Negativer Preis | Gültige Anfangswerte       | Wirft Exception     |
-| 3: Ungültiger Name |       setName_InvalidName_ThrowsException()        | Ungültiger Name | Gültige Anfangswerte      |    Wirft Exception                     |
-| 4: Ungültige Anzahl            |                              setAmount_InvalidAmount_ThrowsException                      |     Ungültige Anzahl            |             Gültige Anfangswerte              |          Wirft Exception                                    |
+| Äquivalenzklasse               | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung         | Erwartetes Ergebnis |
+|--------------------------------|-----|--------------|--------------------------------|---------------------|
+| 1: Gültige Attribute           |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, positive Anzahl | Keine Voraussetzung            | Objekt wird korrekt erstellt |
+| 2: Negativer Preis             |  setPrice_NegativePrice_ThrowsException| Negativer Preis | Gültige restliche Anfangswerte           | Wirft Exception     |
+| 3: Ungültiger Name |       setName_InvalidName_ThrowsException()        | Ungültiger Name | Gültige restliche Anfangswerte |    Wirft Exception                     |
+| 4: Ungültige Anzahl            |                              setAmount_InvalidAmount_ThrowsException                      |     Ungültige Anzahl            | Gültige restliche Anfangswerte          |          Wirft Exception                                    |
 
 
 ### Klasse ContactReceiptItem
@@ -62,9 +62,9 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 | Äquivalenzklasse      | Name Testmethode    | Methoden Parameter                               | Zustand vor Ausführung     | Erwartetes Ergebnis |
 |-----------------------|-----|--------------------------------------------------|----------------------------|---------------------|
 | 1: Gültige Attribute  |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, gültiger Kontakt | Keine Voraussetzung | Objekt wird korrekt erstellt |
-| 2: Negativer Preis    |  setPrice_NegativePrice_ThrowsException| Negativer Preis                                  | Gültige Anfangswerte       | Wirft Exception     |
-| 3: Ungültiger Name    |       setName_InvalidName_ThrowsException()        | Ungültiger Name                                  | Gültige Anfangswerte      |    Wirft Exception                     |
-| 4: Ungültiger Kontakt |                            setContact_InvalidContact_ThrowsException                  | Kontakt ist 'null'                                |             Gültige Anfangswerte              |          Wirft Exception                                    |
+| 2: Negativer Preis    |  setPrice_NegativePrice_ThrowsException| Negativer Preis                                  | Gültige restliche Anfangswerte       | Wirft Exception     |
+| 3: Ungültiger Name    |       setName_InvalidName_ThrowsException()        | Ungültiger Name                                  | Gültige restliche Anfangswerte      |    Wirft Exception                     |
+| 4: Ungültiger Kontakt |                            setContact_InvalidContact_ThrowsException                  | Kontakt ist 'null'                                |             Gültige restliche Anfangswerte              |          Wirft Exception                                    |
 
 
 ### Klasse ReceiptProcessor
@@ -113,15 +113,13 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 1. Hinzufügen mit gültigen Daten.
 
 #### Ungültige Äquivalenzklassen
-2. Hinzufügen mit ungültiger Email.
-3. Mehrfacheintrag gleicher Daten.
+2. Hinzufügen mit Email, welche bereits verwendet wird.
 
 #### Testtabellen
-| Äquivalenzklasse | Name Testmethode                            | Methoden Parameter | Zustand vor Ausführung | Erwartetes Ergebnis |
-|------------------|---------------------------------------------|--------------------|------------------------|---------------------|
-| 1: Gültige Daten | addContact_ValidAttributes_ContactCreated() | Gültiger Name und Email | Kein vorheriger Kontakt | Kontakt wird erstellt |
-| 2: Ungültige Email | ===                                         | Gültiger Name, ungültige Email | Kein vorheriger Kontakt | Fehlerauslösung |
-| 3: Duplikat | ====                                        | Gleicher Name und Email bereits vorhanden | Kontakt existiert | Fehlerauslösung |
+| Äquivalenzklasse | Name Testmethode                            | Methoden Parameter              | Zustand vor Ausführung | Erwartetes Ergebnis   |
+|------------------|---------------------------------------------|---------------------------------|------------------------|-----------------------|
+| 1: Gültige Daten | addContact_ValidAttributes_ContactCreated() | Gültiger Name und Email         | Kein vorheriger Kontakt | Kontakt wird erstellt |
+| 2: Mail-Duplikat | addContact_EmailDuplicate_ThrowException()  | Gleiche Email bereits vorhanden | Kontakt existiert | Wirft Exception       |
 
 
 
