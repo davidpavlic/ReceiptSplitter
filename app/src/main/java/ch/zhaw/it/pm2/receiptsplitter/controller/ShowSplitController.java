@@ -6,12 +6,14 @@ import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -35,7 +37,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     @FXML private TableView<ContactReceiptItem> itemsTable;
     @FXML private TableColumn<ContactReceiptItem, String> itemNameColumn;
-    @FXML private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
+    @FXML private TableColumn<ContactReceiptItem, String> itemPriceColumn;
     @FXML private ProgressIndicator spinner;
 
     private List<Contact> uniqueContacts;
@@ -102,7 +104,14 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     private void configureTable() {
         itemNameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
-        itemPriceColumn.setCellValueFactory(new PropertyValueFactory<>("price"));
+        itemPriceColumn.setCellValueFactory(cellItem -> {
+            ContactReceiptItem item = cellItem.getValue();
+
+            float unitPrice = item.getPrice();
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(unitPrice);
+
+            return new SimpleStringProperty(formattedUnitPrice);
+        });
     }
 
     private void populateTableWithContactItems(Contact contact) {
@@ -111,6 +120,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                         .filter(item -> item.getContact().equals(contact))
                         .collect(Collectors.toList())
         );
+
         itemsTable.setItems(items);
         contactName.setText(contact.getDisplayName());
 
