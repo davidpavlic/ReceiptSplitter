@@ -77,7 +77,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     public void addReceipt() {
         prepareListItemDebugTestData();
 
-        switchScene(Pages.ADD_RECEIPT_WINDOW);
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
     // TODO: Only used for testing, remove in the end

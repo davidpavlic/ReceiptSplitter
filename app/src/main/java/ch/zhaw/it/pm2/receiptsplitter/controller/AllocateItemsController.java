@@ -93,7 +93,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
     private List<TableRow> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
         List<TableRow> receiptItems = new ArrayList<>();
-        for (ReceiptItem receiptItem : receiptProcessor.getFullCopyReceiptItems()) {
+        for (ReceiptItem receiptItem : receiptProcessor.splitReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
                 ComboBox<Contact> comboBox = new ComboBox<>();
                 comboBox.setItems(FXCollections.observableArrayList(contactRepository.getSelectedContacts()));
@@ -155,7 +155,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
         public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.itemPrice = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
+            this.itemPrice = new SimpleStringProperty(receiptItem.getPrice() + " CHF");
             //TODO: Convert Price with default method
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;
