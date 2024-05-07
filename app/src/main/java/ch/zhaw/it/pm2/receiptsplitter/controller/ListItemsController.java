@@ -35,6 +35,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private static final String ADD_FAIL_ERROR_MESSAGE = "Could not add Receipt Item";
     private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item";
     private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
+    private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell";
+    private static final String FLOAT_PARSE_ERROR_MESSAGE = "You can only enter numbers in this cell";
 
     @FXML private HBox errorMessageBox;
     @FXML private Label errorMessageLabel;
@@ -230,7 +232,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureTotalPriceColumn() {
         totalPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            return new SimpleStringProperty(roundPrice(item.getPrice()) + " CHF");
+            float roundedPrice = roundPrice(item.getPrice());
+            return new SimpleStringProperty( roundedPrice + " CHF");
         });
 
         totalPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -288,7 +291,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     private Optional<Float> extractPrice(String priceInput, ReceiptItem item) {
-        float price = new TableViewFloatStringConverter().fromString(priceInput);
+        float price = floatFromString(priceInput);
 
         if (item.getPrice() == price) return Optional.empty();
         if (price == Float.MIN_VALUE) {
@@ -323,16 +326,25 @@ public class ListItemsController extends DefaultController implements CanNavigat
         tableReceiptItems.getSortOrder().setAll(sortOrder);
     }
 
+    public Float floatFromString(String string) {
+        try {
+            return new FloatStringConverter().fromString(string);
+        } catch (NumberFormatException e) {
+            showErrorMessage(FLOAT_PARSE_ERROR_MESSAGE);
+        }
+
+        return Float.MIN_VALUE;
+    }
+
     private class TableViewIntegerStringConverter extends IntegerStringConverter {
         private final IntegerStringConverter converter = new IntegerStringConverter();
-        private final String errorMessage = "You can only enter digits in this cell";
 
         @Override
         public String toString(Integer object) {
             try {
                 return converter.toString(object);
             } catch (NumberFormatException e) {
-                showErrorMessage(errorMessage);
+                showErrorMessage(INTEGER_PARSE_ERROR_MESSAGE);
             }
             return null;
         }
@@ -342,35 +354,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
             try {
                 return converter.fromString(string);
             } catch (NumberFormatException e) {
-                showErrorMessage(errorMessage);
+                showErrorMessage(INTEGER_PARSE_ERROR_MESSAGE);
             }
             return Integer.MIN_VALUE;
-        }
-    }
-
-    private class TableViewFloatStringConverter extends FloatStringConverter {
-        private final FloatStringConverter converter = new FloatStringConverter();
-        private final String errorMessage = "You can only enter numbers in this cell";
-
-        @Override
-        public String toString(Float object) {
-            try {
-                return converter.toString(object);
-            } catch (NumberFormatException e) {
-                showErrorMessage(errorMessage);
-            }
-            return null;
-        }
-
-        @Override
-        public Float fromString(String string) {
-            try {
-                return converter.fromString(string);
-            } catch (NumberFormatException e) {
-                showErrorMessage(errorMessage);
-            }
-
-            return Float.MIN_VALUE;
         }
     }
 }
