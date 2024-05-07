@@ -11,6 +11,7 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
 import java.util.ArrayList;
@@ -40,7 +41,12 @@ public class MainWindowController extends DefaultController implements IsObserve
 
     @FXML
     public void openTransactions() {
-        //TODO Implement Transactions
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("Currently not available");
+        alert.setContentText("This feature will be available in the next version.");
+
+        alert.showAndWait();
     }
 
     @FXML
@@ -73,7 +79,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         }});
         receiptProcessor.setReceipt(receipt);
 
-        Contact firstContact = contacts.getFirst();
+        /*Contact firstContact = contacts.getFirst();
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().getFirst());
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(2));
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(5));
@@ -88,7 +94,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(1));
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(3));
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(8));
-        receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(10));
+        receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(10));*/
         return true;
     }
 

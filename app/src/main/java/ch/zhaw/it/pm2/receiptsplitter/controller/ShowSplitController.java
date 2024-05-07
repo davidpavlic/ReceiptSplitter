@@ -89,7 +89,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
      */
     @Override
     public void back() {
-        switchScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
     }
 
     private void configureTable() {
