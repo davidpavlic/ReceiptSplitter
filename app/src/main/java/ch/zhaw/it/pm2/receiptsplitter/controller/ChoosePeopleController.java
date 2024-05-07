@@ -23,17 +23,29 @@ import javafx.scene.layout.VBox;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+// TODO: Consistency issue: Rename to ChooseContactController
+// TODO: Implement error message box after merge with feat/26
 public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset, IsObserver {
-    @FXML
-    private VBox contactListContainer;
-    @FXML
-    private Button confirmButton;
+    @FXML private VBox contactListContainer;
+    @FXML private Button confirmButton;
+
     private final ObservableList<HBox> contactRows = FXCollections.observableArrayList();
+
     private Contact activeProfile;
     private final List<Contact> availableContacts = new ArrayList<>();
 
-
+    /**
+     * Initializes the Controller with the necessary dependencies and initial data.
+     * Configures the contact list container and the confirm button.
+     *
+     * @param router            The router to be used for navigation.
+     * @param contactRepository The repository to be used for contact management.
+     * @param receiptProcessor  The processor to be used for receipt processing.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -45,6 +57,10 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         createAndAddNewRow();
     }
 
+    /**
+     * @inheritDoc Iterates over the contact rows and adds the selected contacts to the selected contacts list in the contact repository.
+     * Switches to the allocate items window in the end.
+     */
     @Override
     public void confirm() {
         for (HBox row : contactRows) {
@@ -57,16 +73,25 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
     }
 
+    /**
+     * @inheritDoc Switches to the contact list window.
+     */
     @FXML
     public void openContactList() {
         switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_PEOPLE_WINDOW);
     }
 
+    /**
+     * @inheritDoc Switches back to the list items window.
+     */
     @Override
     public void back() {
         switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
+    /**
+     * @inheritDoc Clears the contact rows and adds a new row with the active profile as the first contact.
+     */
     @Override
     public void reset() {
         clearContactRows();
@@ -74,6 +99,10 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         updateFirstContactRow();
     }
 
+    /**
+     * @inheritDoc Clears the current contact rows and updates the available contacts.
+     * Adds a new row with the active profile as the first contact.
+     */
     @Override
     public void update() {
         clearContactRows();
@@ -149,31 +178,28 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
             boolean allComboBoxesHaveValue = contactRows.stream()
                     .map(this::getComboBoxFromRow)
                     .allMatch(comboBox -> comboBox.getValue() != null);
-            confirmButton.setDisable(!(allComboBoxesHaveValue && contactRows.size() >= 2) || isContactSelectedMoreThanOnce());
+
+            boolean minimumContactsSelected = allComboBoxesHaveValue && contactRows.size() >= 2;
+            confirmButton.setDisable(!minimumContactsSelected || isContactSelectedMoreThanOnce());
         });
     }
 
     private boolean isContactSelectedMoreThanOnce() {
-        List<Contact> selectedContacts = new ArrayList<>();
-        for (HBox row : contactRows) {
-            ComboBox<Contact> comboBox = getComboBoxFromRow(row);
-            Contact selectedContact = comboBox.getValue();
-            if (selectedContact != null) {
-                if (selectedContacts.contains(selectedContact)) {
-                    return true;
-                } else {
-                    selectedContacts.add(selectedContact);
-                }
-            }
-        }
-        return false;
+        Set<Contact> selectedContacts = contactRows.stream()
+                .map(this::getComboBoxFromRow)
+                .filter(Objects::nonNull)
+                .map(ComboBox::getValue)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet()); // Use Set to remove duplicates
+
+        return selectedContacts.size() != contactRows.size();
     }
 
     private ComboBox<Contact> getComboBoxFromRow(HBox row) {
-        return (ComboBox<Contact>) row.getChildren().get(1);
+        return (ComboBox<Contact>) row.getChildren().stream().filter(node -> node instanceof ComboBox<?>).findFirst().orElse(null);
     }
 
     private Button getButtonFromRow(HBox row) {
-        return (Button) row.getChildren().getFirst();
+        return (Button) row.getChildren().stream().filter(node -> node instanceof Button).findFirst().orElse(null);
     }
 }
