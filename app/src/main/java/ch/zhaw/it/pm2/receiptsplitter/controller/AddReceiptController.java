@@ -1,19 +1,19 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
-import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
-import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor;
-import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.*;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ImageReceiptExtractorException;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptItemOCR;
+import ch.zhaw.it.pm2.receiptsplitter.service.ImageReceiptExtractor.ReceiptOCR;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -35,7 +35,7 @@ import java.util.List;
 //TODO: JavaDoc
 //TODO: Logger
 //TODO: ReceiptProcessor
-public class AddReceiptController extends DefaultController implements CanNavigate, CanReset  {
+public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
     private File selectedFile;
     private ImageReceiptExtractor imageExtractor;
     private ReceiptProcessor receiptProcessor;
@@ -51,6 +51,14 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button resetButton;
     @FXML private Button backButton;
 
+    /**
+     * Initializes the Controller with the necessary dependencies and initial data.
+     * Configures the drag and drop pane and the upload receipt button.
+     *
+     * @param router            The router to be used for navigation.
+     * @param contactRepository The repository to be used for contact management.
+     * @param receiptProcessor  The processor to be used for receipt processing.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -59,18 +67,26 @@ public class AddReceiptController extends DefaultController implements CanNaviga
 
         setLoadingAnimationEnabled(false);
         setProcessButtonsDisabled(true);
+
+        // TODO: Replace with error message box after merge with feat/26
         errorMessage.setVisible(false);
 
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
 
+    /**
+     * @inheritDoc Enables the loading animation and disables all buttons.
+     * Loads the receipt image and processes the receipt in a separate thread.
+     * After processing the receipt, the loading animation is disabled and the user is navigated to the list items window, additionally doing some cleanup.
+     */
     @Override
     public void confirm() {
         setLoadingAnimationEnabled(true);
         setAllButtonsDisabled(true);
         errorMessage.setVisible(false);
 
+        // TODO: Check if this Threading is alright (just to make sure)
         new Thread(() -> {
             boolean success = processReceipt(selectedFile);
 
@@ -79,31 +95,33 @@ public class AddReceiptController extends DefaultController implements CanNaviga
                 if (success) {
                     switchScene(Pages.LIST_ITEMS_WINDOW);
                     clearReceiptData();
-                }else{
+                } else {
                     errorMessage.setVisible(true);
+                    logger.warning("Could not process receipt.");
                 }
                 setUtilButtonsDisabled(false);
             });
         }).start();
     }
 
-    private boolean processReceipt(File file){
+    private boolean processReceipt(File file) {
         try {
-            ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
+            ReceiptOCR extractedImage = imageExtractor.extractReceiptOCR(file);
             List<ReceiptItem> receiptItems = mapReceiptItems(extractedImage);
 
-            // TODO: processor
+            receiptProcessor.setReceipt(new Receipt(receiptItems));
 
             return true;
         } catch (ImageReceiptExtractorException e) {
-            System.err.println("Error extracting receipt: " + e.getMessage());
+            // TODO: logError() after merge with feat/26
+            logger.severe("Error while processing receipt: " + e.getMessage());
             return false;
         }
     }
 
-    private List<ReceiptItem> mapReceiptItems(ReceiptOCR extractedImage){
+    private List<ReceiptItem> mapReceiptItems(ReceiptOCR extractedImage) {
         List<ReceiptItem> receiptItems = new ArrayList<>();
-        for(ReceiptItemOCR receiptItemOCR : extractedImage.receiptItemOCRList()){
+        for (ReceiptItemOCR receiptItemOCR : extractedImage.receiptItemOCRList()) {
             float price = (float) receiptItemOCR.price();
             int amount = receiptItemOCR.amount();
             String name = receiptItemOCR.name();
@@ -128,9 +146,9 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         boolean success = false;
         Dragboard dragboard = dragEvent.getDragboard();
 
-        if (dragboard.hasFiles()){
+        if (dragboard.hasFiles()) {
             success = true;
-            loadReceipt(dragboard.getFiles().get(0));
+            loadReceipt(dragboard.getFiles().getFirst());
         }
 
         dragEvent.setDropCompleted(success);
@@ -147,10 +165,10 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         dragAndDropPane.setOnDragDropped(this::handleReceiptDropped);
     }
 
-    private void openDialog(){
+    private void openDialog() {
         FileChooser fileChooser = new FileChooser();
         selectedFile = fileChooser.showOpenDialog(uploadReceiptButton.getScene().getWindow());
-        if(selectedFile != null){
+        if (selectedFile != null) {
             loadReceipt(selectedFile);
         }
     }
@@ -167,22 +185,22 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         setProcessButtonsDisabled(true);
     }
 
-    private void setAllButtonsDisabled(boolean enabled){
+    private void setAllButtonsDisabled(boolean enabled) {
         setUtilButtonsDisabled(enabled);
         setProcessButtonsDisabled(enabled);
     }
 
-    private void setUtilButtonsDisabled(boolean enabled){
+    private void setUtilButtonsDisabled(boolean enabled) {
         backButton.setDisable(enabled);
         uploadReceiptButton.setDisable(enabled);
     }
 
-    private void setProcessButtonsDisabled(boolean enabled){
+    private void setProcessButtonsDisabled(boolean enabled) {
         resetButton.setDisable(enabled);
         confirmButton.setDisable(enabled);
     }
 
-    private void setLoadingAnimationEnabled(boolean enabled){
+    private void setLoadingAnimationEnabled(boolean enabled) {
         backgroundShadow.setVisible(enabled);
         progressIndicator.setVisible(enabled);
     }
