@@ -30,21 +30,22 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 **Methoden:** `Konstruktor, ungültige Parameter durch setPrice, setName, setAmount`
 
 #### Gültige Äquivalenzklassen
-1. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
+* 1\. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
+  
 
 #### Ungültige Äquivalenzklassen
-2.  Aufruf mit negativem Preis.
-3. Aufruf mit ungültigem Namen.
-4. Aufruf mit ungültiger Anzahl.
+* 2.1\.  Aufruf mit negativem Preis.
+* 2.2\. Aufruf mit ungültigem Namen.
+* 2.3\. Aufruf mit ungültiger Anzahl.
 
 
 #### Testtabellen
-| Äquivalenzklasse               | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung         | Erwartetes Ergebnis |
-|--------------------------------|-----|--------------|--------------------------------|---------------------|
-| 1: Gültige Attribute           |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, positive Anzahl | Keine Voraussetzung            | Objekt wird korrekt erstellt |
-| 2: Negativer Preis             |  setPrice_NegativePrice_ThrowsException| Negativer Preis | Gültige restliche Anfangswerte           | Wirft Exception     |
-| 3: Ungültiger Name |       setName_InvalidName_ThrowsException()        | Ungültiger Name | Gültige restliche Anfangswerte |    Wirft Exception                     |
-| 4: Ungültige Anzahl            |                              setAmount_InvalidAmount_ThrowsException                      |     Ungültige Anzahl            | Gültige restliche Anfangswerte          |          Wirft Exception                                    |
+| Äquivalenzklasse      | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung         | Erwartetes Ergebnis |
+|-----------------------|-----|--------------|--------------------------------|---------------------|
+| 1: Gültige Attribute  |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, positive Anzahl | Keine Voraussetzung            | Objekt wird korrekt erstellt |
+| 2.1: Negativer Preis  |  setPrice_NegativePrice_ThrowsException| Negativer Preis | Gültige restliche Anfangswerte           | Wirft Exception     |
+| 2.2: Ungültiger Name  |       setName_InvalidName_ThrowsException()        | Ungültiger Name | Gültige restliche Anfangswerte |    Wirft Exception                     |
+| 2.3: Ungültige Anzahl |                              setAmount_InvalidAmount_ThrowsException                      |     Ungültige Anzahl            | Gültige restliche Anfangswerte          |          Wirft Exception                                    |
 
 
 ### Klasse ContactReceiptItem
@@ -52,21 +53,21 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 **Methoden:** `Konstruktor, ungültige Parameter durch setPrice, setName, setAmount`
 
 #### Gültige Äquivalenzklassen
-1. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
+* 1\. Kalkulation mit gültigen Attributen (Preis, Name, Anzahl).
 
 #### Ungültige Äquivalenzklassen
-2.  Aufruf mit negativem Preis.
-3. Aufruf mit ungültigem Namen.
-4. Aufruf mit ungültigem Kontakt.
+* 2.1\.  Aufruf mit negativem Preis. 
+* 2.2\. Aufruf mit ungültigem Namen.
+* 2.3\. Aufruf mit ungültigem Kontakt.
 
 
 #### Testtabellen
-| Äquivalenzklasse      | Name Testmethode    | Methoden Parameter                               | Zustand vor Ausführung     | Erwartetes Ergebnis |
-|-----------------------|-----|--------------------------------------------------|----------------------------|---------------------|
-| 1: Gültige Attribute  |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, gültiger Kontakt | Keine Voraussetzung | Objekt wird korrekt erstellt |
-| 2: Negativer Preis    |  setPrice_NegativePrice_ThrowsException| Negativer Preis                                  | Gültige restliche Anfangswerte       | Wirft Exception     |
-| 3: Ungültiger Name    |       setName_InvalidName_ThrowsException()        | Ungültiger Name                                  | Gültige restliche Anfangswerte      |    Wirft Exception                     |
-| 4: Ungültiger Kontakt |                            setContact_InvalidContact_ThrowsException                  | Kontakt ist 'null'                                |             Gültige restliche Anfangswerte              |          Wirft Exception                                    |
+| Äquivalenzklasse        | Name Testmethode    | Methoden Parameter                               | Zustand vor Ausführung     | Erwartetes Ergebnis |
+|-------------------------|-----|--------------------------------------------------|----------------------------|---------------------|
+| 1: Gültige Attribute    |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, gültiger Kontakt | Keine Voraussetzung | Objekt wird korrekt erstellt |
+| 2.1: Negativer Preis    |  setPrice_NegativePrice_ThrowsException| Negativer Preis                                  | Gültige restliche Anfangswerte       | Wirft Exception     |
+| 2.2: Ungültiger Name    |       setName_InvalidName_ThrowsException()        | Ungültiger Name                                  | Gültige restliche Anfangswerte      |    Wirft Exception                     |
+| 2.3: Ungültiger Kontakt |                            setContact_InvalidContact_ThrowsException                  | Kontakt ist 'null'                                |             Gültige restliche Anfangswerte              |          Wirft Exception                                    |
 
 
 ### Klasse ReceiptProcessor
@@ -74,18 +75,19 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 **Methode:** `calculateDebtByContact(contactItems: List<ContactItem>)`
 
 #### Gültige Äquivalenzklassen
-1. Kalkulation mit mindestens einem gültigen `ContactItem`.
+* 1\.  Kalkulation mit mindestens einem gültigen `ContactItem`.
 
 #### Ungültige Äquivalenzklassen
-2. Kalkulation mit einer leeren Liste.
+* 2.1\. Kalkulation mit einer leeren Liste.
+* 2.2\. Kalkulation mit nicht-existeirendem Kontakt.
 
 
 #### Testtabellen
-| Äquivalenzklasse               | Name Testmethode    | Methoden Parameter   | Zustand vor Ausführung     | Erwartetes Ergebnis |
-|--------------------------------|-----|----------------------|----------------------------|---------------------|
-| 1: Gültige Liste               |   calculateDebtByPerson_ValidInput_CalculationValid()   | Gültige ContactItems | Gültige Contacts vorhanden | Korrekte Berechnung |
-| 2: Leere Liste                 |  calculateDebtByPerson_EmptyList_ThrowException()   | Leere Liste          | Keine Voraussetzung        | Wirft Exception     |
-| 3: Nicht-existierender Kontakt |       calculateDebtByPerson_NonExistingContact_ThrowException()        | Gültige ContactItems | Ungültiger Contact         |    Wirft Exception                     |
+| Äquivalenzklasse                 | Name Testmethode    | Methoden Parameter   | Zustand vor Ausführung     | Erwartetes Ergebnis |
+|----------------------------------|-----|----------------------|----------------------------|---------------------|
+| 1: Gültige Liste                 |   calculateDebtByPerson_ValidInput_CalculationValid()   | Gültige ContactItems | Gültige Contacts vorhanden | Korrekte Berechnung |
+| 2.1: Leere Liste                 |  calculateDebtByPerson_EmptyList_ThrowException()   | Leere Liste          | Keine Voraussetzung        | Wirft Exception     |
+| 2.2: Nicht-existierender Kontakt |       calculateDebtByPerson_NonExistingContact_ThrowException()        | Gültige ContactItems | Ungültiger Contact         |    Wirft Exception                     |
 
 
 ### Klasse Router
@@ -93,18 +95,18 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 **Methode:** `gotoScene(enum: Enum)`
 
 #### Gültige Äquivalenzklassen
-1. Aufruf mit gültigem Enum.
+* 1\.  Aufruf mit gültigem Enum.
 
 #### Ungültige Äquivalenzklassen
-2. Aufruf mit ungültigem Enum.
-3. Aufruf mit `null` Enum.
+* 2.1\. Aufruf mit ungültigem Enum.
+* 2.2\. Aufruf mit `null` Enum.
 
 #### Testtabellen
-| Äquivalenzklasse | Name Testmethode                                   | Methoden Parameter | Zustand vor Ausführung | Erwartetes Ergebnis |
-|------------------|----------------------------------------------------|--------------------|------------------------|---------------------|
-| 1: Gültiger Enum | gotoScene_ValidPage_SceneSwitched(Pages validPage) | Gültiges Enum      | Initialisierte sceneMap | Szene wird geladen  |
-| 2: Ungültiger Enum | gotoScene_PageWithoutLastPage_ThrowsException()    | Ungültiges Enum  | Initialisierte sceneMap | Wirft Exception     |
-| 3: Null Enum     | gotoScene_NullPage_ThrowsException()               | Null              | Beliebiger Zustand      | Wirft Exception     |
+| Äquivalenzklasse     | Name Testmethode                                   | Methoden Parameter | Zustand vor Ausführung | Erwartetes Ergebnis |
+|----------------------|----------------------------------------------------|--------------------|------------------------|---------------------|
+| 1: Gültiger Enum     | gotoScene_ValidPage_SceneSwitched(Pages validPage) | Gültiges Enum      | Initialisierte sceneMap | Szene wird geladen  |
+| 2.1: Ungültiger Enum | gotoScene_PageWithoutLastPage_ThrowsException()    | Ungültiges Enum  | Initialisierte sceneMap | Wirft Exception     |
+| 2.2: Null Enum       | gotoScene_NullPage_ThrowsException()               | Null              | Beliebiger Zustand      | Wirft Exception     |
 
 
 ### Klasse ContactRepository
@@ -112,10 +114,10 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 **Methode:** `addContact(name: String, email: String)`
 
 #### Gültige Äquivalenzklassen
-1. Hinzufügen mit gültigen Daten.
+* 1\. Hinzufügen mit gültigen Daten.
 
 #### Ungültige Äquivalenzklassen
-2. Hinzufügen mit Email, welche bereits verwendet wird.
+* 2\.  Hinzufügen mit Email-Adresse, welche bereits verwendet wird.
 
 #### Testtabellen
 | Äquivalenzklasse | Name Testmethode                            | Methoden Parameter              | Zustand vor Ausführung | Erwartetes Ergebnis   |
