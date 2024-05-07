@@ -4,41 +4,37 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 
 import java.io.IOException;
-import java.util.Arrays;
 
 public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
+
+    private static final String CONTACT_NOT_REMOVED_ERROR_MESSAGE = "Could not remove contact. Please try again.";
 
     @FXML private TableColumn<Contact, String> actionColumn;
     @FXML private TableColumn<Contact, String> emailColumn;
     @FXML private TableColumn<Contact, String> nameColumn;
     @FXML private TableView<Contact> tableContactList;
 
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
+
     private Pages lastPage;
 
     /**
-     * Initializes the Controller with the necessary dependencies and initial data.
-     * Configures the contact list table too.
-     *
-     * @param router The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor The processor to be used for receipt processing.
+     * @inheritDoc Configures the table for the contact list.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -47,6 +43,19 @@ public class ContactListController extends DefaultController implements CanNavig
         contactRepository.addObserver(this);
         this.lastPage = Pages.MAIN_WINDOW; // Default last page
         configureTable();
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
+    }
+
+    /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
     }
 
     /**
@@ -77,7 +86,6 @@ public class ContactListController extends DefaultController implements CanNavig
 
     /**
      * @inheritDoc Switches to the last page.
-     *
      */
     @FXML
     @Override
@@ -86,16 +94,29 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void reset() {} // TODO: Implement? Or remove?
+    public void reset() {
+    } // TODO: Implement? Or remove?
 
     /**
-     * @inheritDoc Sets the last page.
-     *
      * @param page The last page.
+     * @inheritDoc Sets the last page.
      */
     @Override
     public void setLastPage(Pages page) {
         this.lastPage = page;
+    }
+
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private void configureTable() {
@@ -148,17 +169,11 @@ public class ContactListController extends DefaultController implements CanNavig
         try {
             if (!contactRepository.removeContact(contact.getEmail())) {
                 logError("Could not remove contact", null);
+                errorMessageProperty.set(CONTACT_NOT_REMOVED_ERROR_MESSAGE);
             }
         } catch (IOException e) {
             logError("Error removing contact", e);
+            errorMessageProperty.set(CONTACT_NOT_REMOVED_ERROR_MESSAGE);
         }
-    }
-
-    private void logError(String message, Exception e) {
-        logger.severe(message);
-        if (e != null) {
-            logger.fine(Arrays.toString(e.getStackTrace()));
-        }
-        // TODO: Show error message to user
     }
 }

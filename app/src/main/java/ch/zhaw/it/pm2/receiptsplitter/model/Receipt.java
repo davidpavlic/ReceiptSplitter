@@ -1,83 +1,132 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
-//TODO: JavaDoc
+/**
+ * Represents a receipt with a list of receipt items.
+ * Exposes methods to add, update, delete and get receipt items.
+ * The List of Receipt Items  cannot be modified from outside the class.
+ */
 public class Receipt {
+    private List<ReceiptItem> receiptItems;
 
-    private List<ReceiptItem> receiptItemList;
-
+    /**
+     * Constructor for a receipt.
+     * Creates a new receipt with a list of receipt items.
+     *
+     * @param receiptItem List of receipt items.
+     * @throws IllegalArgumentException If the list is null.
+     */
     public Receipt(List<ReceiptItem> receiptItem) {
-        setReceiptItemList(receiptItem);
+        setReceiptItems(receiptItem);
     }
 
+    /**
+     * Set the receipt items.
+     *
+     * @param receiptItems List of receipt items.
+     * @throws IllegalArgumentException If the list is null.
+     */
+    public void setReceiptItems(List<ReceiptItem> receiptItems) {
+        ModelParamValidator.throwIfElementIsNull(receiptItems, ReceiptErrorMessageType.LIST_NULL.toString());
+        this.receiptItems = receiptItems;
+    }
+
+    // TODO: Remove? Already have a getter for the list
+    public ReceiptItem getReceiptItem(int index) {
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        return receiptItems.get(index);
+    }
+
+    /**
+     * Get a receipt item by name.
+     *
+     * @param name Name of the receipt item.
+     * @return Optional of the receipt item.
+     * @throws IllegalArgumentException If the name is null.
+     */
+    public Optional<ReceiptItem> getReceiptItemByName(String name) {
+        ModelParamValidator.throwIfElementIsNull(name, ReceiptErrorMessageType.ITEM_NULL.toString());
+        return receiptItems.stream().filter(item -> item.getName().equals(name)).findFirst();
+    }
+
+    /**
+     * Calculates the total price of all receipt items.
+     *
+     * @return Total price of all receipt items.
+     */
+    public float getReceiptTotal() {
+        // TODO: Nice to have in List Items, otherwise I don't know where the sum total of all Receipt Items is needed? Needs to be removed then if not used.
+        return (float) receiptItems.stream().mapToDouble(ReceiptItem::getPrice).sum();
+    }
+
+    /**
+     * Add a receipt item to the list.
+     *
+     * @param receiptItem Receipt item to be added.
+     * @throws IllegalArgumentException If the receipt item is null.
+     */
+    public void addReceiptItem(ReceiptItem receiptItem) {
+        ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
+        receiptItems.add(receiptItem);
+    }
+
+    /**
+     * Update a receipt item in the list.
+     *
+     * @param index          Index of the receipt item to be updated.
+     * @param newReceiptItem New receipt item.
+     * @throws IllegalArgumentException If the index is out of bounds or the new receipt item is null.
+     */
+    public void updateReceiptItem(int index, ReceiptItem newReceiptItem) {
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        ModelParamValidator.throwIfElementIsNull(newReceiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
+
+        ReceiptItem currentReceiptItem = receiptItems.get(index);
+        currentReceiptItem.setAmount(newReceiptItem.getAmount());
+        currentReceiptItem.setPrice(newReceiptItem.getPrice());
+        currentReceiptItem.setName(newReceiptItem.getName());
+    }
+
+    /**
+     * Delete a receipt item from the list.
+     *
+     * @param index Index of the receipt item to be deleted.
+     * @throws IllegalArgumentException If the index is out of bounds.
+     */
+    public void deleteReceiptItem(int index) {
+        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
+        receiptItems.remove(index);
+    }
+
+    /**
+     * Get an immutable list of receipt items.
+     *
+     * @return Immutable list of receipt items.
+     */
     public List<ReceiptItem> getReceiptItems() {
-        return receiptItemList;
+        return Collections.unmodifiableList(receiptItems);
     }
 
-    public void setReceiptItemList(List<ReceiptItem> receiptItemList) throws IllegalArgumentException{
-
-        ModelParamValidator.throwIfElementIsNull(receiptItemList, ReceiptErrorMessageType.LIST_NULL.toString());
-        this.receiptItemList = receiptItemList;
-    }
-
-    public ReceiptItem getReceiptItem(int index) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
-        return receiptItemList.get(index);
-    }
-
-    public float getReceiptTotal(){
-        return (float) receiptItemList.stream().mapToDouble(ReceiptItem::getPrice).sum();
-    }
-
-    public void addReceiptItem(ReceiptItem receiptItem) throws IllegalArgumentException{
-        ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
-        receiptItemList.add(receiptItem);
-    }
-
-    public void updateReceiptItem(int index, ReceiptItem receiptItem) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
-        ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
-        receiptItemList.set(index, receiptItem);
-    }
-
-    public void deleteReceiptItem(int index) throws IllegalArgumentException{
-        ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItemList.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
-        receiptItemList.remove(index);
-    }
-
-    public void sortByPriceLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getPrice));
-    }
-
-    public void sortByPriceHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getPrice).reversed());
-    }
-
-    public void sortByNameLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparing(ReceiptItem::getName));
-    }
-
-    public void sortByNameHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparing(ReceiptItem::getName).reversed());
-    }
-
-    public void sortByAmountLowestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getAmount));
-    }
-
-    public void sortByAmountHighestFirst(){
-        sortReceiptItemListBy(Comparator.comparingDouble(ReceiptItem::getAmount).reversed());
-    }
-
-    private void sortReceiptItemListBy(Comparator<ReceiptItem> comparator) {
-        receiptItemList.sort(comparator);
+    /**
+     * Full copy of receipt items with the elements copied.
+     *
+     * @param receiptItems List of receipt items to be copied.
+     * @return List of copied receipt items.
+     */
+    public static List<ReceiptItem> fullCopyReceiptItems(List<ReceiptItem> receiptItems) {
+        return receiptItems.stream().
+                map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
+                .collect(Collectors.toList());
     }
 
     protected enum ReceiptErrorMessageType {
         LIST_NULL("ReceiptItemList must not be null."),
         ITEM_NULL("ReceiptItem must not be null."),
+        NAME_NULL("Name of ReceiptItem must not be null."),
         INDEX_NOT_PRESENT("Index can not be present in list.");
 
         private final String message;

@@ -17,6 +17,7 @@ import javafx.stage.Stage;
 import javafx.util.Pair;
 
 import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +31,7 @@ import java.util.logging.Logger;
  */
 public class Router {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
-    final Stage stage;
+    private final Stage stage;
     private final Map<Pages, Pair<Scene, DefaultController>> sceneMap = new HashMap<>();
 
     /**
@@ -46,10 +47,11 @@ public class Router {
         Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
 
         contactRepository.loadContacts();
+        URL styleSheet = getClass().getResource("/styles/style.css");
 
         this.stage = stage;
         for (Pages page : Pages.values()) {
-            addSceneMap(page, page.getPath(), contactRepository, receiptProcessor);
+            addSceneMap(page, page.getPath(), contactRepository, receiptProcessor, styleSheet);
         }
     }
 
@@ -63,10 +65,8 @@ public class Router {
         Objects.requireNonNull(page, "Page cannot be null");
 
         if (stage != null) {
+            getController(page).onBeforeStage();
             stage.setScene(getScene(page));
-            if (getController(page) instanceof IsObserver observerController) {
-                observerController.update();
-            }
             stage.show();
         } else {
             throw new IllegalStateException("Stage is null, can not switch scene");
@@ -83,6 +83,8 @@ public class Router {
      */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
         DefaultController controller = getController(page);
+        controller.onBeforeStage();
+
         if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
             dynamicLastPageController.setLastPage(lastPage);
         } else {
@@ -170,13 +172,17 @@ public class Router {
      * @param pathToScene the path to the scene
      * @throws IOException if an error occurs during scene loading
      */
-    private void addSceneMap(Pages page, String pathToScene, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
+    private void addSceneMap(Pages page, String pathToScene, ContactRepository contactRepository, ReceiptProcessor receiptProcessor, URL styleSheet) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(pathToScene));
         Pane node = loader.load();
         DefaultController controller = loader.getController();
         controller.initialize(this, contactRepository, receiptProcessor);
 
         Scene scene = new Scene(node);
+        if (styleSheet != null) {
+            scene.getStylesheets().add(styleSheet.toExternalForm());
+        }
+
         sceneMap.put(page, new Pair<>(scene, controller));
     }
 }

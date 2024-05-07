@@ -10,7 +10,6 @@ public enum HelpMessages {
     ADD_RECEIPT_WINDOW_MSG("Add Receipt Window \n\nPlease upload the receipt you would like to split. \nMake sure that the receipt is clear and all the items are visible."),
     ALLOCATE_ITEMS_WINDOW_MSG("Allocate Items Window \n\nPlease allocate the items of the receipt to the desired Contacts"),
     CHOOSE_PEOPLE_WINDOW_MSG("Choose People Window \n\nPlease choose the people you would like to split the receipt with"),
-    EDIT_ITEMS_WINDOW_MSG("Edit Items Window \n\nPlease review the Receipt which we have interpreted. \nYou can also edit the items if necessary."),
     SHOW_SPLIT_WINDOW_MSG("Show Split Window \n\nPlease review the split of the receipt. \nBy clicking confirm, you will send out the request via Email."),
     LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nYou can also edit the items if necessary."),
     FAQ_MSG("""

@@ -16,7 +16,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-
 @ExtendWith(MockitoExtension.class)
 class ReceiptProcessorTest {
     private ReceiptProcessor receiptProcessor;
@@ -116,10 +115,9 @@ class ReceiptProcessorTest {
         ReceiptItem existingItem = receipt.getReceiptItems().getFirst();
 
         //Act
-        boolean isSuccessful = receiptProcessor.deleteReceiptItemByName(existingItem.getName());
+        receiptProcessor.deleteReceiptItemByName(existingItem.getName());
 
         // Assert
-        assertTrue(isSuccessful, "The deletion of the item should be successful.");
         assertFalse(receipt.getReceiptItems().contains(existingItem), "The item should be removed from the list.");
     }
 
@@ -152,12 +150,12 @@ class ReceiptProcessorTest {
         List<ContactReceiptItem> contactReceiptItems = Arrays.asList(contactReceiptItem1, contactReceiptItem2);
         receiptProcessor.setContactReceiptItems(contactReceiptItems);
 
-        double expectedTotalDebt = contactReceiptItems.stream()
+        float expectedTotalDebt = (float) contactReceiptItems.stream()
                 .mapToDouble(ContactReceiptItem::getPrice)
                 .sum();
 
         // Act
-        double actualTotalDebt = receiptProcessor.calculateDebtByPerson(validContact);
+        float actualTotalDebt = receiptProcessor.calculateDebtByPerson(validContact);
 
         // Assert
         assertEquals(expectedTotalDebt, actualTotalDebt, 0.01, "The calculated debt should match the expected total debt.");

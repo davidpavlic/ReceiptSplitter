@@ -95,33 +95,12 @@ public class ReceiptTest {
         assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(1));
     }
 
-    @Test
-    void sortList_ValidAttributes_ListSorted(){
-        receipt.sortByPriceLowestFirst();                                                                   //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO);       //Assert
-
-        receipt.sortByPriceHighestFirst();                                                                  //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE);       //Assert
-
-        receipt.sortByNameLowestFirst();                                                                    //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE);       //Assert
-
-        receipt.sortByNameHighestFirst();                                                                   //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_ONE);       //Assert
-
-        receipt.sortByAmountLowestFirst();                                                                  //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_ONE, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_TWO);       //Assert
-
-        receipt.sortByAmountHighestFirst();                                                                 //Act
-        assertSortingOrder(VALID_RECEIPT_ITEM_TWO, VALID_RECEIPT_ITEM_THREE, VALID_RECEIPT_ITEM_ONE);       //Assert
-    }
-
     @ParameterizedTest
     @NullSource
     void setReceiptList_InvalidAttributes_ThrowsException(List<ReceiptItem> receiptItemList){
         //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> receipt.setReceiptItemList(receiptItemList));
+                () -> receipt.setReceiptItems(receiptItemList));
         assertEquals(ReceiptErrorMessageType.LIST_NULL.toString(), exception.getMessage());
     }
 

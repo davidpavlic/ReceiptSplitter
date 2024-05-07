@@ -15,7 +15,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.shape.Rectangle?>
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.AddReceiptController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" stylesheets="@../styles/style.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/"
+            fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.AddReceiptController">
     <top>
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
@@ -29,10 +31,10 @@
     <bottom>
         <HBox prefWidth="394.0" spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button fx:id="backButton" onAction="#back" text="Back" HBox.hgrow="NEVER" />
+            <Button fx:id="backButton" onAction="#back" text="Back" HBox.hgrow="NEVER"/>
 
             <!-- Spacer that pushes both buttons to the ends -->
-            <Pane HBox.hgrow="ALWAYS" />
+            <Pane HBox.hgrow="ALWAYS"/>
 
             <!-- Button on the right -->
             <Button fx:id="resetButton" onAction="#reset" text="Reset" HBox.hgrow="NEVER" />

@@ -28,10 +28,12 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO: Consistency issue: Rename to ChooseContactController
-// TODO: Implement error message box after merge with feat/26
 public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
+
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
 
     private final ObservableList<HBox> contactRows = FXCollections.observableArrayList();
 
@@ -39,12 +41,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     private final List<Contact> availableContacts = new ArrayList<>();
 
     /**
-     * Initializes the Controller with the necessary dependencies and initial data.
-     * Configures the contact list container and the confirm button.
-     *
-     * @param router            The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor  The processor to be used for receipt processing.
+     * @inheritDoc Configures the contact list container and the confirm button.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -52,15 +49,43 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
         contactRepository.addObserver(this);
 
-        confirmButton.setOnAction(e -> confirm());
         configureConfirmButton();
         createAndAddNewRow();
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
+    }
+
+    /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
+     * @inheritDoc Clears the current contact rows and updates the available contacts.
+     * Adds a new row with the active profile as the first contact.
+     */
+    @Override
+    public void update() {
+        clearContactRows();
+        activeProfile = contactRepository.getProfile();
+        availableContacts.clear();
+        availableContacts.addAll(contactRepository.getContacts());
+        availableContacts.remove(activeProfile);
+        createAndAddNewRow();
+        updateFirstContactRow();
     }
 
     /**
      * @inheritDoc Iterates over the contact rows and adds the selected contacts to the selected contacts list in the contact repository.
      * Switches to the allocate items window in the end.
      */
+    @FXML
     @Override
     public void confirm() {
         for (HBox row : contactRows) {
@@ -99,26 +124,24 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         updateFirstContactRow();
     }
 
-    /**
-     * @inheritDoc Clears the current contact rows and updates the available contacts.
-     * Adds a new row with the active profile as the first contact.
-     */
-    @Override
-    public void update() {
-        clearContactRows();
-        activeProfile = contactRepository.getProfile();
-        availableContacts.clear();
-        availableContacts.addAll(contactRepository.getContacts());
-        availableContacts.remove(activeProfile);
-        createAndAddNewRow();
-        updateFirstContactRow();
-    }
-
     @FXML
     private void createAndAddNewRow() {
         HBox newRow = createContactRow();
         contactRows.add(newRow);
         contactListContainer.getChildren().add(newRow);
+    }
+
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private void updateFirstContactRow() {

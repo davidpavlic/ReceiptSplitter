@@ -7,6 +7,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.LoginController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.LoginController">
     <top>
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
@@ -39,30 +40,44 @@
         </HBox>
     </bottom>
     <center>
-        <VBox alignment="CENTER" BorderPane.alignment="TOP_CENTER">
-            <ImageView fitHeight="65.0" fitWidth="65.0">
-                <Image url="@../images/login_icon.png"/>
-            </ImageView>
-            <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Login" textAlignment="CENTER" VBox.vgrow="ALWAYS">
-                <font>
-                    <Font name="System Bold Italic" size="26.0"/>
-                </font>
-                <VBox.margin>
-                    <Insets bottom="10.0"/>
-                </VBox.margin>
-            </Label>
+        <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
+            <HBox fx:id="errorMessageBox" alignment="CENTER" managed="false" prefHeight="30.0" prefWidth="386.0" styleClass="errormessage-box" visible="false">
+                <Pane HBox.hgrow="ALWAYS" /> <!-- Spacer to help center the label horizontally -->
+                <Label fx:id="errorMessageLabel" styleClass="errormessage-label" />
+                <Pane HBox.hgrow="ALWAYS" /> <!-- Another spacer to keep the label centered horizontally -->
+                <Button onAction="#closeErrorMessage" styleClass="errormessage-close-button" text="x" HBox.hgrow="NEVER" />
+            </HBox>
+            <Separator prefWidth="200.0" />
+            <VBox alignment="CENTER" prefHeight="78.0" prefWidth="386.0" VBox.vgrow="ALWAYS">
+                <children>
+                    <ImageView fitHeight="61.0" fitWidth="60.0">
+                        <Image url="@../images/login_icon.png" />
+                        <VBox.margin>
+                            <Insets />
+                        </VBox.margin>
+                    </ImageView>
+                    <Label alignment="TOP_CENTER" contentDisplay="TOP" text="Login" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+                        <font>
+                            <Font name="System Bold Italic" size="20.0" />
+                        </font>
+                        <VBox.margin>
+                            <Insets bottom="5.0" />
+                        </VBox.margin>
+                    </Label>
+                </children>
+            </VBox>
             <HBox alignment="CENTER" fillHeight="false" spacing="10.0">
                 <VBox.margin>
-                    <Insets bottom="10.0" top="10.0"/>
+                    <Insets bottom="10.0" top="10.0" />
                 </VBox.margin>
                 <Label text="Choose your Profile:">
                     <HBox.margin>
-                        <Insets/>
+                        <Insets />
                     </HBox.margin>
                 </Label>
-                <ComboBox fx:id="selectContactDropdown" prefHeight="26.0" prefWidth="180.0"/>
+                <ComboBox fx:id="selectContactDropdown" prefHeight="26.0" prefWidth="180.0" />
             </HBox>
-            <Button mnemonicParsing="false" onAction="#openCreateProfile" text="Create new Profile"/>
+            <Button mnemonicParsing="false" onAction="#openCreateProfile" text="Create new Profile" />
         </VBox>
     </center>
 </BorderPane>

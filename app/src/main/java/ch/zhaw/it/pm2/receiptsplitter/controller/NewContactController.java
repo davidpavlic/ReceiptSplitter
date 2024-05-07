@@ -21,6 +21,9 @@ import java.util.Arrays;
 import java.util.List;
 
 public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {
+    public static final String CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE = "Could not add contact: Email does already exist";
+    public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
+    public static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while adding the contact.";
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -38,13 +41,9 @@ public class NewContactController extends DefaultController implements CanNaviga
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
         // Add a listener that updates button state and checks email validity
-        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            updateUIBasedOnValidation(textFields);
-        }));
+        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> updateUIBasedOnValidation(textFields)));
 
-        errorProperty.addListener((observable, oldValue, newValue) -> {
-            emailErrorLabel.setText(newValue);
-        });
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> emailErrorLabel.setText(newValue));
 
         updateUIBasedOnValidation(textFields);
         confirmButton.setOnAction(event -> confirm());
@@ -64,15 +63,15 @@ public class NewContactController extends DefaultController implements CanNaviga
             back();
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.severe(illegalArgumentException.getMessage());
-            emailErrorLabel.setText("Could not add contact: Email does already exist");
+            emailErrorLabel.setText(CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE);
         } catch (IOException ioException) {
             logger.severe(ioException.getMessage());
             logger.fine(Arrays.toString(ioException.getStackTrace()));
-            emailErrorLabel.setText("An error occurred trying to access the contacts file.");
+            emailErrorLabel.setText(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
         } catch (Exception exception) {
             logger.severe("Error adding contact: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            emailErrorLabel.setText("An unknown error occurred while adding the contact.");
+            emailErrorLabel.setText(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
         }
     }
 

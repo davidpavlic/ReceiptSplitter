@@ -1,0 +1,33 @@
+.errormessage-box {
+    -fx-background-color: #ffb09c;
+}
+
+.errormessage-label {
+    -fx-text-fill: red;
+    -fx-alignment: CENTER;
+}
+
+.errormessage-close-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: red;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.errormessage-close-button:hover {
+    -fx-background-color: #ffcccc; /* Light red background on hover */
+    -fx-text-fill: black; /* Change text color on hover for better contrast */
+}
+
+.delete-button {
+    -fx-background-color: #ff8080;
+    -fx-border-color: #ff0000;
+    -fx-border-radius: 5px;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.delete-button:hover {
+    -fx-background-color: #ff3333; /* Darker red background on hover */
+}

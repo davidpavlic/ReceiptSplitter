@@ -4,24 +4,30 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
 public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
+
+    public static final String EMAIL_NOT_EXISTS_ERROR_MESSAGE = "Could not update contact: Email does not exist";
+    public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
+    public static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while updating the contact.";
+
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -30,6 +36,12 @@ public class EditContactController extends DefaultController implements CanNavig
     @FXML private TextField lastNameInput;
     @FXML private Label emailErrorLabel;
 
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
+
+    /**
+     * @inheritDoc Sets a listener to the text fields to update the UI based on the validation.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -37,18 +49,27 @@ public class EditContactController extends DefaultController implements CanNavig
         this.helpMessage = HelpMessages.EDIT_CONTACT_WINDOW_MSG;
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
-        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            updateUIBasedOnValidation(textFields);
-        }));
+        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> updateUIBasedOnValidation(textFields)));
 
-        errorProperty.addListener((observable, oldValue, newValue) -> {
-            emailErrorLabel.setText(newValue);
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
         });
 
         updateUIBasedOnValidation(textFields);
-        confirmButton.setOnAction(event -> confirm());
     }
 
+    /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
+     * @inheritDoc Update the contact fields
+     */
     @Override
     public void update() {
         Contact contact = contactRepository.getSelectedToEditContact();
@@ -57,11 +78,18 @@ public class EditContactController extends DefaultController implements CanNavig
         lastNameInput.setText(contact.getLastName());
     }
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }
 
+    /**
+     * Updates the contact with the new values.
+     */
+    @FXML
     @Override
     public void confirm() {
         try {
@@ -70,16 +98,14 @@ public class EditContactController extends DefaultController implements CanNavig
             reset();
             back();
         } catch (IllegalArgumentException illegalArgumentException) {
-            logger.severe(illegalArgumentException.getMessage());
-            emailErrorLabel.setText("Could not update contact: Email does not exist");
+            logError(illegalArgumentException.getMessage(), illegalArgumentException);
+            errorMessageProperty.set(EMAIL_NOT_EXISTS_ERROR_MESSAGE);
         } catch (IOException ioException) {
-            logger.severe(ioException.getMessage());
-            logger.fine(Arrays.toString(ioException.getStackTrace()));
-            emailErrorLabel.setText("An error occurred trying to access the contacts file.");
+            logError(ioException.getMessage(), ioException);
+            errorMessageProperty.set(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
         } catch (Exception exception) {
-            logger.severe("Error updating contact: " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
-            emailErrorLabel.setText("An unknown error occurred while updating the contact.");
+            logError("Error updating contact: " + exception.getMessage(), exception);
+            errorMessageProperty.set(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
         }
     }
 
@@ -95,6 +121,19 @@ public class EditContactController extends DefaultController implements CanNavig
         emailInput.clear();
         firstNameInput.clear();
         lastNameInput.clear();
+    }
+
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private void updateUIBasedOnValidation(List<TextField> textFields) {
