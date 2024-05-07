@@ -10,18 +10,18 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.ProgressIndicator?>
 
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
 <BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.AddReceiptController">
     <top>
         <MenuBar prefHeight="10.0" prefWidth="214.0" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu text="Help">
-                    <items>
-                        <MenuItem fx:id="showHelp" accelerator="F1" text="Show help" />
-                        <MenuItem fx:id="showFAQ" mnemonicParsing="false" text="FAQ" />
-                    </items>
-                </Menu>
-            </menus>
+            <Menu text="Help">
+                <MenuItem fx:id="showHelp" accelerator="F1" text="Show help"/>
+                <MenuItem fx:id="showFAQ" mnemonicParsing="false" text="FAQ"/>
+            </Menu>
         </MenuBar>
     </top>
     <bottom>
@@ -33,27 +33,37 @@
             <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Button on the right -->
+            <Button fx:id="resetButton" onAction="#reset" text="Reset" HBox.hgrow="NEVER" />
             <Button fx:id="confirmButton" onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
-            <children>
+            <padding>
+                <Insets left="30.0" right="30.0"/>
+            </padding>
             <Label alignment="CENTER" text="Drag your receipt here" textAlignment="CENTER">
-               <VBox.margin>
-                  <Insets top="20.0" />
-               </VBox.margin>
+                <VBox.margin>
+                    <Insets top="20.0"/>
+                </VBox.margin>
             </Label>
-            <Pane fx:id="dragAndDropPane" onDragDropped="#handleReceiptDropped" prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black; -fx-border-width: 1; -fx-background-color: LightGray;">
-               <VBox.margin>
-                  <Insets bottom="10.0" top="5.0" />
-               </VBox.margin>
+            <Label fx:id="errorMessage" alignment="CENTER" text="The receipt could not be processed."
+                   textAlignment="CENTER" style="-fx-text-fill: red;"/>
+            <Pane fx:id="dragAndDropPane" onDragDropped="#handleReceiptDropped" prefHeight="200.0" prefWidth="200.0"
+                  style="-fx-border-color: black; -fx-border-width: 1; -fx-background-color: LightGray;">
+                <VBox.margin>
+                    <Insets bottom="10.0" top="5.0"/>
+                </VBox.margin>
+                <StackPane prefHeight="${dragAndDropPane.height}" prefWidth="${dragAndDropPane.width}">
+                    <ImageView fx:id="receiptImageView" preserveRatio="true" fitHeight="${dragAndDropPane.height}"
+                               fitWidth="${dragAndDropPane.width}"/>
+                    <Rectangle fx:id="backgroundShadow" width="${dragAndDropPane.width}"
+                               height="${dragAndDropPane.height}" fill="#000000" opacity="0.5" visible="false"/>
+                    <ProgressIndicator fx:id="progressIndicator" visible="false"/>
+                </StackPane>
             </Pane>
-                 <Button fx:id="uploadReceiptButton" maxWidth="Infinity" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Select File" />
-            </children>
-         <padding>
-            <Insets left="30.0" right="30.0" />
-         </padding>
+            <Button fx:id="uploadReceiptButton" maxWidth="Infinity" prefHeight="27.0" prefWidth="329.0"
+                    style="-fx-font-size: 14px;" text="Select File"/>
         </VBox>
     </center>
 </BorderPane>

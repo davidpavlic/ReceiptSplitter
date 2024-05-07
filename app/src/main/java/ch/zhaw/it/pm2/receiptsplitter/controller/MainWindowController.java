@@ -47,7 +47,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     public void addReceipt() {
         if (!prepareDebugTestData()) return;
 
-        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.ADD_RECEIPT_WINDOW);
     }
 
     private boolean prepareDebugTestData() {
