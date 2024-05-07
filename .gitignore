@@ -5,7 +5,9 @@ challenge_points.txt
 *.ipr
 *.ids
 *.iws
+misc.xml
 .idea/
+.idea/*
 
 # Eclipse files
 .project
@@ -71,3 +73,6 @@ Desktop.ini
 
 # databases
 *.sqlite
+
+contacts.csv
+gradle.properties

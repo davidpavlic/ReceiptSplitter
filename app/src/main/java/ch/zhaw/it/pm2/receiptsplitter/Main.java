@@ -3,27 +3,143 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
+import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import javafx.application.Application;
+import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-public class Main {
+/**
+ * <p>The Main class is the entry point of the Receipt Splitter application.</p>
+ *
+ * <p>This application is structured into several packages, each with a specific purpose:</p>
+ * <ul>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter</code>: Contains the Main class which is the entry point of the application.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.model</code>: Contains model classes like Contact.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.utils</code>: Contains utility classes like EnvConstants for managing environment variables.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.repository</code>: Contains repository classes like ContactRepository for managing a list of Contact objects.</li>
+ *     <li><code>ch.zhaw.it.pm2.receiptsplitter.service</code>: Contains service classes that handle business logic.</li>
+ * </ul>
+ *
+ * <p>The Main class sets up the logging configuration, checks if all environment variables are set correctly, and launches the JavaFX application.</p>
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
+public class Main extends Application {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
+
+    /**
+     * The main method of the application.
+     * It configures the logging, checks if all environment variables are set correctly,
+     * and launches the JavaFX application if they are.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         configureLogging();
-        logger.info("Hello world!");
+        logger.info("Starting the application");
+        if (!checkSystemConfigurations()) {
+            throw new IllegalStateException("Can not start Application, System Configurations are not correct.");
+        } else {
+            launch(args);
+        }
     }
 
-    public void Start() {
-        System.out.println("Starting the application");
+    /**
+     * The start method of the JavaFX application.
+     * It sets up the stage, instances the Router and tries to load the login window.
+     *
+     * @param stage the primary stage for this application
+     * @throws Exception if any error occurs during the setup
+     */
+    public void start(Stage stage) throws Exception {
+        stage.setWidth(500);
+        stage.setHeight(400);
+        stage.setMinWidth(460);
+        stage.setMinHeight(360);
+        stage.setTitle("Receipt Splitter");
+
+        //ContactRepository contactRepository = new ContactRepository(Objects.requireNonNull(getClass().getResource("/contacts.csv")).getPath());
+        ContactRepository contactRepository = new ContactRepository("contacts.csv"); // TODO: Ask martin about this
+        ReceiptProcessor receiptProcessor = new ReceiptProcessor();
+        Router router = new Router(stage, contactRepository, receiptProcessor);
+
+        try {
+            router.gotoScene(Pages.LOGIN_WINDOW);
+        } catch (IllegalStateException exception) {
+            logger.severe("Could not load the login window: " + exception);
+        }
     }
 
-    private void loadRouter() {
-        System.out.println("Loading the router");
+    /**
+     * Checks if the system configurations are set correctly.
+     * <p>
+     * This method checks if all environment variables are set correctly and if the contacts.csv file exists.
+     * If any of these checks fail, it logs a severe message and returns false.
+     *
+     * @return true if all system configurations are set correctly, false otherwise
+     */
+    private static boolean checkSystemConfigurations() {
+        logger.info("Checking system configurations");
+        if (!EnvConstants.areAllSet()) {
+            logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
+            return false;
+        }
+
+        Path contactsFile = Paths.get("contacts.csv");
+        if (Files.exists(contactsFile)) {
+            return true;
+        }
+
+        // Check if local.contacts.csv file exists and copy it to contacts.csv, otherwise create an empty contacts.csv file
+        Path localContactsFile = Paths.get("../local.contacts.csv");
+
+        if (Files.exists(localContactsFile)) {
+            logger.info("contacts.csv file not found, copying local.contacts.csv file");
+            try {
+                Files.copy(localContactsFile, contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not copy local.contacts.csv file: " + e);
+                return false;
+            }
+        } else {
+            logger.info("creating empty contacts.csv file");
+            try {
+                Files.createFile(contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not create contacts.csv file: " + e);
+                return false;
+            }
+        }
+
+        return true;
     }
 
+
+    /**
+     * Configures the logging for the application.
+     * It creates a logs directory if it does not exist and sets up the logger configuration.
+     */
     private static void configureLogging() {
+        // TODO: java.nio verwenden?
+        File logDir = new File("logs");
+        if (!logDir.exists()) {
+            boolean created = logDir.mkdir(); // Create the directory if it does not exist
+
+            if (!created) System.err.println("Could not create logs directory");
+        }
         LogManager.getLogManager().reset();
         try {
             InputStream configStream = Main.class.getClassLoader().getResourceAsStream("logging.properties");
@@ -31,8 +147,8 @@ public class Main {
                 throw new IOException("Could not find logging.properties");
             }
             LogManager.getLogManager().readConfiguration(configStream);
-        } catch (IOException e) {
-            System.err.println("Could not setup logger configuration: " + e);
+        } catch (IOException exception) {
+            System.err.println("Could not setup logger configuration: " + exception);
         }
     }
 }
