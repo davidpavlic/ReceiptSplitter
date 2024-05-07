@@ -14,7 +14,7 @@ import java.util.logging.Logger;
  * The SMTP server details and credentials are retrieved from the system properties.
  *
  * @version 1.0
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  */
 public class EmailService {
     private static final String EMAIL_SENDER = "noreplyreceiptsplitter@gmail.com";

@@ -34,7 +34,7 @@ import java.util.Optional;
  * The user can add, update and delete receipt items.
  * The [confirm] navigation leads to the Choose People Window. and the [back] navigation leads to the Add Receipt Window.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {

@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * <p>
  * Thr Currency is set to CHF by default.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class Receipt {
@@ -59,16 +59,6 @@ public class Receipt {
     public Optional<ReceiptItem> getReceiptItemByName(String name) {
         ModelParamValidator.throwIfElementIsNull(name, ReceiptErrorMessageType.ITEM_NULL.toString());
         return receiptItems.stream().filter(item -> item.getName().equals(name)).findFirst();
-    }
-
-    /**
-     * Calculates the total price of all receipt items.
-     *
-     * @return Total price of all receipt items.
-     */
-    public float getReceiptTotal() {
-        // TODO: Nice to have in List Items, otherwise I don't know where the sum total of all Receipt Items is needed? Needs to be removed then if not used.
-        return (float) receiptItems.stream().mapToDouble(ReceiptItem::getPrice).sum();
     }
 
     /**

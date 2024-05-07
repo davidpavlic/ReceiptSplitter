@@ -135,13 +135,15 @@ public class Main extends Application {
      * It creates a logs directory if it does not exist and sets up the logger configuration.
      */
     private static void configureLogging() {
-        // TODO: java.nio verwenden?
-        File logDir = new File("logs");
-        if (!logDir.exists()) {
-            boolean created = logDir.mkdir(); // Create the directory if it does not exist
-
-            if (!created) System.err.println("Could not create logs directory");
+        Path logDir = Paths.get("logs");
+        if (!Files.exists(logDir)) {
+            try {
+                Files.createDirectory(logDir);
+            } catch (IOException e) {
+                logger.severe("Could not create logs directory: " + e);
+            }
         }
+
         LogManager.getLogManager().reset();
         try {
             InputStream configStream = Main.class.getClassLoader().getResourceAsStream("logging.properties");

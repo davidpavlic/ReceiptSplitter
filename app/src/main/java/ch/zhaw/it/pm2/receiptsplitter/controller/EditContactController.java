@@ -26,7 +26,7 @@ import java.util.List;
  * It handles the editing of a contact's details and the validation of the input fields.
  * It implements the CanNavigate, HasDynamicLastPage, CanReset, and IsObserver interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
 
  */

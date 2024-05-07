@@ -28,11 +28,11 @@ import java.io.IOException;
  * It also handles the deletion and editing of contacts.
  * It implements the CanNavigate, HasDynamicLastPage, CanReset, and IsObserver interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
 
  */
-public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
+public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, IsObserver {
 
     private static final String CONTACT_NOT_REMOVED_ERROR_MESSAGE = "Could not remove contact. Please try again.";
 
@@ -101,15 +101,8 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * {@inheritDoc} Resets the controller.
-     */
-    @Override
-    public void reset() {
-    } // TODO: Implement? Or remove?
-
-    /**
      * @param page The last page.
-     * @inheritDoc Sets the last page.
+     * {@inheritDoc}Sets the last page.
      */
     @Override
     public void setLastPage(Pages page) {

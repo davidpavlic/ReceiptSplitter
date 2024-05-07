@@ -17,7 +17,7 @@ import javafx.scene.control.Label;
  * It also updates the welcome message based on the current profile in the contact repository.
  * It implements the IsObserver interface.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
 
  */

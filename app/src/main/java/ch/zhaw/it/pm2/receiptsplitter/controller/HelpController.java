@@ -9,7 +9,7 @@ import javafx.stage.Stage;
  * This class is the controller for the Help view.
  * It Displays the Help text based on the HelpMessages Enum.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class HelpController {

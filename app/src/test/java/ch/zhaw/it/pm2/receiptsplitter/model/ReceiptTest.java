@@ -40,18 +40,6 @@ public class ReceiptTest {
     }
 
     @Test
-    void getTotal_ValidAttributes_TotalGenerated(){
-        //Arrange
-        float localTotal = VALID_RECEIPT_ITEM_ONE.getPrice() + VALID_RECEIPT_ITEM_TWO.getPrice() + VALID_RECEIPT_ITEM_THREE.getPrice();
-
-        //Act
-        float generatedTotal = receipt.getReceiptTotal();
-
-        //Assert
-        assertEquals(localTotal, generatedTotal);
-    }
-
-    @Test
     void addReceiptItem_ValidAttributes_ReceiptItemAdded() {
         //Arrange
         ReceiptItem localReceiptItem = new ReceiptItem(4F, "Entry", 4);

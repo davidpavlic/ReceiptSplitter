@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
  * The user can navigate through the different contacts and see the items they have to pay for.
  * The user can also send out the request to the recipients via email.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class ShowSplitController extends DefaultController implements CanNavigate, IsObserver {

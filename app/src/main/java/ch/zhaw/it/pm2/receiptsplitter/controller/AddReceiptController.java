@@ -38,7 +38,7 @@ import java.util.List;
  * It processes the receipt and navigates to the ListItems view.
  * It implements the CanNavigate and CanReset interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
@@ -59,7 +59,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     /**
-     *
      * {@inheritDoc}
      * Initializes the Controller with the necessary dependencies and initial data.
      * Configures the drag and drop pane and the upload receipt button.
@@ -78,7 +77,8 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     }
 
     /**
-     * @inheritDoc Enables the loading animation and disables all buttons.
+     * {@inheritDoc}
+     * Enables the loading animation and disables all buttons.
      * Loads the receipt image and processes the receipt in a separate thread.
      * After processing the receipt, the loading animation is disabled and the user is navigated to the list items window, additionally doing some cleanup.
      */
@@ -89,6 +89,39 @@ public class AddReceiptController extends DefaultController implements CanNaviga
 
         // Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
         processReceiptInBackgroundThread();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Navigates back to the main window.
+     */
+    @Override
+    public void back() {
+        switchScene(Pages.MAIN_WINDOW);
+        clearReceiptData();
+    }
+
+    /**
+     * {@inheritDoc}
+     * Resets the view by clearing the receipt data.
+     */
+    @Override
+    public void reset() {
+        clearReceiptData();
+    }
+
+    @FXML
+    private void handleReceiptDropped(DragEvent dragEvent) {
+        boolean success = false;
+        Dragboard dragboard = dragEvent.getDragboard();
+
+        if (dragboard.hasFiles()) {
+            success = true;
+            loadReceipt(dragboard.getFiles().getFirst());
+        }
+
+        dragEvent.setDropCompleted(success);
+        dragEvent.consume();
     }
 
     private void processReceiptInBackgroundThread() {
@@ -117,31 +150,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
                 });
             }
         }).start();
-    }
-
-    @Override
-    public void back() {
-        switchScene(Pages.MAIN_WINDOW);
-        clearReceiptData();
-    }
-
-    @Override
-    public void reset() {
-        clearReceiptData();
-    }
-
-    @FXML
-    public void handleReceiptDropped(DragEvent dragEvent) {
-        boolean success = false;
-        Dragboard dragboard = dragEvent.getDragboard();
-
-        if (dragboard.hasFiles()) {
-            success = true;
-            loadReceipt(dragboard.getFiles().getFirst());
-        }
-
-        dragEvent.setDropCompleted(success);
-        dragEvent.consume();
     }
 
     private boolean processReceipt(File file) {

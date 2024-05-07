@@ -4,7 +4,7 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
  * This class represents an item in a receipt that is associated with a contact.
  * It contains the name, price of the item, and the contact who will pay for the item.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class ContactReceiptItem {

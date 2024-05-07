@@ -19,7 +19,7 @@ import javafx.scene.control.ComboBox;
  * It also updates the dropdown menu based on the current contacts in the contact repository.
  * It implements the IsObserver interface.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
 
  */

@@ -24,7 +24,7 @@ import java.util.List;
  * It handles the creation of new contacts and the validation of the input fields.
  * It implements the CanNavigate, CanReset, and HasDynamicLastPage interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {

@@ -34,7 +34,7 @@ public class ReceiptProcessor implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     *{@inheritDoc}
      */
     @Override
     public void addObserver(IsObserver observer) {
@@ -42,7 +42,7 @@ public class ReceiptProcessor implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     *{@inheritDoc}
      */
     @Override
     public void notifyObservers() {

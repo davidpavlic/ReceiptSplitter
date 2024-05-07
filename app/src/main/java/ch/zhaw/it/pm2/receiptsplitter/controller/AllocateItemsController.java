@@ -27,7 +27,7 @@ import java.util.List;
  * It implements the IsObserver, CanNavigate, and CanReset interfaces.
  *
  * @version 1.0
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  */
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
     @FXML private TableView<TableRow> contactItemTable;

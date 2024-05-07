@@ -6,7 +6,7 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
  * The first name cannot be empty, the last name can be empty but not null, and the email must be valid.
  *
  * @version 1.0
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  */
 public class Contact {
 
