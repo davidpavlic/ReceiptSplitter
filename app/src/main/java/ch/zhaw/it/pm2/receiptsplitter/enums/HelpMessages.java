@@ -11,7 +11,7 @@ public enum HelpMessages {
     ALLOCATE_ITEMS_WINDOW_MSG("Allocate Items Window \n\nPlease allocate the items of the receipt to the desired Contacts. \nEvery Item has to be allocated to at least one Contact."),
     CHOOSE_PEOPLE_WINDOW_MSG("Choose People Window \n\nPlease choose the people you would like to split the receipt with. \nYou can only choose a Contact once and at least two Contacts have to be selected."),
     SHOW_SPLIT_WINDOW_MSG("Show Split Window \n\nPlease review the split of the receipt. \nBy clicking confirm, you will send out the request via Email."),
-    LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nYou can also edit or add new items if necessary."),
+    LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nTo Edit an Item, click on the Field you would like to change and press Enter to commit the Change. "),
     FAQ_MSG("""
             FAQ - Frequently Asked Questions
 
