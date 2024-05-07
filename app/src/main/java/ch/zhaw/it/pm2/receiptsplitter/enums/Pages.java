@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm2.receiptsplitter.utils;
+package ch.zhaw.it.pm2.receiptsplitter.enums;
 
 public enum Pages {
 
@@ -9,7 +9,6 @@ public enum Pages {
     CONTACT_LIST_WINDOW("/pages/ContactList.fxml"),
     CREATE_PROFILE_WINDOW("/pages/NewContact.fxml"),
     EDIT_PROFILE_WINDOW("/pages/EditContact.fxml"),
-    SHOW_RESULT_WINDOW("/pages/ShowResult.fxml"),
     LIST_ITEMS_WINDOW("/pages/ListItems.fxml"),
     CHOOSE_PEOPLE_WINDOW("/pages/ChoosePeople.fxml"),
     SHOW_SPLIT_WINDOW("/pages/ShowSplit.fxml");

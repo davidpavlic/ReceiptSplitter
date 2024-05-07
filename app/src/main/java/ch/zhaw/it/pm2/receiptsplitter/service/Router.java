@@ -6,9 +6,9 @@ import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -46,12 +46,13 @@ public class Router {
         Objects.requireNonNull(contactRepository, "ContactRepository cannot be null");
         Objects.requireNonNull(receiptProcessor, "ReceiptProcessor cannot be null");
 
+        contactRepository.loadContacts();
         URL styleSheet = getClass().getResource("/styles/style.css");
+
         this.stage = stage;
         for (Pages page : Pages.values()) {
             addSceneMap(page, page.getPath(), contactRepository, receiptProcessor, styleSheet);
         }
-        contactRepository.loadContacts();
     }
 
     /**
@@ -115,6 +116,10 @@ public class Router {
             Stage dialogStage = new Stage();
             Scene scene = new Scene(node);
 
+            dialogStage.setWidth(500);
+            dialogStage.setHeight(400);
+            dialogStage.setMinWidth(460);
+            dialogStage.setMinHeight(360);
             dialogStage.setTitle("Help");
             dialogStage.initModality(Modality.APPLICATION_MODAL);
             dialogStage.initOwner(stage);

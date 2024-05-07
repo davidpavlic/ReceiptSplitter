@@ -4,8 +4,6 @@ import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObservable;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -227,6 +225,18 @@ public class ReceiptProcessor implements IsObservable {
     public void setReceiptItems(List<ReceiptItem> receiptItems) {
         receipt.setReceiptItems(receiptItems);
         notifyObservers();
+    }
+
+    /**
+     * Retrieves the distinct Contacts of the contact-receipt items.
+     *
+     * @return List of distinct Contacts
+     */
+    public List<Contact> getDistinctContacts() {
+        return contactReceiptItems.stream()
+                .map(ContactReceiptItem::getContact)
+                .distinct()
+                .collect(Collectors.toList());
     }
 
     /**
