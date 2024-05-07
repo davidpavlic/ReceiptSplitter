@@ -45,9 +45,9 @@ public class RouterTest {
 
     @BeforeAll
     static void setUpAll() {
-        // Initialize JavaFX Runtime for testing
-        //  Is used so that the FXMLLoader does not throw an Exception when loading the FXML files.
-        //  No specific action needs to be executed, so the body is empty.
+        //Initialize JavaFX Runtime for testing
+        //Is used so that the FXMLLoader does not throw an Exception when loading the FXML files.
+        //No specific action needs to be executed, so the body is empty.
         Platform.startup(() -> {
         });
     }

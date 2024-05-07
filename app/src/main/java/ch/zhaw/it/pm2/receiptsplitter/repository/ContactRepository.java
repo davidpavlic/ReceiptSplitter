@@ -26,6 +26,7 @@ import java.util.stream.Stream;
  * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
+//TODO: Decide for consistent errormessages. Enum, static string or hard coded.
 public class ContactRepository implements IsObservable {
     private static final Logger logger = Logger.getLogger(ContactRepository.class.getName());
 

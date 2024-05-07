@@ -10,7 +10,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-//TODO: Add Mocking because all test are dependent on correct constructor initialization
 public class ReceiptItemTest {
 
     private static final float VALID_PRICE = 9.95F;
@@ -25,7 +24,6 @@ public class ReceiptItemTest {
 
     @Test
     void constructor_ValidAttributes_ItemCreated() {
-        //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
         assertReceiptItemAttributes(VALID_PRICE, VALID_NAME, VALID_AMOUNT);
     }

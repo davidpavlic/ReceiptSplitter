@@ -3,69 +3,93 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt.ReceiptErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
-//TODO: Add Mocking because all test are dependent on correct constructor initialization
+@ExtendWith(MockitoExtension.class)
 public class ReceiptTest {
 
-    private static final ReceiptItem VALID_RECEIPT_ITEM_ONE = new ReceiptItem(9.95F, "Burger", 1);
-    private static final ReceiptItem VALID_RECEIPT_ITEM_TWO = new ReceiptItem(20F, "Extra Cheese", 20);
-    private static final ReceiptItem VALID_RECEIPT_ITEM_THREE = new ReceiptItem(4.95F, "Fanta", 2);
+    @Mock
+    private ReceiptItem mockReceiptItemOne;
+    @Mock
+    private ReceiptItem mockReceiptItemTwo;
+    @Mock
+    private ReceiptItem mockReceiptItemThree;
+
     private Receipt receipt;
 
     @BeforeEach
     void setUp() {
+        generateMock(mockReceiptItemOne, 9.95F, "Burger", 1);
+        generateMock(mockReceiptItemTwo, 20F, "Extra Cheese", 20);
+        generateMock(mockReceiptItemThree, 4.95F, "Fanta", 2);
+
         List<ReceiptItem> validReceiptItemList = new ArrayList<>();
-        validReceiptItemList.add(VALID_RECEIPT_ITEM_ONE);
-        validReceiptItemList.add(VALID_RECEIPT_ITEM_TWO);
-        validReceiptItemList.add(VALID_RECEIPT_ITEM_THREE);
+        validReceiptItemList.add(mockReceiptItemOne);
+        validReceiptItemList.add(mockReceiptItemTwo);
+        validReceiptItemList.add(mockReceiptItemThree);
+
         receipt = new Receipt(validReceiptItemList);
+    }
+
+    private void generateMock(ReceiptItem mockItem, float price, String name, int amount){
+        lenient().when(mockItem.getPrice()).thenReturn(price);
+        lenient().when(mockItem.getName()).thenReturn(name);
+        lenient().when(mockItem.getAmount()).thenReturn(amount);
     }
 
     @Test
     void constructor_ValidAttributes_ListCreated() {
-        //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_ONE, receipt.getReceiptItem(0));
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(1));
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(2));
+        assertReceiptItemAttributes(mockReceiptItemOne, receipt.getReceiptItem(0));
+        assertReceiptItemAttributes(mockReceiptItemTwo, receipt.getReceiptItem(1));
+        assertReceiptItemAttributes(mockReceiptItemThree, receipt.getReceiptItem(2));
     }
 
     @Test
     void addReceiptItem_ValidAttributes_ReceiptItemAdded() {
         //Arrange
-        ReceiptItem localReceiptItem = new ReceiptItem(4F, "Entry", 4);
+        ReceiptItem mockNewReceiptItem = mock(ReceiptItem.class);
+        generateMock(mockNewReceiptItem, 4F, "Entry", 4);
+
         int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act
-        receipt.addReceiptItem(localReceiptItem);
+        receipt.addReceiptItem(mockNewReceiptItem);
 
         //Assert
         assertEquals(receiptSizeBefore + 1, receipt.getReceiptItems().size());
-        assertReceiptItemAttributes(localReceiptItem, receipt.getReceiptItem(receiptSizeBefore));
+        assertReceiptItemAttributes(mockNewReceiptItem, receipt.getReceiptItem(receiptSizeBefore));
     }
 
     @Test
     void updateReceiptItem_ValidAttributes_ReceiptItemUpdated() {
         //Arrange
         int index = 1;
-        ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
+        ReceiptItem mockUpdatedReceiptItem = mock(ReceiptItem.class);
+        generateMock(mockUpdatedReceiptItem, 0.05F, "Trinkgeld", 1);
+
         int receiptSizeBefore = receipt.getReceiptItems().size();
 
         //Act
-        receipt.updateReceiptItem(index, localContact);
+        receipt.updateReceiptItem(index, mockUpdatedReceiptItem);
 
         //Assert
         assertEquals(receiptSizeBefore, receipt.getReceiptItems().size());
-        assertReceiptItemAttributes(localContact, receipt.getReceiptItem(index));
+        verify(mockReceiptItemTwo).setPrice(mockUpdatedReceiptItem.getPrice());
+        verify(mockReceiptItemTwo).setName(mockUpdatedReceiptItem.getName());
+        verify(mockReceiptItemTwo).setAmount(mockUpdatedReceiptItem.getAmount());
     }
 
     @Test
@@ -79,8 +103,8 @@ public class ReceiptTest {
 
         //Assert
         assertEquals(receiptSizeBefore - 1, receipt.getReceiptItems().size());
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_TWO, receipt.getReceiptItem(index));
-        assertReceiptItemAttributes(VALID_RECEIPT_ITEM_THREE, receipt.getReceiptItem(1));
+        assertReceiptItemAttributes(mockReceiptItemTwo, receipt.getReceiptItem(index));
+        assertReceiptItemAttributes(mockReceiptItemThree, receipt.getReceiptItem(1));
     }
 
     @ParameterizedTest
@@ -118,11 +142,12 @@ public class ReceiptTest {
     @ValueSource(ints = {3, -1})
     void updateReceiptItem_InvalidIndex_ThrowsException(int index) {
         //Arrange
-        ReceiptItem localContact = new ReceiptItem(0.05F, "Trinkgeld", 1);
+        ReceiptItem mockUpdatedReceiptItem = mock(ReceiptItem.class);
+        generateMock(mockUpdatedReceiptItem, 0.05F, "Trinkgeld", 1);
 
         //Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> receipt.updateReceiptItem(index, localContact));
+                () -> receipt.updateReceiptItem(index, mockUpdatedReceiptItem));
         assertEquals(ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString(), exception.getMessage());
     }
 
