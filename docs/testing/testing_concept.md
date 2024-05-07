@@ -15,10 +15,7 @@ Die Router-Klasse regelt die Navigation innerhalb der Applikation.
 Das Testen der gotoScene-Methode ist wesentlich, um sicherzustellen, dass die korrekten Ansichten geladen werden und keine unerwarteten Fehler auftreten, wenn ungültige oder null Enums übergeben werden.
  gotoScene mit last page kann man nicht testen. Es gibt keinen Weg, den Controller zu mocken um Methoden, die aufgerufen werden, zu verifizieren. 
 Der Grund dafür ist, dass wir keine Macht darüber haben, wie der Controller erstellt wird. Da dies der FXMLLoader übernimmt, können wir es nicht mocken. Wir konnten hier aber einen negativen Test schreiben.
-
 Gewisse Klassen wie OpenHelpModal können nicht getestet werden. Es kann nichts gemockt werden, was man dann asserten kann. Dies gilbt selbst für den Controller.
-
-gotoScene mit last page kann man ebenfalls nicht testen, da gibt es kein Weg den Controller zu mocken um Methoden die aufgerufen werden zu verifizieren. Grund dafür ist, dass wir keine Macht haben, wie der Controller erstellt wird, das übernimmt alles der FXMLLoader und somit können wir es nicht mocken.
 
 Die ContactRepository-Klasse ist zentral für das Kontaktmanagement.
 Es ist notwendig, das Hinzufügen und Entfernen von Kontakten mit einer E-Mail-Validierungsregeln zu testen, um die Integrität der Kontaktinformationen zu gewährleisten. 
