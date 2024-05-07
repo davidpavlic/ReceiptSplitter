@@ -15,8 +15,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO: Slight Refactoring
-
 /**
  * Represents a repository for contacts. It manages the contacts and selected contacts.
  * It also provides methods to add, update, remove and get contacts.
@@ -24,6 +22,7 @@ import java.util.stream.Stream;
  * A profile can be set which is automatically added to the selected contacts.
  * The profile represents the User who is currently logged in.
  */
+//TODO: Decide for consistent errormessages. Enum, static string or hard coded.
 public class ContactRepository implements IsObservable {
     private final List<IsObserver> observers = new ArrayList<>();
     private final List<Contact> contacts = new ArrayList<>();
@@ -99,7 +98,6 @@ public class ContactRepository implements IsObservable {
      * Adds a contact to the contact list.
      *
      * @param contact Contact to be added
-     * @return True if the contact is added, false otherwise
      * @throws IOException If an I/O error occurs
      */
     public void addContact(Contact contact) throws IOException {

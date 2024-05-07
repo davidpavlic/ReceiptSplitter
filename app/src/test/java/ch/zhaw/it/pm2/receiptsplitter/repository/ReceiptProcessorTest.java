@@ -39,6 +39,7 @@ class ReceiptProcessorTest {
         receiptProcessor.setReceipt(receipt);
     }
 
+    //lenient is used here to prevent code duplication and further improve maintainability
     private void generateMock(ReceiptItem mockItem, float price, String name, int amount) {
         lenient().when(mockItem.getPrice()).thenReturn(price);
         lenient().when(mockItem.getName()).thenReturn(name);
