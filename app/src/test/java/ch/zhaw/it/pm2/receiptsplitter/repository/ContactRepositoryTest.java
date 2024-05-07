@@ -220,14 +220,22 @@ public class ContactRepositoryTest {
 
     @Test
     void addToSelectedContacts_InvalidContact_ContactNotAdded(){
-        //Arrange & Act & Assert
-        assertFalse(contactRepository.addToSelectedContacts(newContact.getEmail()));
+        //Arrange
+        int listSize = contactRepository.getSelectedContacts().size();
+        //Act
+        contactRepository.addToSelectedContacts(newContact.getEmail());
+        //Assert
+        assertEquals(listSize, contactRepository.getSelectedContacts().size());
     }
 
     @Test
     void removeFromSelectedContacts_InvalidContact_ContactNotRemoved(){
+        //Arrange
+        int listSize = contactRepository.getSelectedContacts().size();
         //Arrange & Act & Assert
-        assertFalse(contactRepository.removeFromSelectedContacts(firstContact.getEmail()));
+        contactRepository.removeFromSelectedContacts(firstContact.getEmail());
+        //Assert
+        assertEquals(listSize, contactRepository.getSelectedContacts().size());
     }
 
     @Test
