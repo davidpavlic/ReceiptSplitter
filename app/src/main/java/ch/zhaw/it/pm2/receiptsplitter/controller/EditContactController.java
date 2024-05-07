@@ -28,12 +28,11 @@ import java.util.List;
  *
  * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
-
  */
 public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
-    public static final String EMAIL_NOT_EXISTS_ERROR_MESSAGE = "Could not update contact: Email does not exist";
-    public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
-    public static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while updating the contact.";
+    private static final String EMAIL_NOT_EXISTS_ERROR_MESSAGE = "Could not update contact: Email does not exist";
+    private static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
+    private static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while updating the contact.";
 
     private Pages lastPage;
 
@@ -121,8 +120,8 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     /**
-    {@inheritDoc}
-    */
+     * {@inheritDoc}
+     */
     @FXML
     @Override
     public void reset() {

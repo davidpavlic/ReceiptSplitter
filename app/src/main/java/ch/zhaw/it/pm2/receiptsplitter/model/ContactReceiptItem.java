@@ -27,6 +27,10 @@ public class ContactReceiptItem {
         setContact(contact);
     }
 
+    /**
+     * Gets the price of the item.
+     * @return the price of the item
+     */
     public float getPrice() {
         return price;
     }
@@ -42,6 +46,10 @@ public class ContactReceiptItem {
         this.price = price;
     }
 
+    /**
+     * Gets the name of the item.
+     * @return the name of the item
+     */
     public String getName() {
         return name;
     }
@@ -57,6 +65,10 @@ public class ContactReceiptItem {
         this.name = name;
     }
 
+    /**
+     * Gets the contact associated with the item.
+     * @return the contact associated with the item
+     */
     public Contact getContact() {
         return contact;
     }

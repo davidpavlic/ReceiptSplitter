@@ -13,12 +13,24 @@ public class ReceiptItem {
     private float price;
     private int amount;
 
-    public ReceiptItem(float price, String name, int amount) throws IllegalArgumentException{
+    /**
+     * Constructs a new ReceiptItem instance.
+     *
+     * @param price  the price of the item
+     * @param name   the name of the item
+     * @param amount the amount of the item
+     * @throws IllegalArgumentException if the name is empty, the price is zero or lower, or the amount is zero or lower
+     */
+    public ReceiptItem(float price, String name, int amount) throws IllegalArgumentException {
         setName(name);
         setPrice(price);
         setAmount(amount);
     }
 
+    /**
+     * Returns the name of the item.
+     * @return the name of the item
+     */
     public String getName() {
         return name;
     }
@@ -29,20 +41,33 @@ public class ReceiptItem {
      * @param name the name of the item
      * @throws IllegalArgumentException if the name is empty
      */
-    public void setName(String name) throws IllegalArgumentException{
+    public void setName(String name) throws IllegalArgumentException {
         ModelParamValidator.throwIfStringIsEmpty(name, ReceiptItemErrorMessageType.NAME_EMPTY.toString());
         this.name = name;
     }
 
+    /**
+     * Returns the price of the item.
+     * @return the price of the item
+     */
     public float getPrice() {
         return price;
     }
 
-    public void setPrice(float price) throws IllegalArgumentException{
+    /**
+     * Sets the price of the item.
+     * @param price the price of the item
+     * @throws IllegalArgumentException if the price is zero or lower
+     */
+    public void setPrice(float price) throws IllegalArgumentException {
         ModelParamValidator.throwIfZeroOrLower(price, ReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString());
         this.price = price;
     }
 
+    /**
+     * Returns the amount of the item.
+     * @return the amount of the item
+     */
     public int getAmount() {
         return amount;
     }
@@ -53,13 +78,14 @@ public class ReceiptItem {
      * @param amount the amount of the item
      * @throws IllegalArgumentException if the amount is zero or lower
      */
-    public void setAmount(int amount) throws IllegalArgumentException{
+    public void setAmount(int amount) throws IllegalArgumentException {
         ModelParamValidator.throwIfZeroOrLower(amount, ReceiptItemErrorMessageType.AMOUNT_ZERO_OR_LOWER.toString());
         this.amount = amount;
     }
 
     /**
      * Rounds the price to two decimal places.
+     *
      * @param price the price to round
      * @return the rounded price
      */

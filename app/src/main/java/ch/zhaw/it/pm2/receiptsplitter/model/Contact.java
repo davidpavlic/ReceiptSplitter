@@ -28,6 +28,10 @@ public class Contact {
         setEmail(email);
     }
 
+    /**
+     * Gets the first name of the contact.
+     * @return the first name of the contact
+     */
     public String getFirstName() {
         return firstName;
     }
@@ -43,6 +47,10 @@ public class Contact {
         this.firstName = firstName;
     }
 
+    /**
+     * Gets the last name of the contact.
+     * @return the last name of the contact
+     */
     public String getLastName() {
         return lastName;
     }
@@ -59,6 +67,10 @@ public class Contact {
         this.lastName = lastName;
     }
 
+    /**
+     * Gets the email of the contact.
+     * @return the email of the contact
+     */
     public String getEmail() {
         return email;
     }
@@ -74,10 +86,13 @@ public class Contact {
         this.email = email;
     }
 
+    /**
+     * Returns the display name of the contact.
+     * @return the display name of the contact
+     */
     public String getDisplayName() {
         return firstName + " " + lastName;
     }
-
 
     /**
      * This enum represents the types of error messages that can be thrown by the Contact class.

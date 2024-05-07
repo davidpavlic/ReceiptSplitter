@@ -11,7 +11,6 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;

@@ -44,6 +44,12 @@ public class Receipt {
         this.receiptItems = receiptItems;
     }
 
+    /**
+     * Get the receipt item at a given index.
+     *
+     * @param index Index of the receipt item.
+     * @return Receipt item at the given index.
+     */
     public ReceiptItem getReceiptItem(int index) {
         ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         return receiptItems.get(index);
@@ -131,6 +137,8 @@ public class Receipt {
 
     /**
      * Set the currency of the receipt.
+     *
+     * @param currencies Currency of the receipt.
      */
     public void setCurrency(Currencies currencies) {
         this.currencies = currencies;
@@ -154,7 +162,6 @@ public class Receipt {
     protected enum ReceiptErrorMessageType {
         LIST_NULL("ReceiptItemList must not be null."),
         ITEM_NULL("ReceiptItem must not be null."),
-        NAME_NULL("Name of ReceiptItem must not be null."),
         INDEX_NOT_PRESENT("Index can not be present in list.");
 
         private final String message;

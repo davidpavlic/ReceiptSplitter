@@ -43,7 +43,7 @@ import java.util.List;
  */
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
 
-    public static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
+    private static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
 
     private File selectedFile;
     private ImageReceiptExtractor imageExtractor;

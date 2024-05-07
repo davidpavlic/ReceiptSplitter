@@ -14,6 +14,10 @@ import javafx.util.Callback;
  * @version 1.0
  */
 public class ContactDropdownConfigurer {
+    /**
+     * Configures the ComboBox for the Contact dropdown.
+     * @param comboBox the ComboBox to configure
+     */
     public static void configureComboBox(ComboBox<Contact> comboBox) {
         comboBox.setCellFactory(new Callback<>() {
             @Override

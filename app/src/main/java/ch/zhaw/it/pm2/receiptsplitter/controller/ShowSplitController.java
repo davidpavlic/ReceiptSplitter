@@ -6,7 +6,6 @@ import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
-import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -97,8 +96,8 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
     /**
      * {@inheritDoc}
-     *
-     *  Handles the Confirmation of the Receipt and sends out the Request to the Recipients via Email.
+     * <p>
+     * Handles the Confirmation of the Receipt and sends out the Request to the Recipients via Email.
      */
     @Override
     public void confirm() {

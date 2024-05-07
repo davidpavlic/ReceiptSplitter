@@ -1,5 +1,11 @@
 package ch.zhaw.it.pm2.receiptsplitter.enums;
 
+/**
+ * This enum represents the pages of the application.
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public enum Pages {
 
     ADD_RECEIPT_WINDOW("/pages/AddReceipt.fxml"),

@@ -1,7 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
@@ -30,7 +29,6 @@ import java.io.IOException;
  *
  * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
-
  */
 public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, IsObserver {
 
@@ -102,7 +100,7 @@ public class ContactListController extends DefaultController implements CanNavig
 
     /**
      * @param page The last page.
-     * {@inheritDoc}Sets the last page.
+     *             {@inheritDoc}Sets the last page.
      */
     @Override
     public void setLastPage(Pages page) {
