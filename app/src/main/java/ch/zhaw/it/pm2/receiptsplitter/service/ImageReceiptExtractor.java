@@ -116,10 +116,19 @@ public class ImageReceiptExtractor {
      * Checked Exception thrown when an error occurs during the image extraction process.
      */
     public static class ImageReceiptExtractorException extends Exception {
+        /**
+         * Constructs a new ImageReceiptExtractorException with the specified detail message.
+         * @param message the detail message
+         */
         public ImageReceiptExtractorException(String message) {
             super(message);
         }
 
+        /**
+         * Constructs a new ImageReceiptExtractorException with the specified detail message and cause.
+         * @param message the detail message
+         * @param cause the cause
+         */
         public ImageReceiptExtractorException(String message, Throwable cause) {
             super(message, cause);
         }

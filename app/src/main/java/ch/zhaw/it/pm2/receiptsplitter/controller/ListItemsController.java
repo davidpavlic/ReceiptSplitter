@@ -34,7 +34,7 @@ import java.util.Optional;
  * The user can add, update and delete receipt items.
  * The [confirm] navigation leads to the Choose People Window. and the [back] navigation leads to the Add Receipt Window.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
@@ -45,8 +45,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
     private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell. Before editing, please make sure to delete the whole cell and after editing, press enter to confirm the change";
     private static final String FLOAT_PARSE_ERROR_MESSAGE = "You can only enter numbers in this cell";
-    public static final String ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE = "You can only add one placeholder item at a time";
-    public static final String POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE = "You can only enter positive numbers in this cell";
+    private static final String ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE = "You can only add one placeholder item at a time";
+    private static final String POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE = "You can only enter positive numbers in this cell";
 
     @FXML private TableView<ReceiptItem> tableReceiptItems;
     @FXML private TableColumn<ReceiptItem, Integer> amountColumn;
@@ -328,7 +328,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
         tableReceiptItems.getSortOrder().setAll(sortOrder);
     }
 
-    public Float floatFromString(String string) {
+    private Float floatFromString(String string) {
         try {
             return new FloatStringConverter().fromString(string);
         } catch (NumberFormatException e) {

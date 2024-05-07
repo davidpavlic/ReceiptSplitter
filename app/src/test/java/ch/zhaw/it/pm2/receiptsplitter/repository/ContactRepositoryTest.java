@@ -205,9 +205,9 @@ public class ContactRepositoryTest {
         //Assert selected contacts size should remain unchanged
         assertEquals(INITIAL_SELECTED_SIZE + 1, contactRepository.getSelectedContacts().size());
         //Assert contact list reference
-        assertContactListAttributes(newContact, contactRepository.getContacts().get(0));
+        assertContactListAttributes(newContact, contactRepository.getContacts().getFirst());
         //Assert selected contact list reference
-        assertContactListAttributes(newContact, contactRepository.getSelectedContacts().get(0));
+        assertContactListAttributes(newContact, contactRepository.getSelectedContacts().getFirst());
         //Assert profile reference
         assertContactListAttributes(newContact, contactRepository.getProfile());
     }

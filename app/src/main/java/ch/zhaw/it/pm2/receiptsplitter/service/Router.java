@@ -4,11 +4,10 @@ import ch.zhaw.it.pm2.receiptsplitter.Main;
 import ch.zhaw.it.pm2.receiptsplitter.controller.HelpController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HasDynamicLastPage;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -38,7 +37,9 @@ public class Router {
      * Constructs a new Router with the given stage.
      * Initializes the scene map with all pages defined in the Pages enum.
      *
-     * @param stage the primary stage for this application
+     * @param stage             the primary stage for this application
+     * @param contactRepository the contact repository
+     * @param receiptProcessor  the receipt processor
      * @throws IOException if an error occurs during scene initialization
      */
     public Router(Stage stage, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) throws IOException {
@@ -99,6 +100,7 @@ public class Router {
      *
      * @param helpText the help message to display
      * @throws IllegalStateException if an error occurs during modal opening
+     * @throws IOException           if an error occurs during modal loading
      */
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
         Objects.requireNonNull(helpText, "Help message cannot be null");
@@ -125,7 +127,7 @@ public class Router {
             dialogStage.showAndWait();
         } catch (IllegalStateException | IOException exception) {
             logger.fine("Could not open help modal: " + exception.getMessage());
-            throw  exception;
+            throw exception;
         }
     }
 

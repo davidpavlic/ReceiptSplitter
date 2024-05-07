@@ -1,6 +1,5 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
-import ch.zhaw.it.pm2.receiptsplitter.enums.Currencies;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
@@ -34,7 +33,7 @@ public class ReceiptProcessor implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void addObserver(IsObserver observer) {
@@ -42,7 +41,7 @@ public class ReceiptProcessor implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void notifyObservers() {
@@ -68,7 +67,7 @@ public class ReceiptProcessor implements IsObservable {
 
         boolean receiptItemExists = receipt.getReceiptItemByName(receiptItem.getName()).isPresent();
         if (receiptItemExists) {
-            logger.fine("Receipt item already exists with the same name:" + receiptItem.getName() );
+            logger.fine("Receipt item already exists with the same name:" + receiptItem.getName());
             throw new IllegalArgumentException("Receipt item already exists.");
         }
 
@@ -81,6 +80,7 @@ public class ReceiptProcessor implements IsObservable {
      * Updates an existing ReceiptItem in the list of receipt items.
      * Notifies observers of the change.
      *
+     * @param oldName        the name of the ReceiptItem to be updated
      * @param newReceiptItem the ReceiptItem to be updated
      * @throws IllegalArgumentException if the newReceiptItem is null, the old name is null, the item with the old name does not exist or the new name already exists.
      */
@@ -228,6 +228,7 @@ public class ReceiptProcessor implements IsObservable {
 
     /**
      * Formats a price with the currency symbol.
+     *
      * @param price the price to be formatted
      * @return the formatted price with the currency symbol
      */

@@ -19,15 +19,15 @@ import javafx.scene.control.ComboBox;
  * It also updates the dropdown menu based on the current contacts in the contact repository.
  * It implements the IsObserver interface.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
 
  */
 public class LoginController extends DefaultController implements IsObserver{
 
-    public static final String PROFILE_NOT_SET_ERROR_MESSAGE = "Could not set the selected profile. Please try again.";
-    public static final String SELECTED_PROFILE_NO_EMAIL_ADDRESS_ERROR_MESSAGE = "The selected profile has no email address. Please select another profile.";
-    public static final String SELECT_PROFILE_ERROR_MESSAGE = "Please select a profile";
+    private static final String PROFILE_NOT_SET_ERROR_MESSAGE = "Could not set the selected profile. Please try again.";
+    private static final String SELECTED_PROFILE_NO_EMAIL_ADDRESS_ERROR_MESSAGE = "The selected profile has no email address. Please select another profile.";
+    private static final String SELECT_PROFILE_ERROR_MESSAGE = "Please select a profile";
 
     @FXML private Button confirmButton;
     @FXML private ComboBox<Contact> selectContactDropdown;

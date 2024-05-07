@@ -1,9 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
-//TODO: Custom Exception
-
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
-
 import java.util.logging.Logger;
 
 /**
