@@ -1,0 +1,585 @@
+@startuml
+
+' Interfaces
+interface CanNavigate {
+    +confirm(): void
+    +back(): void
+}
+
+interface CanReset {
+    +reset(): void
+}
+
+interface HasDynamicLastPage {
+    +setLastPage(page: Pages): void
+}
+
+interface IsObserver {
+    +update(): void
+}
+
+' Abstract class
+abstract class DefaultController {
+#final Logger logger : Logger.getLogger(DefaultController.class.getName())
+  #Router router
+  #ContactRepository contactRepository
+  #ReceiptProcessor receiptProcessor
+  #HelpMessages helpMessage
+  #StringProperty errorMessageProperty : new SimpleStringProperty()
+    +initialize(router, contactRepository, receiptProcessor): void
+onBeforeStage(): void
+    +showFAQ(): void
+    +showHelp(): void
+    +switchScene(page: Pages): void
+    +switchScene(page: Pages, lastPage: Pages): void
+    +logError(message: String, exception: Exception): void
+-getSwitchSceneErrorMessage(page: Pages): String
+}
+
+' Main Class
+class Main {
+    {static} +main(args: String[]): void
+    {static} -checkSystemConfiguration(): boolean
+{static} -configureLogging(): void
+
+}
+
+
+' Controllers
+class AddReceiptController {
+    -selectedFile: File
+    -imageExtractor: ImageReceiptExtractor
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    +confirm(): void
+    -processReceipt(): boolean;
+    -mapReceiptItems(receiptItems: List<ReceiptItem>):  ReceiptOCR
+    +back(): void
+    +reset(): void
+    +handleReceiptDropped(dragEvent: DragEvent): void
+    -setupDragAndDrop(): void
+    +openDialog(): void
+    -loadReceipt(file : File): void
+     -clearReceiptData(): void
+-setAllButtonsDisabled(enabled : boolean): void
+-setUtilsButtonsDisabled(enabled : boolean): void
+-setLoadingAnimationDisabled(enabled : boolean): void
+}
+
+class AllocateItemsController {
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    +update(): void
+    -private createComboBoxes(comboBoxes: List<ComboBox<Contact>>): List<TableRow>
+    -configureTableColumns(): void
+    -checkAllComboBoxesSelected(comboBoxes: List<ComboBox<Contact>>): void
+    +confirm(): void
+    +back(): void
+    +reset(): void
+}
+
+class ChoosePeopleController {
+   -Contact activeProfile
+   -List<Contact> availableContacts
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    +onBeforeStage():void
+    +update(): void
+    +confirm(): void
+    +openContactList(): void
+    +back(): void
+    +reset(): void
+    -createAndAddNewRow(): void
+-closeErrorMessage(): void
+-showErrorMessage(errorMessage: String): void
+-updateFirstContactRow(): void
+-createContactRow(): HBox
+-clearContactRows(): void
+-configureConfirmButton(): void
+-isContactSelectedMoreThanOnce(): boolean
+-getComboBoxFromRow(row: HBox): ComboBox<Contact>
+-getButtonFromRow(row: HBox): Button
+    +openContactList(): void
+}
+
+class ContactListController {
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    onBeforeStage(): void
+    +update(): void
+    +openCreateProfile(): void
+    +confirm(): void
+    +back(): void
+    +reset(): void
++setLastPage(page: Pages): void
+-closeErrorMessage(): void
+-showErrorMessage(errorMessage: String): void
+-configureTable(): void
+-configureColumns(): void
+-configureActionColumn(): void
+-createActionCell(): TableCell<Contact, String>
+-updateItem(item: String, empty: boolean): void
+-configureButtons(): void
+-handleEditAction(Contact contact): void
+-handleDeleteAction(Contact contact): void
+}
+
+class EditContactController {
+     +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
++onBeforeStage(): void
+    +update(): void
++setLastPage(page: Pages): void
+    +confirm(): void
+    +back(): void
+    +reset(): void
+    -closeErrorMessage(): void
+    -showErrorMessage(errorMessage: String): void
+    - updateUIBasedOnValidation(textFields: List<TextField>): void
+   }
+
+class HelpController {
+    +setHelpText(helpText: HelpMessages): void
+    +confirm(): void
+}
+
+class ListItemsController {
+  {static} -String ADD_FAIL_ERROR_MESSAGE : "Could not add Receipt Item"
+  {static} -String UPDATE_FAIL_ERROR_MESSAGE : "Could not update Receipt Item"
+  {static} -String DELETE_FAIL_ERROR_MESSAGE : "Could not remove Receipt Item"
+  {static} -String INTEGER_PARSE_ERROR_MESSAGE : "You can only enter digits in this cell"
+  {static} -String FLOAT_PARSE_ERROR_MESSAGE : "You can only enter numbers in this cell"
+  -private initialDataReceiptItems: List<ReceiptItem>
+  -private dataReceiptItems: List<ReceiptItem>
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    +onBeforeStage(): void
+    +update(): void
+    +confirm(): void
+    +back(): void
+    +reset(): void
+-addReceiptItem(): void
+-closeErrorMessage(): void
+    -showErrorMessage(errorMessage: String): void
+-configureTable(): void
+-configureNameColumn(): void
+-configureAmountColumn(): void
+-configureUnitPriceColumn(): void
+-configureTotalPriceColumn(): void
+-configureActionColumn(): void
+ -createActionCell() : TableCell<ReceiptItem, Void>
+-handleDeleteAction(ReceiptItem receiptItem): void
+-extractPrice(priceInput: String, receiptItem: ReceiptItem): Optional<Float>
+-updateReceiptItem(oldName: String, receiptItem: ReceiptItem): void
+-updateTable: void
++floatFromString(string: String): Float
+}
+
+class LoginController {
+ {static} +String PROFILE_NOT_SET_ERROR_MESSAGE : "Could not set the selected profile. Please try again."
+  {static} +String SELECTED_PROFILE_NO_EMAIL_ADDRESS_ERROR_MESSAGE : "The selected profile has no email address. Please select another profile."
+  {static} +String SELECT_PROFILE_ERROR_MESSAGE : "Please select a profile"
+  +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
++onBeforeStage(): void
+ +update(): void
+    +closeWindow(): void
+    -openCreateProfile(): void
+    +confirm(): void
+    -closeErrorMessage(): void
+    -showErrorMessage(errorMessage: String): void
+    -configureDropdown(): void
+}
+
+class MainWindowController {
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
++onBeforeStage: void
+   +update(): void
+    +openContactList(): void
+    +openTransactions(): void
+    +addReceipt(): void
+-prepareListItemDebugTestData(): void
+    +back(): void
+
+}
+
+class NewContactController {
+  {static} +String CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE : "Could not add contact: Email does already exist"
+  {static} +String CONTACTS_FILE_ACCESS_ERROR_MESSAGE : "An error occurred trying to access the contacts file."
+  {static} +String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE : "An unknown error occurred while adding the contact."
+  -Pages lastPage
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
+    +setLastPage(lastPage: Pages): void
+    +confirm(): void
+    +back(): void
+    +reset(): void
+    -updateUIBasedOnValidation(textFields: List<TextField>): void
+   }
+
+class ShowSplitController {
+-List<Contact> uniqueContacts
+  -Contact currentContact
+    +initialize(router : Router, contactRepository : ContactRepository, receiptProcessor: ReceiptProcessor ): void
++onBeforeStage(): void
+    +update(): void
+    +confirm(): void
+    +back(): void
+    -configureTable(): void
+-populateTableWithContactItems(contact: Contact): void
+    +nextPerson(): void
+    +previousPerson(): void
+-closeErrorMessage(): void
+-showErrorMessage(): void
+-setSpinnerActive(active: boolean): void
+-createAltert(alertType: altertType, title: String, header: String, message: String)
+-handleConfirmationAndEmails(): void
+-buildAndSendEmails(): boolean
+-buildEmail(recipient: Contact, requester: Contact): String
+}
+
+'Util Class
+class ContactDropdownConfigurer {
+    +configureComboBox(comboBox : ComboBox<Contact>) : void
+  }
+
+' Model Classes
+class ModelParamValidator {
+    {static} void throwIfIndexOutOfBounds(index : int, size : int, errorMessage : String)
+    {static} void throwIfElementIsNull(object : Object, errorMessage : String)
+    {static} void throwIfZeroOrLower(amount : float, errorMessage : String)
+    {static} void throwIfStringIsEmpty(string : String, errorMessage : String)
+    {static} void throwIfEmailIsInvalid(email : String, errorMessage : String)
+    }
+
+class Contact {
+    -firstName : String
+    -lastName : String
+    -email : String
+    +Contact(firstName : String, lastName : String, email : String) throws IllegalArgumentException
+    +getFirstName() : String
+    +setFirstName(firstName : String) throws IllegalArgumentException
+    +getLastName() : String
+    +setLastName(lastName : String) throws IllegalArgumentException
+    +getEmail() : String
+    +setEmail(email : String) throws IllegalArgumentException
+    +getDisplayName() : String
+      -message : String
+      +toString() : String
+    }
+
+class Receipt {
+    -receiptItems : List<ReceiptItem>
+    +Receipt(receiptItems : List<ReceiptItem>)
+    +setReceiptItems(receiptItems : List<ReceiptItem>)
+    +getReceiptItem(index : int) : ReceiptItem
+    +getReceiptItemByName(name : String) : Optional<ReceiptItem>
+    +getReceiptTotal() : float
+    +addReceiptItem(receiptItem : ReceiptItem)
+    +updateReceiptItem(index : int, newReceiptItem : ReceiptItem)
+    +deleteReceiptItem(index : int)
+    +getReceiptItems() : List<ReceiptItem>
+    {static} +fullCopyReceiptItems(receiptItems : List<ReceiptItem>) : List<ReceiptItem>
+  }
+
+class ReceiptItem {
+      -name : String
+        -price : float
+        -amount : int
+        +ReceiptItem(price : float, name : String, amount : int)
+        +getName() : String
+        +setName(name : String) throws IllegalArgumentException
+        +getPrice() : float
+        +setPrice(price : float) throws IllegalArgumentException
+        +getAmount() : int
+        +setAmount(amount : int) throws IllegalArgumentException
+        {static} +roundPrice(price : float) : float
+}
+
+class ContactReceiptItem {
+ -price : float
+    -name : String
+    -contact : Contact
+    +ContactReceiptItem(price : float, name : String, contact : Contact)
+    +getPrice() : float
+    +setPrice(price : float) throws IllegalArgumentException
+    +getName() : String
+    +setName(name : String) throws IllegalArgumentException
+    +getContact() : Contact
+    +setContact(contact : Contact) throws IllegalArgumentException
+        -message : String
+      +toString() : String
+}
+
+'Logger Class
+ class LoggerFileHandler extends FileHandler {
+    +LoggerFileHandler() throws Exception
+  }
+
+' Repository Classes
+  interface IsObservable {
+    +addObserver(observer : IsObserver) : void
+    +notifyObservers() : void
+  }
+
+ interface IsObserver {
+    +update() : void
+  }
+
+class ContactRepository {
+        -observers : List<IsObserver>
+        -contacts : List<Contact>
+        -selectedContacts : List<Contact>
+        -selectedProfile : Contact
+        -selectedToEditContact : Contact
+        -contactsFilePath : Path
+        +ContactRepository(path : String)
+        +loadContacts() : void
+        +addObserver(observer : IsObserver) : void
+        +notifyObservers() : void
+        +contactExists(email : String) : boolean
+        +findContactByEmail(email : String) : Optional<Contact>
+        +addContact(contact : Contact) : void
+        +updateContact(email : String, newContact : Contact) : boolean
+        +removeContact(email : String) : boolean
+        +addToSelectedContacts(email : String) : boolean
+        +removeFromSelectedContacts(email : String) : boolean
+        +getSelectedContacts() : List<Contact>
+        +getSelectedToEditContact() : Contact
+        +getProfile() : Contact
+        +getContacts() : List<Contact>
+        +setSelectedToEditContact(selectedToEditContact : Contact) : void
+        +setProfile(email : String) : boolean
+        +setNewProfile(contact : Contact) : boolean
+        -updateContactInContactList(email : String, newContact : Contact) : boolean
+        -updateContactInContactFile(email : String, newContact : Contact) : boolean
+        -removeContactFromContactFile(email : String) : boolean
+        -appendContactToContactFile(contact : Contact) : void
+        -parseLineToContact(line : String) : Contact
+        -parseContactToLine(contact : Contact) : String
+}
+
+class ReceiptProcessor {
+    -receipt : Receipt
+         -contactReceiptItems : List<ContactReceiptItem>
+         -observers : List<IsObserver>
+         +addObserver(observer : IsObserver) : void
+         +notifyObservers() : void
+         +addReceiptItem(receiptItem : ReceiptItem) : void
+         +updateReceiptItemByName(oldName : String, newReceiptItem : ReceiptItem) : void
+         +deleteReceiptItemByName(name : String) : void
+         +createContactReceiptItem(contact : Contact, receiptItem : ReceiptItem) : void
+         +deleteAllContactReceiptItems() : void
+         +splitReceiptItems() : List<ReceiptItem>
+         +getContactItemsByContact(email : String) : List<ContactReceiptItem>
+         +calculateDebtByPerson(contact : Contact) : float
+         +getFullCopyReceiptItems() : List<ReceiptItem>
+         +setReceiptItems(receiptItems : List<ReceiptItem>) : void
+         +getDistinctContacts() : List<Contact>
+         +setReceipt(receipt : Receipt) : void
+         +getContactReceiptItems() : List<ContactReceiptItem>
+         +setContactReceiptItems(contactReceiptItems : List<ContactReceiptItem>) : void
+         -splitIntoIndividualReceiptItems(receiptItem : ReceiptItem) : List<ReceiptItem>
+}
+
+'Services
+ class EmailService {
+    -EMAIL_SENDER : String = "noreplyreceiptsplitter@gmail.com"
+    -SMTP_SERVER : String = "smtp.sendgrid.net"
+    -SMTP_PORT : int = 25
+    -USERNAME : String
+    -PASSWORD : String
+
+    +EmailService()
+    +sendEmail(recipient : String, subject : String, body : String) : boolean
+    {static} +isValidMail(email : String) : boolean
+    -getSmtpServer() : Mailer
+  }
+
+class Router {
+    -stage : Stage
+    -sceneMap : Map<Pages, Pair<Scene, DefaultController>>
+    +Router(stage : Stage, contactRepository : ContactRepository, receiptProcessor : ReceiptProcessor)
+    +gotoScene(page : Pages) : void
+    +gotoScene(page : Pages, lastPage : Pages) : void
+    +openHelpModal(helpText : HelpMessages) : void
+    +closeWindow() : void
+    +getScene(page : Pages) : Scene
+    +getController(page : Pages) : DefaultController
+    -addSceneMap(page : Pages, pathToScene : String, contactRepository : ContactRepository, receiptProcessor : ReceiptProcessor, styleSheet : URL) : void
+  }
+
+  class ImageReceiptExtractor {
+      -logger : Logger
+      -MODEL_ID : String = "prebuilt-receipt"
+      -endpoint : String
+      -key : String
+      +ImageReceiptExtractor()
+      +extractReceiptOCR(file : File) : ReceiptOCR
+      -getDocumentAnalysisClient() : DocumentAnalysisClient
+      -extractReceiptItemOCRList(analyzedReceiptFields : Map<String, DocumentField>) : List<ReceiptItemOCR>
+      -getAnalyzedReceiptFields(analyzeLayoutResultPoller : SyncPoller<OperationResult, AnalyzeResult>) : Map<String, DocumentField>
+      -getDocumentFieldIntValue(receiptItem : DocumentField, fieldName : String, defaultValue : int) : int
+      -getDocumentFieldContent(receiptItem : DocumentField, fieldName : String, defaultValue : String) : String
+      -calculateTotalPrice(receiptItem : DocumentField, itemQuantity : int) : double
+      -chooseMostConfidentPrice(totalPriceField : DocumentField, priceField : DocumentField, calculatedTotalPrice : double) : double
+      -getUnitPrice(field : DocumentField) : double
+      -roundExtractedPrice(value : double) : double
+      }
+
+
+' Enumerations
+enum Pages {
+    ADD_RECEIPT_WINDOW
+    ALLOCATE_ITEMS_WINDOW
+    LOGIN_WINDOW
+    MAIN_WINDOW
+    CONTACT_LIST_WINDOW
+    CREATE_PROFILE_WINDOW
+    EDIT_PROFILE_WINDOW
+    LIST_ITEMS_WINDOW
+    CHOOSE_PEOPLE_WINDOW
+    SHOW_SPLIT_WINDOW
+}
+
+enum HelpMessages {
+    MAIN_WINDOW_MSG
+    LOGIN_WINDOW_MSG
+    CONTACT_LIST_WINDOW_MSG
+    NEW_CONTACT_WINDOW_MSG
+    EDIT_CONTACT_WINDOW_MSG
+    ADD_RECEIPT_WINDOW_MSG
+    ALLOCATE_ITEMS_WINDOW_MSG
+    CHOOSE_PEOPLE_WINDOW_MSG
+    SHOW_SPLIT_WINDOW_MSG
+    LIST_ITEMS_WINDOW_MSG
+    FAQ_MSG
+}
+
+enum EnvConstants {
+    SMTP_USERNAME("SMTP_USERNAME")
+    SMTP_API_KEY("SMTP_API_KEY")
+    AZURE_AI_FORM_RECOGNIZER_ENDPOINT("AZURE_AI_FORM_RECOGNIZER_ENDPOINT")
+    AZURE_AI_FORM_RECOGNIZER_KEY("AZURE_AI_FORM_RECOGNIZER_KEY")
+    -key : String
+    +{static} areAllSet() : boolean
+    +getKey() : String
+ }
+
+ enum Currencies{
+ CHF
+ }
+
+
+' Inheritance relationships
+AddReceiptController -up-|> DefaultController
+AllocateItemsController -up-|> DefaultController
+ChoosePeopleController -up-|> DefaultController
+ContactListController -up-|> DefaultController
+EditContactController -up-|> DefaultController
+ListItemsController -up-|> DefaultController
+LoginController -up-|> DefaultController
+MainWindowController -up-|> DefaultController
+NewContactController -up-|> DefaultController
+ShowSplitController -up-|> DefaultController
+LoggerFileHandler -up-|> Logger
+HelpController -up-|> DefaultController
+ModelParamValidator -down-|> Logger
+
+' Interface implementations
+AddReceiptController ..|> CanNavigate
+AddReceiptController ..|> CanReset
+AllocateItemsController ..|> CanNavigate
+AllocateItemsController ..|> CanReset
+AllocateItemsController ..|> IsObserver
+ChoosePeopleController ..|> CanNavigate
+ChoosePeopleController ..|> CanReset
+ChoosePeopleController ..|> IsObserver
+ContactListController ..|> CanNavigate
+ContactListController ..|> HasDynamicLastPage
+ContactListController ..|> CanReset
+ContactListController ..|> IsObserver
+EditContactController ..|> CanNavigate
+EditContactController ..|> HasDynamicLastPage
+EditContactController ..|> CanReset
+EditContactController ..|> IsObserver
+ListItemsController ..|> CanNavigate
+ListItemsController ..|> CanReset
+ListItemsController ..|> IsObserver
+LoginController ..|> IsObserver
+MainWindowController ..|> IsObserver
+NewContactController ..|> CanNavigate
+NewContactController ..|> HasDynamicLastPage
+NewContactController ..|> CanReset
+ShowSplitController ..|> CanNavigate
+ShowSplitController ..|> HasDynamicLastPage
+ShowSplitController ..|> IsObserver
+
+' Dependencies and associations
+DefaultController --> Router
+DefaultController --> ContactRepository
+DefaultController --> ReceiptProcessor
+DefaultController --> HelpMessages
+DefaultController --> StringProperty
+ContactRepository --> Contact : aggregates
+ReceiptProcessor --> Receipt : uses
+ReceiptProcessor --> ReceiptItem : uses
+LoginController --> Contact : creates
+NewContactController --> Contact : creates
+ListItemsController --> Receipt : manipulates
+ListItemsController --> ReceiptItem : manipulates
+AddReceiptController --> File : uses
+EmailService --> Contact : sends emails
+ShowSplitController --> ContactReceiptItem : uses
+ShowSplitController --> EmailService : uses
+ImageReceiptExtractor --> ReceiptOCR : creates
+ImageReceiptExtractor --> ReceiptItemOCR : creates
+HelpController --> HelpMessages : uses
+ContactDropdownConfigurer --> Contact : uses
+ModelParamValidator --> String : validates
+ModelParamValidator --> Float : validates
+Main ..> Router : uses
+Main ..> ContactRepository : uses
+Main ..> ReceiptProcessor : uses
+Main ..> Pages : uses
+Main ..> EnvConstants : uses
+
+' Relationships
+AddReceiptController --> ImageReceiptExtractor : uses
+ImageReceiptExtractor --> ReceiptOCR : creates
+ImageReceiptExtractor --> ReceiptItemOCR : creates
+ImageReceiptExtractor --> File : reads
+AddReceiptController ..> Currencies : uses
+Receipt ..> Currencies : uses
+ReceiptProcessor ..> Currencies : uses
+
+' Observer relationships
+ContactRepository ..> IsObservable : implements
+ReceiptProcessor ..> IsObservable : implements
+AllocateItemsController ..> IsObserver : implements
+ChooseContactController ..> IsObserver : implements
+ContactListController ..> IsObserver : implements
+ListItemsController ..> IsObserver : implements
+LoginController ..> IsObserver : implements
+MainWindowController ..> IsObserver : implements
+ShowSplitController ..> IsObserver : implements
+
+' Add Observer Calls
+ContactRepository <-- AllocateItemsController : <<addObserver>>
+ContactRepository <-- ChooseContactController : <<addObserver>>
+ContactRepository <-- ContactListController : <<addObserver>>
+ContactRepository <-- LoginController : <<addObserver>>
+ContactRepository <-- MainWindowController : <<addObserver>>
+ContactRepository <-- ShowSplitController : <<addObserver>>
+ReceiptProcessor <-- ListItemsController : <<addObserver>>
+
+' Notify Observers Calls
+ContactRepository --> IsObserver : <<notifyObservers>>
+ReceiptProcessor --> IsObserver : <<notifyObservers>>
+
+' ModelParamValidator usage relationships
+Receipt ..> ModelParamValidator : uses -- "throwIfIndexOutOfBounds"
+Receipt ..> ModelParamValidator : uses -- "throwIfElementIsNull"
+Receipt ..> ModelParamValidator : uses -- "throwIfStringIsEmpty"
+Contact ..> ModelParamValidator : uses -- "throwIfElementIsNull"
+Contact ..> ModelParamValidator : uses -- "throwIfStringIsEmpty"
+Contact ..> ModelParamValidator : uses -- "throwIfEmailIsInvalid"
+ContactReceiptItem ..> ModelParamValidator : uses -- "throwIfElementIsNull"
+ContactReceiptItem ..> ModelParamValidator : uses -- "throwIfZeroOrLower"
+ContactReceiptItem ..> ModelParamValidator : uses -- "throwIfStringIsEmpty"
+ReceiptItem ..> ModelParamValidator : uses -- "throwIfZeroOrLower"
+ReceiptItem ..> ModelParamValidator : uses -- "throwIfStringIsEmpty"
+
+@enduml

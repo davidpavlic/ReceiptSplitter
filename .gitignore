@@ -5,7 +5,9 @@ challenge_points.txt
 *.ipr
 *.ids
 *.iws
+misc.xml
 .idea/
+.idea/*
 
 # Eclipse files
 .project
@@ -30,6 +32,7 @@ build/
 
 # ignore logfiles
 *.log*
+logs/
 
 # OS dependant files
 .DS_Store
@@ -70,3 +73,6 @@ Desktop.ini
 
 # databases
 *.sqlite
+
+app/contacts.csv
+gradle.properties

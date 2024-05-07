@@ -8,22 +8,26 @@
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
+    id("org.openjfx.javafxplugin") version "0.1.0"
 }
 
 repositories {
-    // Use Maven Central for resolving dependencies.
     mavenCentral()
 }
 
 dependencies {
-    // Use JUnit Jupiter for testing.
+    // Use JUnit Jupiter & Mockito for testing.
     testImplementation(libs.junit.jupiter)
     testImplementation(libs.mockito)
+    testImplementation(libs.mockito.junit.jupiter)
 
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 
     // This dependency is used by the application.
     implementation(libs.guava)
+    implementation(libs.simple.java.mail)
+    implementation(libs.mail.batch.modules)
+    implementation(libs.azure.ai.form.recognizer)
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
@@ -33,9 +37,36 @@ java {
     }
 }
 
+javafx {
+    version = "21.0.2"
+    modules("javafx.controls", "javafx.fxml")
+}
+
+// Set the Environment Variable  keys
+object EnvVarKeys {
+    const val SMTP_USERNAME = "SMTP_USERNAME"
+    const val SMTP_API_KEY = "SMTP_API_KEY"
+    const val AZURE_FORM_RECOGNIZER_ENDPOINT = "AZURE_AI_FORM_RECOGNIZER_ENDPOINT"
+    const val AZURE_FORM_RECOGNIZER_KEY = "AZURE_AI_FORM_RECOGNIZER_KEY"
+}
+
+// Get the Env Vars from the gradle.properties file
+val smtpApiKey: String? =  findProperty(EnvVarKeys.SMTP_USERNAME) as String?
+val smtpUsername: String? = findProperty(EnvVarKeys.SMTP_API_KEY) as String?
+val azureFormRecognizerEndpoint: String? = findProperty(EnvVarKeys.AZURE_FORM_RECOGNIZER_ENDPOINT) as String?
+val azureFormRecognizerKey: String? = findProperty(EnvVarKeys.AZURE_FORM_RECOGNIZER_KEY) as String?
+
 application {
     // Define the main class for the application.
-    mainClass = "ch.zhaw.it.pm2.receiptsplitter.App"
+    mainClass = "ch.zhaw.it.pm2.receiptsplitter.Main"
+
+    // Set the Env Vars as JVM arguments for the application.
+    applicationDefaultJvmArgs = listOf(
+            "-D${EnvVarKeys.SMTP_USERNAME}=${smtpApiKey}",
+            "-D${EnvVarKeys.SMTP_API_KEY}=${smtpUsername}",
+            "-D${EnvVarKeys.AZURE_FORM_RECOGNIZER_ENDPOINT}=${azureFormRecognizerEndpoint}",
+            "-D${EnvVarKeys.AZURE_FORM_RECOGNIZER_KEY}=${azureFormRecognizerKey}"
+    )
 }
 
 tasks.named<Test>("test") {
