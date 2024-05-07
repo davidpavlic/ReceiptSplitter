@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
 import org.simplejavamail.api.email.Email;
 import org.simplejavamail.api.mailer.Mailer;
 import org.simplejavamail.email.EmailBuilder;
@@ -18,6 +18,7 @@ public class EmailService {
     private Mailer getSmtpServer() {
         return MailerBuilder
                 .withSMTPServer(SMTP_SERVER, SMTP_PORT, USERNAME, PASSWORD)
+                .withSessionTimeout(20 * 1000)
                 .buildMailer();
     }
 
@@ -31,18 +32,17 @@ public class EmailService {
                     .from(EMAIL_SENDER)
                     .to(recipient)
                     .withSubject(subject)
-                    .withPlainText(body)
+                    .withHTMLText(body)
                     .buildEmail();
+
             mailer.sendMail(email);
         } catch (Exception exception) {
-            throw new Exception("Failed to send email", exception);
+            throw new Exception("There was an issue when trying to send out the Email", exception);
         }
-
         return true;
     }
 
     public static boolean isValidMail(String email) {
-        //TODO make this nonStatic and use one isValidMail method
         return email.trim().matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
     }
 }

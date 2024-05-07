@@ -10,6 +10,7 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -20,7 +21,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {
+public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -33,11 +34,9 @@ public class NewContactController extends DefaultController implements CanNaviga
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.lastPage = Pages.MAIN_WINDOW;
-        this.helpMessage = HelpMessages.NEW_CONTACT_WINDOW_MSG;
-
+        this.helpMessage = HelpMessages.EDIT_CONTACT_WINDOW_MSG;
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
-        // Add a listener that updates button state and checks email validity
         textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
             updateUIBasedOnValidation(textFields);
         }));
@@ -51,6 +50,14 @@ public class NewContactController extends DefaultController implements CanNaviga
     }
 
     @Override
+    public void update() {
+        Contact contact = contactRepository.getSelectedToEditContact();
+        emailInput.setText(contact.getEmail());
+        firstNameInput.setText(contact.getFirstName());
+        lastNameInput.setText(contact.getLastName());
+    }
+
+    @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }
@@ -58,21 +65,21 @@ public class NewContactController extends DefaultController implements CanNaviga
     @Override
     public void confirm() {
         try {
-            Contact contact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
-            contactRepository.addContact(contact);
+            Contact newContact = new Contact(firstNameInput.getText(), lastNameInput.getText(), emailInput.getText());
+            contactRepository.updateContact(contactRepository.getSelectedToEditContact().getEmail(), newContact);
             reset();
             back();
         } catch (IllegalArgumentException illegalArgumentException) {
             logger.severe(illegalArgumentException.getMessage());
-            emailErrorLabel.setText("Could not add contact: Email does already exist");
+            emailErrorLabel.setText("Could not update contact: Email does not exist");
         } catch (IOException ioException) {
             logger.severe(ioException.getMessage());
             logger.fine(Arrays.toString(ioException.getStackTrace()));
             emailErrorLabel.setText("An error occurred trying to access the contacts file.");
         } catch (Exception exception) {
-            logger.severe("Error adding contact: " + exception.getMessage());
+            logger.severe("Error updating contact: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            emailErrorLabel.setText("An unknown error occurred while adding the contact.");
+            emailErrorLabel.setText("An unknown error occurred while updating the contact.");
         }
     }
 

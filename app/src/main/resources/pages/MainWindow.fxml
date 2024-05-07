@@ -10,7 +10,6 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -20,8 +19,8 @@
         <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <MenuItem onAction="#showHelp" text="Show help"/>
-                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ"/>
+                    <MenuItem onAction="#showHelp" text="Show help" />
+                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
                 </Menu>
             </menus>
         </MenuBar>
@@ -35,7 +34,7 @@
    <center>
       <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" text="ReceiptSplitter" textAlignment="CENTER" VBox.vgrow="ALWAYS">
+            <Label fx:id="welcomeMessage" alignment="CENTER" textAlignment="CENTER" VBox.vgrow="ALWAYS">
                <font>
                   <Font name="System Bold Italic" size="26.0" />
                </font>
@@ -49,9 +48,9 @@
                       <ColumnConstraints hgrow="SOMETIMES" percentWidth="50" />
                   </columnConstraints>
       
-                  <Button onAction="#openContactList" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Contact List" GridPane.rowIndex="3" />
-                  <Button onAction="#openTransactions" maxWidth="Infinity" style="-fx-font-size: 14px;" text="Transactions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <Button onAction="#addReceipt" maxWidth="Infinity" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Add Receipt" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                  <Button maxWidth="Infinity" onAction="#openContactList" style="-fx-font-size: 14px;" text="Contact List" GridPane.rowIndex="3" />
+                  <Button maxWidth="Infinity" onAction="#openTransactions" style="-fx-font-size: 14px;" text="Transactions" GridPane.columnIndex="1" GridPane.rowIndex="3" disable="true" />
+                  <Button maxWidth="Infinity" onAction="#addReceipt" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Add Receipt" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                <rowConstraints>
                   <RowConstraints />
                   <RowConstraints />

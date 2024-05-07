@@ -1,9 +1,12 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -49,9 +52,9 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     @Override
-    public void initialize(Router router) {
-        this.router = router;
-        this.helpMessage = HelpMessages.ADD_RECEIPT_ITEMS_WINDOW_MSG;
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
+        super.initialize(router, contactRepository, receiptProcessor);
+        this.helpMessage = HelpMessages.ADD_RECEIPT_WINDOW_MSG;
         this.imageExtractor = new ImageReceiptExtractor();
 
         setLoadingAnimationEnabled(false);
@@ -89,7 +92,8 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             ReceiptOCR extractedImage =  imageExtractor.extractReceiptOCR(file);
             List<ReceiptItem> receiptItems = mapReceiptItems(extractedImage);
 
-            receiptProcessor = new ReceiptProcessor(new Receipt(receiptItems));
+            // TODO: processor
+
             return true;
         } catch (ImageReceiptExtractorException e) {
             System.err.println("Error extracting receipt: " + e.getMessage());
