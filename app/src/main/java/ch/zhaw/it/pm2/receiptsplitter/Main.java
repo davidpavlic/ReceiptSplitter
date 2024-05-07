@@ -72,7 +72,7 @@ public class Main extends Application {
         stage.setTitle("Receipt Splitter");
 
         //ContactRepository contactRepository = new ContactRepository(Objects.requireNonNull(getClass().getResource("/contacts.csv")).getPath());
-        ContactRepository contactRepository = new ContactRepository("contacts.csv"); // TODO: Ask martin about this
+        ContactRepository contactRepository = new ContactRepository("contacts.csv");
         ReceiptProcessor receiptProcessor = new ReceiptProcessor();
         Router router = new Router(stage, contactRepository, receiptProcessor);
 
