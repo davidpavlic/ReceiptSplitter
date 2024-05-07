@@ -37,13 +37,9 @@ public class EditContactController extends DefaultController implements CanNavig
         this.helpMessage = HelpMessages.EDIT_CONTACT_WINDOW_MSG;
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
-        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            updateUIBasedOnValidation(textFields);
-        }));
+        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> updateUIBasedOnValidation(textFields)));
 
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            emailErrorLabel.setText(newValue);
-        });
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> emailErrorLabel.setText(newValue));
 
         updateUIBasedOnValidation(textFields);
         confirmButton.setOnAction(event -> confirm());

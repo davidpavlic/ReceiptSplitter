@@ -38,13 +38,9 @@ public class NewContactController extends DefaultController implements CanNaviga
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
         // Add a listener that updates button state and checks email validity
-        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> {
-            updateUIBasedOnValidation(textFields);
-        }));
+        textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> updateUIBasedOnValidation(textFields)));
 
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            emailErrorLabel.setText(newValue);
-        });
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> emailErrorLabel.setText(newValue));
 
         updateUIBasedOnValidation(textFields);
         confirmButton.setOnAction(event -> confirm());

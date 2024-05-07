@@ -105,9 +105,7 @@ public class LoginController extends DefaultController implements IsObserver{
 
     private void configureDropdown() {
         selectContactDropdown.setPromptText("Please choose a profile");
-        selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            confirmButton.setDisable(newValue == null);
-        });
+        selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> confirmButton.setDisable(newValue == null));
 
         ContactDropdownConfigurer.configureComboBox(selectContactDropdown);
     }

@@ -61,7 +61,6 @@ public class ReceiptProcessor implements IsObservable {
     public void addReceiptItem(ReceiptItem receiptItem) {
         if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
-        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         boolean receiptItemExists = receipt.getReceiptItemByName(receiptItem.getName()).isPresent();
         if (receiptItemExists) {
             throw new IllegalArgumentException("Receipt item already exists.");
@@ -109,7 +108,6 @@ public class ReceiptProcessor implements IsObservable {
      * Notifies observers of the change.
      *
      * @param name the name of the ReceiptItem to be removed
-     * @return true if the item was removed, false otherwise
      * @throws IllegalArgumentException if the name is null or if the item does not exist
      */
     public void deleteReceiptItemByName(String name) {
