@@ -53,7 +53,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     public void addReceipt() {
         if (!prepareDebugTestData()) return;
 
-        switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
+        switchScene(Pages.ADD_RECEIPT_WINDOW);
     }
 
     private boolean prepareDebugTestData() {
@@ -79,7 +79,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         }});
         receiptProcessor.setReceipt(receipt);
 
-        /*ontact firstContact = contacts.getFirst();
+        /*Contact firstContact = contacts.getFirst();
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().getFirst());
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(2));
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(5));

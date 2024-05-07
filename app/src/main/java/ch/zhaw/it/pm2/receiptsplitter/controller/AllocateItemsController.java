@@ -23,10 +23,10 @@ import java.util.List;
 
 
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
-    @FXML private TableView<Combination> contactItemTable;
-    @FXML private TableColumn<Combination, String> itemColumn;
-    @FXML private TableColumn<Combination, String> priceColumn;
-    @FXML private TableColumn<Combination, String> dropdown;
+    @FXML private TableView<TableRow> contactItemTable;
+    @FXML private TableColumn<TableRow, String> itemColumn;
+    @FXML private TableColumn<TableRow, String> priceColumn;
+    @FXML private TableColumn<TableRow, String> dropdown;
     @FXML private Button confirmButton;
 
     @Override
@@ -41,14 +41,14 @@ public class AllocateItemsController extends DefaultController implements IsObse
     @Override
     public void update() {
         List<ComboBox<Contact>> comboBoxes = new ArrayList<>();
-        List<Combination> receiptItems = createComboBoxes(comboBoxes);
+        List<TableRow> receiptItems = createComboBoxes(comboBoxes);
         contactItemTable.setItems(FXCollections.observableArrayList(receiptItems));
         configureTableColumns();
         checkAllComboBoxesSelected(comboBoxes);
     }
 
-    private List<Combination> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
-        List<Combination> receiptItems = new ArrayList<>();
+    private List<TableRow> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
+        List<TableRow> receiptItems = new ArrayList<>();
         for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
                 ComboBox<Contact> comboBox = new ComboBox<>();
@@ -72,7 +72,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
                     checkAllComboBoxesSelected(comboBoxes);
                 });
                 comboBoxes.add(comboBox);
-                receiptItems.add(new Combination(receiptItem, comboBox));
+                receiptItems.add(new TableRow(receiptItem, comboBox));
             }
         }
         return receiptItems;
@@ -80,7 +80,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
     private void configureTableColumns() {
         itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
-        priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
+        priceColumn.setCellValueFactory(cellData -> cellData.getValue().itemPriceProperty());
         dropdown.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -109,10 +109,13 @@ public class AllocateItemsController extends DefaultController implements IsObse
     @Override
     public void confirm() {
         receiptProcessor.deleteAllContactReceiptItems();
-        for (Combination combination : contactItemTable.getItems()) {
-            Contact contact = combination.getContactComboBox().getSelectionModel().getSelectedItem();
+        for (TableRow tableRow : contactItemTable.getItems()) {
+            Contact contact = tableRow.getContactComboBox().getSelectionModel().getSelectedItem();
             if (contact != null) {
-                receiptProcessor.createContactReceiptItem(contact, combination.getReceiptItem());
+                receiptProcessor.createContactReceiptItem(contact, tableRow.getReceiptItem());
+            } else {
+                logger.warning("Can not Continue, Contact not selected for item: " + tableRow.getReceiptItem().getName());
+                return;
             }
         }
         router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
@@ -132,15 +135,16 @@ public class AllocateItemsController extends DefaultController implements IsObse
     }
 
     // Data model class for a table row
-    public static class Combination {
+    public static class TableRow {
         private final ReceiptItem receiptItem;
         private final SimpleStringProperty itemName;
-        private final SimpleStringProperty price;
+        private final SimpleStringProperty itemPrice;
         private final ComboBox<Contact> contactComboBox;
 
-        public Combination(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
+        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.price = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
+            this.itemPrice = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
+            //TODO: Convert Price with default method
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;
         }
@@ -149,12 +153,8 @@ public class AllocateItemsController extends DefaultController implements IsObse
             return itemName;
         }
 
-        public void setPrice(String price) {
-            this.price.set(price);
-        }
-
-        public SimpleStringProperty priceProperty() {
-            return price;
+        public SimpleStringProperty itemPriceProperty() {
+            return itemPrice;
         }
 
         public ComboBox<Contact> getContactComboBox() {
