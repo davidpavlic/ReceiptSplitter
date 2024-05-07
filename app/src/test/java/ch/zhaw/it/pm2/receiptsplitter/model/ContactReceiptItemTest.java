@@ -3,31 +3,40 @@ package ch.zhaw.it.pm2.receiptsplitter.model;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem.ContactReceiptItemErrorMessageType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
-//TODO: Add Mocking because all test are dependent on correct constructor initialization
+@ExtendWith(MockitoExtension.class)
 public class ContactReceiptItemTest {
 
     private static final float VALID_PRICE = 3.95F;
     private static final String VALID_NAME = "Coke";
-    private static final Contact VALID_CONTACT = new Contact("Pablo", "Escobar", "Pablo.Escobar@hotmail.mx");
+
+    @Mock
+    private Contact mockContact;
+
     private ContactReceiptItem contactReceiptItem;
 
     @BeforeEach
     void setUp() {
-        contactReceiptItem = new ContactReceiptItem(VALID_PRICE, VALID_NAME, VALID_CONTACT);
+        lenient().when(mockContact.getFirstName()).thenReturn("Pablo");
+        lenient().when(mockContact.getLastName()).thenReturn("Escobar");
+        lenient().when(mockContact.getEmail()).thenReturn("Pablo.Escobar@hotmail.mx");
+        contactReceiptItem = new ContactReceiptItem(VALID_PRICE, VALID_NAME, mockContact);
     }
 
     @Test
     void constructor_ValidAttributes_ItemCreated() {
-        //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
-        assertContactReceiptItemAttributes(VALID_PRICE, VALID_NAME, VALID_CONTACT);
+        assertContactReceiptItemAttributes(VALID_PRICE, VALID_NAME, mockContact);
     }
 
     @Test
@@ -57,13 +66,13 @@ public class ContactReceiptItemTest {
     @Test
     void setContact_ValidAttributes_ContactUpdated() {
         //Arrange
-        Contact newContact = new Contact("Ronald", "McDonald", "Ronald.McDonald@megges.com");
+        Contact newMockContact = mock(Contact.class);
 
         //Act
-        contactReceiptItem.setContact(newContact);
+        contactReceiptItem.setContact(newMockContact);
 
         //Assert
-        assertEquals(newContact, contactReceiptItem.getContact());
+        assertEquals(newMockContact, contactReceiptItem.getContact());
     }
 
     @ParameterizedTest
@@ -71,7 +80,7 @@ public class ContactReceiptItemTest {
     void setPrice_InvalidAttributes_ThrowsException(float price) {
         //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> new ContactReceiptItem(price, VALID_NAME, VALID_CONTACT));
+                () -> new ContactReceiptItem(price, VALID_NAME, mockContact));
         assertEquals(ContactReceiptItemErrorMessageType.PRICE_ZERO_OR_LOWER.toString(), exception.getMessage());
     }
 
@@ -81,7 +90,7 @@ public class ContactReceiptItemTest {
     void setName_InvalidAttributes_ThrowsException(String name) {
         //Arrange & Act & Assert
         Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> new ContactReceiptItem(VALID_PRICE, name, VALID_CONTACT));
+                () -> new ContactReceiptItem(VALID_PRICE, name, mockContact));
         assertEquals(ContactReceiptItemErrorMessageType.NAME_EMPTY.toString(), exception.getMessage());
     }
 

@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-//TODO: Add Mocking because all test are dependent on correct constructor initialization
 public class ContactTest {
 
     private static final String VALID_FIRSTNAME = "Max";
@@ -26,7 +25,6 @@ public class ContactTest {
 
     @Test
     void constructor_ValidAttributes_ItemCreated() {
-        //TODO: Set Arrange and Act by including mocking and moving setup-method here
         //Assert
         assertContactAttributes(VALID_FIRSTNAME, VALID_LASTNAME, VALID_EMAIL);
     }

@@ -16,8 +16,6 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-//TODO: Slight Refactoring
-
 /**
  * Represents a repository for contacts. It manages the contacts and selected contacts.
  * It also provides methods to add, update, remove and get contacts.
@@ -28,6 +26,7 @@ import java.util.stream.Stream;
  * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
+//TODO: Decide for consistent errormessages. Enum, static string or hard coded.
 public class ContactRepository implements IsObservable {
     private static final Logger logger = Logger.getLogger(ContactRepository.class.getName());
     private final List<IsObserver> observers = new ArrayList<>();
@@ -105,7 +104,6 @@ public class ContactRepository implements IsObservable {
      * Adds a contact to the contact list.
      *
      * @param contact Contact to be added
-     * @return True if the contact is added, false otherwise
      * @throws IOException If an I/O error occurs
      */
     public void addContact(Contact contact) throws IOException {
