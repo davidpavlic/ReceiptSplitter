@@ -63,8 +63,8 @@ Für die Bearbeitung von Pull Requests (PRs) im Rahmen unseres Git-Develop-Workf
 - Branches und PRs werden stets auf dem Develop-Branch erstellt (Ausnahme: hotfix branches).
 
 #### Beispiele für PRs
-1. Feat/23-Contact-Repository-Creation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/51
-2. Feat/38-Receit-Processor-Creation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/52
+1. Feat/26-List-Items-View-Implementation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/61
+2. Feat/38-Receipt-Processor-Creation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/52
 
 ### Branch Naming
 - Feature Branches: `feat/<issue-number>-<short-description>`
@@ -86,6 +86,7 @@ die parallel an diesen arbeiten können, ohne sich gegenseitig zu beeinflussen.
 
 ### Dependency Injection
 Das Konzept der Dependency Injection (DI) wird verwendet, um die Abhängigkeiten zwischen den verschiedenen Komponenten Ihrer Anwendung zu verwalten und zu minimieren. 
+Wir haben uns für DI und gegen Singletons oder Factory Pattern entschieden, da DI die Flexibilität und Testbarkeit des Codes erhöht.
 In der start-Methode der Main-Klasse werden so die Repositories ContactRepository und ReceiptProcessor wie auch der Router initialisiert.
 
 #### Instanziierung von Abhängigkeiten
@@ -122,7 +123,8 @@ Die Controller lauschen auf Aktionen des Benutzers (z.B. Button-Klicks), manipul
 
 
 ### Ordnerstruktur und Packages
-Die Anwendung wurde in verschiedene Pakete unterteilt, um die Trennung von Anliegen zu gewährleisten:
+Die Anwendung wurde in verschiedene Pakete unterteilt, um die Trennung von Anliegen zu gewährleisten. Unser System basiert auf der Idee, Klassen nach Verwendungszweck zu gruppieren. 
+Dementsprechend findet sich bspw. das Observer Interface nicht im interfaces-package. Übersichtlichkeit und Wartbarkeit sind die Hauptziele dieser Struktur.
 
 - **interfaces**: Enthält Interfaces, die bestimmte Verhaltensweisen definieren, die von anderen Klassen implementiert werden können. 
 Dies fördert die lose Kopplung und macht den Code flexibler und einfacher zu warten.
@@ -138,9 +140,11 @@ Diese Trennung sorgt dafür, dass das Modell unabhängig von der Benutzeroberfl�
 - **service**: Die Service-Schicht implementiert Logik, die sich über mehrere Modelle oder Bereiche erstreckt 
 und zentrale Funktionen für die Anwendung koordiniert.
 
-- **util**: Enthält Hilfsklassen und -funktionen, die in verschiedenen Teilen der Anwendung verwendet werden können.
+- **util**: Enthält Hilfsklassen und -funktionen, die in verschiedenen Teilen der Anwendung verwendet werden können. Ein Beispiel hierfüre wäre ContactDropdown, welches in den Controllern mehrmals verwendet wird.
+Enums, die in der Anwendung verwendet werden, finden sich ebenfalls in diesem Package.
 
 - **pages**: Enthält die FXML-Dateien und Controller-Klassen für die verschiedenen Seiten der JavaFX-Anwendung/ des GUI.
+
 
 
 
@@ -155,5 +159,5 @@ Namen der Mitwirkenden:
 
 ## Anhang
 - [Klassendiagramm](docs/classdiagram/classdiagramm.png)
-- [Testkonzept](docs/testing/equivalence_classes.md)
+- [Testkonzept](docs/testing/testing_concept.md)
 
