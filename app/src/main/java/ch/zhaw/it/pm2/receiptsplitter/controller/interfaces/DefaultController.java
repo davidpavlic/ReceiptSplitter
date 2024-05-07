@@ -28,7 +28,7 @@ import java.util.logging.Logger;
  */
 public abstract class DefaultController {
     protected final Logger logger = Logger.getLogger(DefaultController.class.getName());
-    protected Router router;
+    private Router router;
     protected ContactRepository contactRepository;
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
@@ -81,6 +81,7 @@ public abstract class DefaultController {
     @FXML
     void showHelp() {
         if (helpMessage == null) {
+            logger.fine("No help message set in " + this.getClass().getSimpleName() + " Controller");
             throw new IllegalStateException("No help message set");
         }
 
@@ -90,6 +91,11 @@ public abstract class DefaultController {
             logError("Could not open help modal", exception);
             errorMessageProperty.setValue("Could not open help modal");
         }
+    }
+
+    @FXML
+    void closeWindow() {
+        router.closeWindow();
     }
 
     /**

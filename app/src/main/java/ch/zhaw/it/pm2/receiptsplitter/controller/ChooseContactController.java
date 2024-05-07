@@ -28,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO: Consistency issue: Rename to ChooseContactController
-public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset, IsObserver {
+public class ChooseContactController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
 
@@ -36,6 +36,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
 
     private Contact activeProfile;
     private final List<Contact> availableContacts = new ArrayList<>();
+    private boolean shouldUpdate;
 
     /**
      * @inheritDoc Configures the contact list container and the confirm button.
@@ -45,7 +46,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
         contactRepository.addObserver(this);
-
+        this.shouldUpdate = true;
         configureConfirmButton();
         createAndAddNewRow();
     }
@@ -56,7 +57,10 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @Override
     public void onBeforeStage() {
         super.onBeforeStage();
-        update();
+        if(shouldUpdate){
+            update();
+            shouldUpdate = false;
+        }
     }
 
     /**
@@ -81,6 +85,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @FXML
     @Override
     public void confirm() {
+        contactRepository.removeAllSelectedContacts();
         for (HBox row : contactRows) {
             ComboBox<Contact> comboBox = getComboBoxFromRow(row);
             Contact contact = comboBox.getValue();
@@ -97,7 +102,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
      */
     @FXML
     public void openContactList() {
-        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_CONTACT_WINDOW);
     }
 
     /**

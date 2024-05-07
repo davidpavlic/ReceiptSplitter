@@ -17,8 +17,7 @@ Wir verwenden zudem untenstehende Version von Gradle als Build Tool und Dependen
 git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter.git
 ```
 - Öffnen Sie das Projekt in ihrer IDE.
-- Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu. 
-- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und bennen Sie es als `contacts.csv`. 
+- Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu.
 - Führen sie folgende Befehle aus um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
 
 ### Linux/MacOS
@@ -55,6 +54,11 @@ Der Email Versand funktioniert nicht in jedem Netzwerk. Manchmal kann es dazu ko
 Wir haben ein Timeout von 20 Sekunden gesetzt, falls der Versand nicht funktioniert. In diesem Fall wird eine Fehlermeldung ausgegeben.
 Im ZHAW Netzwerk funktioniert der Versand jedoch. Dies wurde bei allen Authoren dieses Projekts getestet.
 
+## OCR Erkennung
+Dies ist nicht wirklick ein Issue, da unsere Applikation dieses abhandelt. Jedoch ist es wichtig zu wissen, dass die OCR Erkennung nicht immer 100% genau ist.
+Deshalb hat man im nächsten Schritt die Möglichkeit die erkannten Werte zu korrigieren. Wir haben die OCR Erkennung mit verschiedenen Quittungen getestet und haben vier davon in den [docs/receipts](docs/receipts) Ordner abgelegt.
+Diese Quittungen könnten als Testdaten verwendet werden.
+
 # Branching Modell
 Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist,
 bei dem ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch existiert.
@@ -79,7 +83,6 @@ Für die Bearbeitung von Pull Requests (PRs) im Rahmen unseres Git-Develop-Workf
 - Hotfix Branches: `hotfix/<issue-number>-<short-description>`
 
 ## Überlegungen zu Struktur und Aufbau
-
 
 ### Grundsätze und Designentscheidungen
 Durch die Unterteilung in Pakete ist auf einen Blick erkennbar, wo bestimmte Funktionalitäten implementiert sind.

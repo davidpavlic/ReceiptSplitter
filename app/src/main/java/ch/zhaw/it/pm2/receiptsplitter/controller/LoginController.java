@@ -64,11 +64,6 @@ public class LoginController extends DefaultController implements IsObserver{
     }
 
     @FXML
-    private void closeWindow() {
-        router.closeWindow();
-    }
-
-    @FXML
     private void openCreateProfile() {
         switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.LOGIN_WINDOW);
         closeErrorMessage();
