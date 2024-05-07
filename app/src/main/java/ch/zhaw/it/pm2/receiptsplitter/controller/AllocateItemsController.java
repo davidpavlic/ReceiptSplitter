@@ -2,31 +2,24 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
-import ch.zhaw.it.pm2.receiptsplitter.controller.utils.ContactDropdownConfigurer;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.util.Callback;
 import javafx.util.StringConverter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
@@ -42,21 +35,25 @@ public class AllocateItemsController extends DefaultController implements IsObse
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
         contactRepository.addObserver(this);
         receiptProcessor.addObserver(this);
-        confirmButton.setOnAction(event -> confirm() );
+        confirmButton.setOnAction(event -> confirm());
     }
 
     @Override
     public void update() {
         List<ComboBox<Contact>> comboBoxes = new ArrayList<>();
+        List<Combination> receiptItems = createComboBoxes(comboBoxes);
+        contactItemTable.setItems(FXCollections.observableArrayList(receiptItems));
+        configureTableColumns();
+        checkAllComboBoxesSelected(comboBoxes);
+    }
 
+    private List<Combination> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
         List<Combination> receiptItems = new ArrayList<>();
         for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
                 ComboBox<Contact> comboBox = new ComboBox<>();
                 comboBox.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
                 comboBox.setPromptText("Choose Contact");
-
-                // Set the StringConverter for the ComboBox
                 comboBox.setConverter(new StringConverter<>() {
                     @Override
                     public String toString(Contact contact) {
@@ -71,18 +68,17 @@ public class AllocateItemsController extends DefaultController implements IsObse
                                 .orElse(null);
                     }
                 });
-
-                // Add a listener to the ComboBox selection model
                 comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                     checkAllComboBoxesSelected(comboBoxes);
                 });
-
                 comboBoxes.add(comboBox);
                 receiptItems.add(new Combination(receiptItem, comboBox));
             }
         }
+        return receiptItems;
+    }
 
-        contactItemTable.setItems(FXCollections.observableArrayList(receiptItems));
+    private void configureTableColumns() {
         itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
         priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
         dropdown.setCellFactory(param -> new TableCell<>() {
@@ -98,9 +94,6 @@ public class AllocateItemsController extends DefaultController implements IsObse
                 }
             }
         });
-
-        checkAllComboBoxesSelected(comboBoxes);
-        contactItemTable.setEditable(true);
     }
 
     private void checkAllComboBoxesSelected(List<ComboBox<Contact>> comboBoxes) {
@@ -147,7 +140,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
         public Combination(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.price = new SimpleStringProperty(Math.round(receiptItem.getPrice()/receiptItem.getAmount() * 100) / 100F + " CHF");
+            this.price = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;
         }
