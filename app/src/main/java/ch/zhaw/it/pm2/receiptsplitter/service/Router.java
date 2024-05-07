@@ -69,6 +69,7 @@ public class Router {
             stage.setScene(getScene(page));
             stage.show();
         } else {
+            logger.fine("Stage is null, can not switch scene");
             throw new IllegalStateException("Stage is null, can not switch scene");
         }
     }
@@ -87,6 +88,7 @@ public class Router {
         if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
             dynamicLastPageController.setLastPage(lastPage);
         } else {
+            logger.fine("Controller does not implement HasDynamicLastPage");
             throw new IllegalArgumentException("Controller does not implement HasDynamicLastPage");
         }
         gotoScene(page);
@@ -122,7 +124,7 @@ public class Router {
 
             dialogStage.showAndWait();
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal: " + exception.getMessage());
+            logger.fine("Could not open help modal: " + exception.getMessage());
             throw  exception;
         }
     }

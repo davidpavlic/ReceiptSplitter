@@ -30,6 +30,7 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //TODO: JavaDoc
@@ -112,6 +113,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             return true;
         } catch (ImageReceiptExtractorException e) {
             logger.severe("Error while processing receipt: " + e.getMessage());
+            logger.fine("Error while processing receipt: " + Arrays.toString(e.getStackTrace()));
             return false;
         }
     }

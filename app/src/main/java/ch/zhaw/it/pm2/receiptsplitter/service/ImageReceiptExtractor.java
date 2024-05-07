@@ -48,7 +48,6 @@ public class ImageReceiptExtractor {
         Objects.requireNonNull(file, "File must not be null");
 
         try {
-            // Create a client for the Azure Form Recognizer service
             DocumentAnalysisClient client = getDocumentAnalysisClient();
 
             BinaryData binaryData = BinaryData.fromFile(file.toPath());
@@ -98,6 +97,7 @@ public class ImageReceiptExtractor {
 
         // The image to analyze is a single receipt, so we can assume that the first document is the analyzed receipt
         if (analyzeResult.getDocuments().isEmpty()) {
+            logger.warning("No document to extract found in the image");
             throw new ImageReceiptExtractorException("No document to extract found in the image");
         }
 
@@ -105,6 +105,7 @@ public class ImageReceiptExtractor {
         Map<String, DocumentField> analyzedReceiptFields = analyzedReceipt.getFields();
 
         if (!analyzedReceiptFields.containsKey("Items") || !analyzedReceiptFields.containsKey("Total")) {
+            logger.warning("No receipt items or total price found in the receipt");
             throw new ImageReceiptExtractorException("No receipt items or total price found in the receipt");
         }
 

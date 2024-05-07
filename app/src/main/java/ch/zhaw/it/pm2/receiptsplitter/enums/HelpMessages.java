@@ -8,10 +8,10 @@ public enum HelpMessages {
     NEW_CONTACT_WINDOW_MSG("New Contact Window \n\nPlease enter the details of the new contact. \nMake sure that all the fields have to be filled out and to use a valid Mail."),
     EDIT_CONTACT_WINDOW_MSG("Edit Contact Window \n\nPlease edit the details of the contact. \nMake sure that all the fields have to be filled out and to use a valid Mail."),
     ADD_RECEIPT_WINDOW_MSG("Add Receipt Window \n\nPlease upload the receipt you would like to split. \nMake sure that the receipt is clear and all the items are visible."),
-    ALLOCATE_ITEMS_WINDOW_MSG("Allocate Items Window \n\nPlease allocate the items of the receipt to the desired Contacts"),
-    CHOOSE_PEOPLE_WINDOW_MSG("Choose People Window \n\nPlease choose the people you would like to split the receipt with"),
+    ALLOCATE_ITEMS_WINDOW_MSG("Allocate Items Window \n\nPlease allocate the items of the receipt to the desired Contacts. \nEvery Item has to be allocated to at least one Contact."),
+    CHOOSE_PEOPLE_WINDOW_MSG("Choose People Window \n\nPlease choose the people you would like to split the receipt with. \nYou can only choose a Contact once and at least two Contacts have to be selected."),
     SHOW_SPLIT_WINDOW_MSG("Show Split Window \n\nPlease review the split of the receipt. \nBy clicking confirm, you will send out the request via Email."),
-    LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nYou can also edit the items if necessary."),
+    LIST_ITEMS_WINDOW_MSG("List Items Window \n\nPlease review the Items of the Receipt. \nYou can also edit or add new items if necessary."),
     FAQ_MSG("""
             FAQ - Frequently Asked Questions
 
