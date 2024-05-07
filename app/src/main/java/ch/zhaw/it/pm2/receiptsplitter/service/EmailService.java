@@ -42,6 +42,7 @@ public class EmailService {
             logger.info("Sending Email to " + recipient);
             mailer.sendMail(email);
         } catch (Exception exception) {
+            logger.fine("There was an issue when trying to send out the Email: " + exception.getMessage());
             throw new Exception("There was an issue when trying to send out the Email", exception);
         }
         return true;

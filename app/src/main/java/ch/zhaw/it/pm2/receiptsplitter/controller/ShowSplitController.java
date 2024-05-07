@@ -229,7 +229,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                     return false;
                 }
             } catch (Exception e) {
-                // TODO: logError() after merge
                 logError("Failed to send email", e);
                 return false;
             }

@@ -112,8 +112,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             receiptProcessor.setReceipt(new Receipt(receiptItems));
             return true;
         } catch (ImageReceiptExtractorException e) {
-            logger.severe("Error while processing receipt: " + e.getMessage());
-            logger.fine("Error while processing receipt: " + Arrays.toString(e.getStackTrace()));
+            logError("Error while processing receipt: " + e.getMessage(), e);
             return false;
         }
     }

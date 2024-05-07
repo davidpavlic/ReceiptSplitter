@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -80,6 +81,7 @@ public class Main extends Application {
             router.gotoScene(Pages.LOGIN_WINDOW);
         } catch (IllegalStateException exception) {
             logger.severe("Could not load the login window: " + exception);
+            logger.fine("Exiting the application, can not load login Window" + Arrays.toString(exception.getStackTrace()));
         }
     }
 
