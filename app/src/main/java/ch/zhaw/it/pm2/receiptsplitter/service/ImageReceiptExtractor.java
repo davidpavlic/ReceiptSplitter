@@ -1,6 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.service;
 
-import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
 import com.azure.ai.formrecognizer.documentanalysis.DocumentAnalysisClient;
 import com.azure.ai.formrecognizer.documentanalysis.DocumentAnalysisClientBuilder;
 import com.azure.ai.formrecognizer.documentanalysis.models.*;

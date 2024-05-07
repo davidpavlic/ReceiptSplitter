@@ -3,11 +3,11 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.utils.ContactDropdownConfigurer;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
@@ -40,6 +40,7 @@ public class AllocateItemsController extends DefaultController {
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
+        this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
         loadItems();
     }
 
