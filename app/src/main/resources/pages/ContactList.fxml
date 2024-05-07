@@ -16,15 +16,15 @@
 
 <BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.ContactListController">
     <top>
-        <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
-            <menus>
-                <Menu text="Help">
-                    <MenuItem onAction="#showHelp" text="Show help" />
-                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
+    <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
+        <menus>
+            <Menu text="Help">
+                <MenuItem onAction="#showHelp" text="Show help" />
+                <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
+            </Menu>
+        </menus>
+    </MenuBar>
+</top>
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->

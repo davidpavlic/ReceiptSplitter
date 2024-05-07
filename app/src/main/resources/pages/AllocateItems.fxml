@@ -13,13 +13,11 @@
 
 <BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.AllocateItemsController">
     <top>
-        <MenuBar prefHeight="10.0" prefWidth="214.0" BorderPane.alignment="CENTER">
+        <MenuBar prefHeight="10.0" prefWidth="386.0" BorderPane.alignment="CENTER">
             <menus>
                 <Menu text="Help">
-                    <items>
-                        <MenuItem fx:id="showHelp" accelerator="F1" text="Show help" />
-                        <MenuItem mnemonicParsing="false" text="FAQ" />
-                    </items>
+                    <MenuItem onAction="#showHelp" text="Show help" />
+                    <MenuItem mnemonicParsing="false" onAction="#showFAQ" text="FAQ" />
                 </Menu>
             </menus>
         </MenuBar>
@@ -27,25 +25,29 @@
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
             <!-- Button on the left -->
-            <Button text="Back" HBox.hgrow="NEVER" />
+            <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
 
             <!-- Spacer that pushes both buttons to the ends -->
-            <Pane HBox.hgrow="ALWAYS" />
+            <Pane HBox.hgrow="ALWAYS"/>
 
             <!-- Button on the right -->
-            <Button text="Confirm" HBox.hgrow="NEVER" />
+            <Button layoutX="192.0" layoutY="1.0" onAction="#reset" text="Reset" />
+            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
          <children>
-            <TableView fx:id="contactItemTable">
-              <columns>
-                <TableColumn fx:id="itemColumn" prefWidth="160" text="Item" />
-                <TableColumn fx:id="priceColumn" prefWidth="160" text="Item" />
-                <TableColumn fx:id="dropdown" prefWidth="160" text="Contacts" />
-              </columns>
-            </TableView>
+             <TableView fx:id="contactItemTable" editable="true">
+                 <columns>
+                     <TableColumn fx:id="itemColumn" prefWidth="127.0" text="Item" />
+                     <TableColumn fx:id="priceColumn" prefWidth="118.0" text="Price" />
+                     <TableColumn fx:id="dropdown" prefWidth="160.0" text="Contact" />
+                 </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+             </TableView>
          </children>
         </VBox>
     </center>
