@@ -17,8 +17,7 @@ Wir verwenden zudem untenstehende Version von Gradle als Build Tool und Dependen
 git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter.git
 ```
 - Öffnen Sie das Projekt in ihrer IDE.
-- Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu. 
-- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und bennen Sie es als `contacts.csv`. 
+- Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu.
 - Führen sie folgende Befehle aus um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
 
 ### Linux/MacOS
