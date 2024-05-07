@@ -2,7 +2,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.utils.ContactDropdownConfigurer;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
@@ -29,7 +29,7 @@ import java.util.List;
 
 
 
-public class AllocateItemsController extends DefaultController {
+public class AllocateItemsController extends DefaultController implements IsObserver {
     @FXML private TableView<Combination> contactItemTable;
     @FXML private TableColumn<Combination, String> itemColumn;
     @FXML private TableColumn<Combination, String> priceColumn;
@@ -41,10 +41,10 @@ public class AllocateItemsController extends DefaultController {
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
-        loadItems();
     }
 
-    private void loadItems() {
+    @Override
+    public void update() {
         // Populate a list of all available contacts
         ObservableList<String> contacts = FXCollections.observableArrayList();
 
@@ -55,7 +55,7 @@ public class AllocateItemsController extends DefaultController {
         List<Combination> receiptItems = new ArrayList<>();
         for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
-                receiptItems.add(new Combination(receiptItem.getName(), receiptItem.getPrice()/receiptItem.getAmount(), "", contacts));
+                receiptItems.add(new Combination(receiptItem.getName(), Math.round(receiptItem.getPrice()/receiptItem.getAmount() * 100) / 100F, "", contacts));
             }
         }
 
