@@ -41,8 +41,9 @@
          <children>
             <TableView fx:id="contactItemTable">
               <columns>
-                <TableColumn fx:id="itemColumn" text="Item" />
-                <TableColumn fx:id="dropdown" text="Contacts" />
+                <TableColumn fx:id="itemColumn" prefWidth="160" text="Item" />
+                <TableColumn fx:id="priceColumn" prefWidth="160" text="Item" />
+                <TableColumn fx:id="dropdown" prefWidth="160" text="Contacts" />
               </columns>
             </TableView>
          </children>

@@ -32,6 +32,7 @@ import java.util.List;
 public class AllocateItemsController extends DefaultController {
     @FXML private TableView<Combination> contactItemTable;
     @FXML private TableColumn<Combination, String> itemColumn;
+    @FXML private TableColumn<Combination, String> priceColumn;
     @FXML private TableColumn<Combination, String> dropdown;
 
     ObservableList<Combination> contactList = FXCollections.observableArrayList();
@@ -44,17 +45,22 @@ public class AllocateItemsController extends DefaultController {
 
     private void loadItems() {
         // Populate a list of all available contacts
-        ObservableList<String> contacts = FXCollections.observableArrayList("One", "Two", "Three");
+        ObservableList<String> contacts = FXCollections.observableArrayList();
+
+        for(Contact contact : contactRepository.getSelectedContacts()){
+            contacts.add(contact.getDisplayName());
+        }
 
         List<Combination> receiptItems = new ArrayList<>();
         for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
-                receiptItems.add(new Combination(receiptItem.getName(), contacts.get(0), contacts));
+                receiptItems.add(new Combination(receiptItem.getName(), receiptItem.getPrice()/receiptItem.getAmount(), "", contacts));
             }
         }
 
         contactItemTable.setItems(FXCollections.observableArrayList(receiptItems));
         itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
+        priceColumn.setCellValueFactory(cellData -> cellData.getValue().priceProperty());
         dropdown.setCellValueFactory(cellData -> cellData.getValue().usersProperty());
 
         // Use a custom cell factory for the ComboBox column
@@ -103,17 +109,15 @@ public class AllocateItemsController extends DefaultController {
     // Data model class for a table row
     public static class Combination {
         private final SimpleStringProperty receiptItem;
+        private final SimpleStringProperty price;
         private final SimpleStringProperty users;
         private final ObservableList<String> availableContacts;
 
-        public Combination(String receiptItem, String users, ObservableList<String> availableContacts) {
+        public Combination(String receiptItem, float price, String users, ObservableList<String> availableContacts) {
             this.receiptItem = new SimpleStringProperty(receiptItem);
+            this.price = new SimpleStringProperty(Float.toString(price));
             this.users = new SimpleStringProperty(users);
             this.availableContacts = availableContacts;
-        }
-
-        public String getReceiptItem() {
-            return receiptItem.get();
         }
 
         public void setReceiptItem(String receiptItem) {
@@ -124,8 +128,12 @@ public class AllocateItemsController extends DefaultController {
             return receiptItem;
         }
 
-        public String getUsers() {
-            return users.get();
+        public void setPrice(String price) {
+            this.price.set(price);
+        }
+
+        public SimpleStringProperty priceProperty() {
+            return price;
         }
 
         public void setUsers(String users) {
@@ -138,9 +146,36 @@ public class AllocateItemsController extends DefaultController {
     }
 
 
-    public void allocatePerson(int rowID){}
 
-    public void deallocatePerson(int rowID){}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
        /*
     @Override
     public void confirm() {
