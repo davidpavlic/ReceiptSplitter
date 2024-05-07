@@ -13,7 +13,16 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 
+/**
+ * This class is the controller for the Login view.
+ * It handles the selection of a profile from a dropdown menu and the navigation to the CreateProfile view.
+ * It also updates the dropdown menu based on the current contacts in the contact repository.
+ * It implements the IsObserver interface.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
 
+ */
 public class LoginController extends DefaultController implements IsObserver{
 
     public static final String PROFILE_NOT_SET_ERROR_MESSAGE = "Could not set the selected profile. Please try again.";
@@ -25,9 +34,7 @@ public class LoginController extends DefaultController implements IsObserver{
 
     /**
      *
-     * @param router The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor The processor to be used for receipt processing.
+     * {@inheritDoc}
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -40,7 +47,7 @@ public class LoginController extends DefaultController implements IsObserver{
     }
 
     /**
-     * @inheritDoc Executes update method before the stage is loaded.
+     * {@inheritDoc} Executes update method before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -49,7 +56,7 @@ public class LoginController extends DefaultController implements IsObserver{
     }
 
     /**
-     * @inheritDoc Update the contact dropdown list
+     * {@inheritDoc} Update the contact dropdown list
      */
     @Override
     public void update() {
@@ -69,8 +76,11 @@ public class LoginController extends DefaultController implements IsObserver{
         closeErrorMessage();
     }
 
+    /**
+     * {@inheritDoc} Sets the Contact as active Profile
+     */
     @FXML
-    private void confirm() {
+    public void confirm() {
         if (selectContactDropdown.getValue() == null) {
             errorMessageProperty.set(SELECT_PROFILE_ERROR_MESSAGE);
             logger.fine("No contact selected");

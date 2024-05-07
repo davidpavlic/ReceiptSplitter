@@ -116,7 +116,7 @@ public abstract class DefaultController {
      * Switches the scene to the specified page, and sets the last page.
      *
      * @param page     The page to switch to.
-     * @param lastPage The last page.
+     * @param lastPage The last page of the new Controller.
      */
     protected void switchScene(Pages page, Pages lastPage) {
         try {
