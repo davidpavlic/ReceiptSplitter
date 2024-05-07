@@ -33,12 +33,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 //TODO: JavaDoc
-//TODO: Logger
-//TODO: ReceiptProcessor
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
     private File selectedFile;
     private ImageReceiptExtractor imageExtractor;
-    private ReceiptProcessor receiptProcessor;
 
     @FXML private Pane dragAndDropPane;
     @FXML private ImageView receiptImageView;
@@ -87,9 +84,11 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         errorMessage.setVisible(false);
 
         // TODO: Check if this Threading is alright (just to make sure)
+        //Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
         new Thread(() -> {
             boolean success = processReceipt(selectedFile);
 
+            //The UI updates occur in the JavaFX Application thread using `Platform.runLater` to ensure thread safety.
             Platform.runLater(() -> {
                 setLoadingAnimationEnabled(false);
                 if (success) {
@@ -97,7 +96,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
                     clearReceiptData();
                 } else {
                     errorMessage.setVisible(true);
-                    logger.warning("Could not process receipt.");
+                    logger.fine("Showing parsing receipt error, receipt processing has failed.");
                 }
                 setUtilButtonsDisabled(false);
             });
@@ -110,10 +109,8 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             List<ReceiptItem> receiptItems = mapReceiptItems(extractedImage);
 
             receiptProcessor.setReceipt(new Receipt(receiptItems));
-
             return true;
         } catch (ImageReceiptExtractorException e) {
-            // TODO: logError() after merge with feat/26
             logger.severe("Error while processing receipt: " + e.getMessage());
             return false;
         }
