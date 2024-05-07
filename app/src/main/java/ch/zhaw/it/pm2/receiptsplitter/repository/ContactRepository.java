@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,6 +26,7 @@ import java.util.stream.Stream;
  * The profile represents the User who is currently logged in.
  */
 public class ContactRepository implements IsObservable {
+    private static final Logger logger = Logger.getLogger(ContactRepository.class.getName());
     private final List<IsObserver> observers = new ArrayList<>();
     private final List<Contact> contacts = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
@@ -66,6 +68,7 @@ public class ContactRepository implements IsObservable {
      * @inheritDoc
      */
     public void notifyObservers() {
+        logger.fine("Notifying observers in " + this.getClass().getSimpleName());
         for (IsObserver observer : observers) {
             observer.update();
         }
@@ -103,34 +106,40 @@ public class ContactRepository implements IsObservable {
      * @throws IOException If an I/O error occurs
      */
     public void addContact(Contact contact) throws IOException {
-        if (contactExists(contact.getEmail()))
+        if (contactExists(contact.getEmail())) {
+            logger.fine("Duplicate contact found with same Email: " + contact.getEmail());
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
+        }
 
         appendContactToContactFile(contact);
         contacts.add(contact);
         notifyObservers();
     }
 
-    public boolean updateContact(String email, Contact newContact) throws IOException {
+    public void updateContact(String email, Contact newContact) throws IOException {
         Objects.requireNonNull(email);
         Objects.requireNonNull(newContact);
 
-        if (!contactExists(email))
+        if (!contactExists(email)) {
+            logger.fine("No record found with email: " + email);
             throw new IllegalArgumentException("No record found with email: " + email);
+        }
 
         if (updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
             notifyObservers();
-            return true;
         }
-        return false;
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
-        if (selectedProfile != null && selectedProfile.getEmail().equals(email))
+        if (selectedProfile != null && selectedProfile.getEmail().equals(email)) {
+            logger.fine("Contact is selected profile and cannot be removed" + email);
             throw new IllegalArgumentException("Contact is selected profile");
+        }
 
-        if (!contactExists(email))
+        if (!contactExists(email)) {
+            logger.fine("No record found with email: " + email);
             throw new IllegalArgumentException("No record found with email: " + email);
+        }
 
         if (removeContactFromContactFile(email)) {
             if (contacts.removeIf(contact -> contact.getEmail().equals(email))) {
@@ -143,17 +152,18 @@ public class ContactRepository implements IsObservable {
     }
 
     //The following methods represent CRUD operations for selected contacts list
-    // TODO: Return type is not used for this and other methods. Maybe throw Exception instead? ReceiptProcessor is throwing Exception for such cases.
-    public boolean addToSelectedContacts(String email) {
+    public void addToSelectedContacts(String email) {
         if (contactExists(email)) {
-            selectedContacts.add(findContactByEmail(email).get());
-            return true;
+            selectedContacts.add(findContactByEmail(email).isPresent() ? findContactByEmail(email).get() : null);
         }
-        return false;
     }
 
-    public boolean removeFromSelectedContacts(String email) {
-        return selectedContacts.removeIf(contact -> contact.getEmail().equals(email));
+    public void removeFromSelectedContacts(String email) {
+        selectedContacts.removeIf(contact -> contact.getEmail().equals(email));
+    }
+
+    public void removeAllSelectedContacts() {
+        selectedContacts.clear();
     }
 
     //Getters
@@ -198,14 +208,14 @@ public class ContactRepository implements IsObservable {
      * Sets a new profile and adds it as a new Contact first.
      *
      * @param contact Contact to be set as profile
-     * @return True if the profile is set, false otherwise
      * @throws IOException              If an I/O error occurs
      * @throws IllegalArgumentException If the contact already exists
      */
-    // TODO: Not used. currently. Remove?
-    public boolean setNewProfile(Contact contact) throws IOException {
+
+    public void setNewProfile(Contact contact) throws IOException {
+        logger.info("Setting new profile: " + contact.getEmail());
         addContact(contact);
-        return setProfile(contact.getEmail());
+        setProfile(contact.getEmail());
     }
 
     private boolean updateContactInContactList(String email, Contact newContact) {

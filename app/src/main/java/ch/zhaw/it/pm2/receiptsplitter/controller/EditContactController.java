@@ -16,7 +16,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,9 +35,6 @@ public class EditContactController extends DefaultController implements CanNavig
     @FXML private TextField lastNameInput;
     @FXML private Label emailErrorLabel;
 
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
-
     /**
      * @inheritDoc Sets a listener to the text fields to update the UI based on the validation.
      */
@@ -50,10 +46,6 @@ public class EditContactController extends DefaultController implements CanNavig
         List<TextField> textFields = Arrays.asList(emailInput, firstNameInput, lastNameInput);
 
         textFields.forEach(textField -> textField.textProperty().addListener((obs, oldVal, newVal) -> updateUIBasedOnValidation(textFields)));
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
 
         updateUIBasedOnValidation(textFields);
     }
@@ -97,6 +89,7 @@ public class EditContactController extends DefaultController implements CanNavig
             contactRepository.updateContact(contactRepository.getSelectedToEditContact().getEmail(), newContact);
             reset();
             back();
+            closeErrorMessage();
         } catch (IllegalArgumentException illegalArgumentException) {
             logError(illegalArgumentException.getMessage(), illegalArgumentException);
             errorMessageProperty.set(EMAIL_NOT_EXISTS_ERROR_MESSAGE);
@@ -121,19 +114,6 @@ public class EditContactController extends DefaultController implements CanNavig
         emailInput.clear();
         firstNameInput.clear();
         lastNameInput.clear();
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void updateUIBasedOnValidation(List<TextField> textFields) {

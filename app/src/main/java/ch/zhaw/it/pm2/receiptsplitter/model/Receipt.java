@@ -1,16 +1,21 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Currencies;
+
+import java.text.NumberFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * Represents a receipt with a list of receipt items.
+ * Represents a receipt with a list of receipt items and a Currency.
  * Exposes methods to add, update, delete and get receipt items.
  * The List of Receipt Items  cannot be modified from outside the class.
+ * <p>
+ * Thr Currency is set to CHF by default.
  */
 public class Receipt {
+
+    private Currencies currencies;
     private List<ReceiptItem> receiptItems;
 
     /**
@@ -21,6 +26,7 @@ public class Receipt {
      * @throws IllegalArgumentException If the list is null.
      */
     public Receipt(List<ReceiptItem> receiptItem) {
+        currencies = Currencies.CHF; // Default currency
         setReceiptItems(receiptItem);
     }
 
@@ -103,12 +109,39 @@ public class Receipt {
     }
 
     /**
+     * Formats a given price as a String with the currency symbol.
+     *
+     * @param price Price to be formatted.
+     * @return Formatted price as a String.
+     */
+    public String formatPriceWithCurrency(float price) {
+        Currency currencyCode = Currency.getInstance(currencies.getCurrency());
+
+        Locale locale = Locale.of("de", "CH"); // de-CH is used as default locale for this MVP Project.
+
+        NumberFormat numberFormat = NumberFormat.getCurrencyInstance(locale);
+        numberFormat.setCurrency(currencyCode);
+
+        String formattedPrice = numberFormat.format(price);
+
+        // NumberFormat adds spaces with different unicode points, this is to ensure that the unicode points are the same
+        return formattedPrice.replaceAll("[\\s\\u00A0]+", " ").trim();
+    }
+
+    /**
      * Get an immutable list of receipt items.
      *
      * @return Immutable list of receipt items.
      */
     public List<ReceiptItem> getReceiptItems() {
         return Collections.unmodifiableList(receiptItems);
+    }
+
+    /**
+     * Set the currency of the receipt.
+     */
+    public void setCurrency(Currencies currencies) {
+        this.currencies = currencies;
     }
 
     /**
@@ -122,6 +155,7 @@ public class Receipt {
                 map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
                 .collect(Collectors.toList());
     }
+
 
     protected enum ReceiptErrorMessageType {
         LIST_NULL("ReceiptItemList must not be null."),

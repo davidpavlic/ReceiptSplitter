@@ -28,17 +28,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO: Consistency issue: Rename to ChooseContactController
-public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset, IsObserver {
+public class ChooseContactController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
-
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
 
     private final ObservableList<HBox> contactRows = FXCollections.observableArrayList();
 
     private Contact activeProfile;
     private final List<Contact> availableContacts = new ArrayList<>();
+    private boolean shouldUpdate;
 
     /**
      * @inheritDoc Configures the contact list container and the confirm button.
@@ -48,13 +46,9 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
         contactRepository.addObserver(this);
-
+        this.shouldUpdate = true;
         configureConfirmButton();
         createAndAddNewRow();
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -63,7 +57,10 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @Override
     public void onBeforeStage() {
         super.onBeforeStage();
-        update();
+        if(shouldUpdate){
+            update();
+            shouldUpdate = false;
+        }
     }
 
     /**
@@ -88,6 +85,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @FXML
     @Override
     public void confirm() {
+        contactRepository.removeAllSelectedContacts();
         for (HBox row : contactRows) {
             ComboBox<Contact> comboBox = getComboBoxFromRow(row);
             Contact contact = comboBox.getValue();
@@ -96,6 +94,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
             }
         }
         switchScene(Pages.ALLOCATE_ITEMS_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -103,7 +102,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
      */
     @FXML
     public void openContactList() {
-        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CONTACT_LIST_WINDOW, Pages.CHOOSE_CONTACT_WINDOW);
     }
 
     /**
@@ -129,19 +128,6 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         HBox newRow = createContactRow();
         contactRows.add(newRow);
         contactListContainer.getChildren().add(newRow);
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void updateFirstContactRow() {

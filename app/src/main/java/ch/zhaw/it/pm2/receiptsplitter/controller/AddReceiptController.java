@@ -3,6 +3,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Currencies;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
@@ -17,7 +18,6 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -30,10 +30,14 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //TODO: JavaDoc
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
+
+    public static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
+
     private File selectedFile;
     private ImageReceiptExtractor imageExtractor;
 
@@ -41,7 +45,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private ImageView receiptImageView;
     @FXML private Rectangle backgroundShadow;
     @FXML private ProgressIndicator progressIndicator;
-    @FXML private Label errorMessage;
 
     @FXML private Button uploadReceiptButton;
     @FXML private Button confirmButton;
@@ -65,9 +68,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         setLoadingAnimationEnabled(false);
         setProcessButtonsDisabled(true);
 
-        // TODO: Replace with error message box after merge with feat/26
-        errorMessage.setVisible(false);
-
         setupDragAndDrop();
         uploadReceiptButton.setOnAction((actionEvent -> openDialog()));
     }
@@ -81,7 +81,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     public void confirm() {
         setLoadingAnimationEnabled(true);
         setAllButtonsDisabled(true);
-        errorMessage.setVisible(false);
 
         // TODO: Check if this Threading is alright (just to make sure)
         //Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
@@ -94,8 +93,9 @@ public class AddReceiptController extends DefaultController implements CanNaviga
                 if (success) {
                     switchScene(Pages.LIST_ITEMS_WINDOW);
                     clearReceiptData();
+                    closeErrorMessage();
                 } else {
-                    errorMessage.setVisible(true);
+                    errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
                     logger.fine("Showing parsing receipt error, receipt processing has failed.");
                 }
                 setUtilButtonsDisabled(false);
@@ -108,10 +108,12 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             ReceiptOCR extractedImage = imageExtractor.extractReceiptOCR(file);
             List<ReceiptItem> receiptItems = mapReceiptItems(extractedImage);
 
-            receiptProcessor.setReceipt(new Receipt(receiptItems));
+            Receipt receipt = new Receipt(receiptItems);
+            receipt.setCurrency(Currencies.CHF); // CHF is set as default currency for this MVP Project.
+            receiptProcessor.setReceipt(receipt);
             return true;
         } catch (ImageReceiptExtractorException e) {
-            logger.severe("Error while processing receipt: " + e.getMessage());
+            logError("Error while processing receipt: " + e.getMessage(), e);
             return false;
         }
     }

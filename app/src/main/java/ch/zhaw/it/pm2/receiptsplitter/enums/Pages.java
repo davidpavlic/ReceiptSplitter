@@ -10,7 +10,7 @@ public enum Pages {
     CREATE_PROFILE_WINDOW("/pages/NewContact.fxml"),
     EDIT_PROFILE_WINDOW("/pages/EditContact.fxml"),
     LIST_ITEMS_WINDOW("/pages/ListItems.fxml"),
-    CHOOSE_PEOPLE_WINDOW("/pages/ChoosePeople.fxml"),
+    CHOOSE_CONTACT_WINDOW("/pages/ChooseContact.fxml"),
     SHOW_SPLIT_WINDOW("/pages/ShowSplit.fxml");
 
     private final String path;

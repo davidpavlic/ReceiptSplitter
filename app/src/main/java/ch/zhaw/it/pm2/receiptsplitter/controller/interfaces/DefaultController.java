@@ -8,6 +8,8 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,12 +28,14 @@ import java.util.logging.Logger;
  */
 public abstract class DefaultController {
     protected final Logger logger = Logger.getLogger(DefaultController.class.getName());
-    protected Router router;
+    private Router router;
     protected ContactRepository contactRepository;
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
     protected StringProperty errorMessageProperty = new SimpleStringProperty();
 
+    @FXML protected HBox errorMessageBox;
+    @FXML protected Label errorMessageLabel;
 
     /**
      * Initializes the controller with a router, contact repository, and receipt processor.
@@ -45,6 +49,10 @@ public abstract class DefaultController {
         this.contactRepository = contactRepository;
         this.receiptProcessor = receiptProcessor;
         this.helpMessage = HelpMessages.LOGIN_WINDOW_MSG;
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
     }
 
     /**
@@ -73,6 +81,7 @@ public abstract class DefaultController {
     @FXML
     void showHelp() {
         if (helpMessage == null) {
+            logger.fine("No help message set in " + this.getClass().getSimpleName() + " Controller");
             throw new IllegalStateException("No help message set");
         }
 
@@ -82,6 +91,11 @@ public abstract class DefaultController {
             logError("Could not open help modal", exception);
             errorMessageProperty.setValue("Could not open help modal");
         }
+    }
+
+    @FXML
+    void closeWindow() {
+        router.closeWindow();
     }
 
     /**
@@ -124,6 +138,26 @@ public abstract class DefaultController {
         if (exception != null) {
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
+    }
+
+    /**
+     * Closes the error message box.
+     */
+    @FXML
+    protected void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    /**
+     * Shows an error message in the error message box.
+     * @param message The error message to show.
+     */
+    protected void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private String getSwitchSceneErrorMessage(Pages page) {

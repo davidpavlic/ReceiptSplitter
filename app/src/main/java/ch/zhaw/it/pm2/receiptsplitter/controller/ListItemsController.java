@@ -27,19 +27,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem.roundPrice;
-
+/**
+ * Controller for the List Items Window.
+ * <p>
+ * Shows a table with the receipt items that were extracted from the receipt.
+ * The user can add, update and delete receipt items.
+ * The [confirm] navigation leads to the Choose People Window. and the [back] navigation leads to the Add Receipt Window.
+ */
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
 
     private static final String ADD_FAIL_ERROR_MESSAGE = "Could not add Receipt Item";
-    private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item";
+    private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item. Before editing, please make sure to delete the whole cell and after editing, press enter to confirm the change";
     private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
-    private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell";
+    private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell. Before editing, please make sure to delete the whole cell and after editing, press enter to confirm the change";
     private static final String FLOAT_PARSE_ERROR_MESSAGE = "You can only enter numbers in this cell";
-
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
+    public static final String ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE = "You can only add one placeholder item at a time";
+    public static final String POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE = "You can only enter positive numbers in this cell";
 
     @FXML private TableView<ReceiptItem> tableReceiptItems;
     @FXML private TableColumn<ReceiptItem, Integer> amountColumn;
@@ -64,10 +68,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
         this.helpMessage = HelpMessages.LIST_ITEMS_WINDOW_MSG;
         receiptProcessor.addObserver(this);
         configureTable();
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -95,7 +95,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void confirm() {
-        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CHOOSE_CONTACT_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -104,7 +105,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void back() {
-        switchScene(Pages.ADD_RECEIPT_WINDOW);
+//        switchScene(Pages.ADD_RECEIPT_WINDOW);
+        errorMessageProperty.set("This feature will be available in the next version.");
     }
 
     /**
@@ -118,11 +120,10 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     @FXML
     private void addReceiptItem() {
-
         boolean placeholderExists = dataReceiptItems.stream().anyMatch(item -> RECEIPT_ITEM_PLACEHOLDER_DATA.getName().equals(item.getName()));
 
         if (placeholderExists) {
-            showErrorMessage("You can only add one placeholder item at a time");
+            showErrorMessage(ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE);
             return;
         }
 
@@ -137,19 +138,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
             logError(ADD_FAIL_ERROR_MESSAGE, e);
             showErrorMessage(ADD_FAIL_ERROR_MESSAGE);
         }
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void configureTable() {
@@ -202,7 +190,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
             }
 
             if (amount < 0) {
-                showErrorMessage("You can only enter positive numbers in this cell");
+                showErrorMessage(POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE);
                 tableReceiptItems.refresh();
                 return;
             }
@@ -215,18 +203,22 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureUnitPriceColumn() {
         unitPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            float roundedPrice = roundPrice(item.getPrice() / item.getAmount());
 
-            return new SimpleStringProperty(roundedPrice + " CHF");
+            float unitPrice = item.getPrice() / item.getAmount();
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(unitPrice);
+
+            return new SimpleStringProperty(formattedUnitPrice);
         });
 
         unitPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         unitPriceColumn.setOnEditCommit(event -> {
             String unitPriceInput = event.getNewValue();
+
             if (event.getOldValue().equals(unitPriceInput)) return;
 
             ReceiptItem item = event.getRowValue();
-            Optional<Float> unitPrice = extractPrice(unitPriceInput, item);
+            Optional<Float> unitPrice = extractPrice(unitPriceInput);
+
             if (unitPrice.isEmpty()) return;
 
             item.setPrice(unitPrice.get() * item.getAmount());
@@ -237,8 +229,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureTotalPriceColumn() {
         totalPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            float roundedPrice = roundPrice(item.getPrice());
-            return new SimpleStringProperty( roundedPrice + " CHF");
+            String formattedPrice = receiptProcessor.formatPriceWithCurrency(item.getPrice());
+
+            return new SimpleStringProperty(formattedPrice);
         });
 
         totalPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -246,8 +239,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
             String totalPriceInput = event.getNewValue();
             if (event.getOldValue().equals(totalPriceInput)) return;
 
+
             ReceiptItem item = event.getRowValue();
-            Optional<Float> totalPrice = extractPrice(totalPriceInput, item);
+            Optional<Float> totalPrice = extractPrice(totalPriceInput);
 
             if (totalPrice.isEmpty()) return;
 
@@ -295,17 +289,17 @@ public class ListItemsController extends DefaultController implements CanNavigat
         }
     }
 
-    private Optional<Float> extractPrice(String priceInput, ReceiptItem item) {
+    private Optional<Float> extractPrice(String priceInput) {
         float price = floatFromString(priceInput);
 
-        if (item.getPrice() == price) return Optional.empty();
         if (price == Float.MIN_VALUE) {
+            showErrorMessage(FLOAT_PARSE_ERROR_MESSAGE);
             tableReceiptItems.refresh();
             return Optional.empty();
         }
 
         if (price < 0) {
-            showErrorMessage("You can only enter positive numbers in this cell");
+            showErrorMessage(POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE);
             tableReceiptItems.refresh();
             return Optional.empty();
         }
