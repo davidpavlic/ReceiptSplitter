@@ -108,10 +108,12 @@ Der Router erhält seine Abhängigkeiten (stage, contactRepository, receiptProce
 Dies erleichtert das Testen, da Mock- oder Stub-Objekte während des Testens leicht eingesetzt werden können.
 
 
-### Implementation des MVC-Patterns
-Diese Trennung der Verantwortlichkeiten innerhalb des MVC-Designs fördert die Wiederverwendbarkeit und die Unabhängigkeit der Komponenten, 
+### Implementation des MVCS-Patterns
+Die Trennung der Verantwortlichkeiten innerhalb des MVCS-Designs fördert die Wiederverwendbarkeit und die Unabhängigkeit der Komponenten, 
 erleichtert das Testen und die Wartung der Anwendung und ermöglicht eine klarere Modularisierung der Funktionalität. 
-Die Kommunikation zwischen den Komponenten wird durch die Implementation des Observer Pattern sichergestellt.
+Das zusätzliche Service-Element verbessert die Logik und die Datenzugriffsschicht, indem es diese von den Controllern trennt. 
+Die Kommunikation zwischen den Komponenten wird durch die Implementierung des Observer-Musters sichergestellt, 
+wobei Services als erweiterte Vermittler fungieren.
 
 #### Model
 Die model-Komponente beinhaltet Klassen wie Contact, Receipt, und ReceiptItem. Diese Klassen repräsentieren die Datenstruktur und die Logik der Anwendung. 
@@ -169,6 +171,6 @@ Namen der Mitwirkenden:
 - Suhejl Asani
 
 ## Anhang
-- [Klassendiagramm](docs/classdiagram/classdiagramm.png)
+- [Klassendiagramm](docs/classdiagram/classdiagramm.puml)
 - [Testing Konzept](docs/testing/testing_concept.md)
 
