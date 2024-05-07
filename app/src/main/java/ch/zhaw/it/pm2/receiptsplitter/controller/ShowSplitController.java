@@ -67,6 +67,15 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
      * @inheritDoc Updates the TableView with the ContactItems of the first Contact in the list.
      */
     @Override

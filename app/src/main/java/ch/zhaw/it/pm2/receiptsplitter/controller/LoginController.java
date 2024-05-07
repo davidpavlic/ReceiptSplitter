@@ -45,6 +45,15 @@ public class LoginController extends DefaultController implements IsObserver{
     }
 
     /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
      * @inheritDoc Update the contact dropdown list
      */
     @Override

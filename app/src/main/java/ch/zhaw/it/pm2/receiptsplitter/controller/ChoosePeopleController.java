@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 // TODO: Consistency issue: Rename to ChooseContactController
-// TODO: Implement error message box after merge with feat/26
 public class ChoosePeopleController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
@@ -42,12 +41,7 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     private final List<Contact> availableContacts = new ArrayList<>();
 
     /**
-     * Initializes the Controller with the necessary dependencies and initial data.
-     * Configures the contact list container and the confirm button.
-     *
-     * @param router            The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor  The processor to be used for receipt processing.
+     * @inheritDoc Configures the contact list container and the confirm button.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -55,7 +49,6 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         this.helpMessage = HelpMessages.CHOOSE_PEOPLE_WINDOW_MSG;
         contactRepository.addObserver(this);
 
-        confirmButton.setOnAction(e -> confirm());
         configureConfirmButton();
         createAndAddNewRow();
 
@@ -65,13 +58,36 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     }
 
     /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
+     * @inheritDoc Clears the current contact rows and updates the available contacts.
+     * Adds a new row with the active profile as the first contact.
+     */
+    @Override
+    public void update() {
+        clearContactRows();
+        activeProfile = contactRepository.getProfile();
+        availableContacts.clear();
+        availableContacts.addAll(contactRepository.getContacts());
+        availableContacts.remove(activeProfile);
+        createAndAddNewRow();
+        updateFirstContactRow();
+    }
+
+    /**
      * @inheritDoc Iterates over the contact rows and adds the selected contacts to the selected contacts list in the contact repository.
      * Switches to the allocate items window in the end.
      */
+    @FXML
     @Override
     public void confirm() {
-
-
         for (HBox row : contactRows) {
             ComboBox<Contact> comboBox = getComboBoxFromRow(row);
             Contact contact = comboBox.getValue();
@@ -104,21 +120,6 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @Override
     public void reset() {
         clearContactRows();
-        createAndAddNewRow();
-        updateFirstContactRow();
-    }
-
-    /**
-     * @inheritDoc Clears the current contact rows and updates the available contacts.
-     * Adds a new row with the active profile as the first contact.
-     */
-    @Override
-    public void update() {
-        clearContactRows();
-        activeProfile = contactRepository.getProfile();
-        availableContacts.clear();
-        availableContacts.addAll(contactRepository.getContacts());
-        availableContacts.remove(activeProfile);
         createAndAddNewRow();
         updateFirstContactRow();
     }

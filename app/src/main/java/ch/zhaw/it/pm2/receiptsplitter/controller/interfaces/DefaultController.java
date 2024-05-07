@@ -52,7 +52,7 @@ public abstract class  DefaultController {
      * Executes code before the stage  is loaded.
      */
     public void onBeforeStage() {
-        // Empty method to be overridden by subclasses
+        logger.info("Loading stage for: " + this.getClass().getSimpleName());
     }
 
     /**

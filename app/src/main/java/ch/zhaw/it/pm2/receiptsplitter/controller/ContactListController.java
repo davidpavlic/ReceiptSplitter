@@ -32,12 +32,7 @@ public class ContactListController extends DefaultController implements CanNavig
     private Pages lastPage;
 
     /**
-     * Initializes the Controller with the necessary dependencies and initial data.
-     * Configures the contact list table too.
-     *
-     * @param router            The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor  The processor to be used for receipt processing.
+     * @inheritDoc Configures the table for the contact list.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -50,6 +45,15 @@ public class ContactListController extends DefaultController implements CanNavig
         errorMessageProperty.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) showErrorMessage(newValue);
         });
+    }
+
+    /**
+     * @inheritDoc Executes update method before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
     }
 
     /**
@@ -88,7 +92,8 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     @Override
-    public void reset() {} // TODO: Implement? Or remove?
+    public void reset() {
+    } // TODO: Implement? Or remove?
 
     /**
      * @param page The last page.

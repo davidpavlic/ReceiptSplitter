@@ -1,5 +1,7 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
+import ch.zhaw.it.pm2.receiptsplitter.enums.Currency;
+
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -8,7 +10,7 @@ import java.util.stream.Collectors;
 
 //TODO: JavaDoc
 public class Receipt {
-
+    private Currency currency;
     private List<ReceiptItem> receiptItems;
 
     /**

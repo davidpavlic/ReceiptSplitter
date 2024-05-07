@@ -67,9 +67,6 @@ public class Router {
         if (stage != null) {
             getController(page).onBeforeStage();
             stage.setScene(getScene(page));
-            if (getController(page) instanceof IsObserver observerController) {
-                observerController.update();
-            }
             stage.show();
         } else {
             throw new IllegalStateException("Stage is null, can not switch scene");

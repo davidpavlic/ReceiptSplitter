@@ -1,14 +1,14 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
-import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -19,6 +19,9 @@ import java.util.List;
 public class MainWindowController extends DefaultController implements IsObserver {
     @FXML private Label welcomeMessage;
 
+    /**
+     * @inheritDoc
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -26,6 +29,18 @@ public class MainWindowController extends DefaultController implements IsObserve
         contactRepository.addObserver(this);
     }
 
+    /**
+     * @inheritDoc Executes update method  before the stage is loaded.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        update();
+    }
+
+    /**
+     * @inheritDoc Update the welcome message
+     */
     @Override
     public void update() {
         if (!(contactRepository.getProfile() == null)) {
@@ -33,16 +48,25 @@ public class MainWindowController extends DefaultController implements IsObserve
         }
     }
 
+    /**
+     * Opens the contact list window.
+     */
     @FXML
     public void openContactList() {
         switchScene(Pages.CONTACT_LIST_WINDOW, Pages.MAIN_WINDOW);
     }
 
+    /**
+     * Opens the transactions window.
+     */
     @FXML
     public void openTransactions() {
         //TODO Implement Transactions
     }
 
+    /**
+     * Opens the add receipt window.
+     */
     @FXML
     public void addReceipt() {
 //        if (!prepareDebugTestData()) return;
@@ -52,8 +76,8 @@ public class MainWindowController extends DefaultController implements IsObserve
     }
 
     // TODO: Only used for testing, remove in the end
-    private void prepareListItemDebugTestData(){
-        Receipt receipt = new Receipt(new ArrayList<>(){{
+    private void prepareListItemDebugTestData() {
+        Receipt receipt = new Receipt(new ArrayList<>() {{
             add(new ReceiptItem(1.0F, "Test Item 1", 1));
             add(new ReceiptItem(2.0F, "Test Item 2", 2));
             add(new ReceiptItem(3.0F, "Test Item 3", 3));
@@ -72,7 +96,7 @@ public class MainWindowController extends DefaultController implements IsObserve
             return false;
         }
 
-        Receipt receipt = new Receipt(new ArrayList<>(){{
+        Receipt receipt = new Receipt(new ArrayList<>() {{
             add(new ReceiptItem(10.0f, "Item 1", 1));
             add(new ReceiptItem(10.0f, "Item 1", 1));
             add(new ReceiptItem(20.0f, "Item 2", 1));
