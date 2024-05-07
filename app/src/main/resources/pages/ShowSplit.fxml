@@ -55,9 +55,9 @@
             </HBox>
             <TableView fx:id="itemsTable">
                 <columns>
-                    <TableColumn fx:id="itemNameColumn" maxWidth="Infinity" minWidth="-Infinity" text="Item Name"/>
-                    <TableColumn fx:id="itemPriceColumn" maxWidth="Infinity" minWidth="-Infinity"
-                                 text="Item Price"/>
+                    <TableColumn fx:id="itemNameColumn" styleClass="table-column-center" maxWidth="Infinity" minWidth="-Infinity" text="Name"/>
+                    <TableColumn fx:id="itemPriceColumn" styleClass="table-column-center"  maxWidth="Infinity" minWidth="-Infinity"
+                                 text="Price"/>
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

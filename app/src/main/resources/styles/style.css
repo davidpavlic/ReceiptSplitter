@@ -31,3 +31,7 @@
 .delete-button:hover {
     -fx-background-color: #ff3333; /* Darker red background on hover */
 }
+
+.table-column-center {
+    -fx-alignment: CENTER;
+}

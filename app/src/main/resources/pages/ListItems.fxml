@@ -68,11 +68,11 @@
             <TableView fx:id="tableReceiptItems" editable="true" prefHeight="200.0" prefWidth="200.0"
                        VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="amountColumn" prefWidth="68.00005948543549" text="Amount"/>
-                    <TableColumn fx:id="nameColumn" prefWidth="139.19995880126953" text="Name"/>
-                    <TableColumn fx:id="unitPriceColumn" minWidth="-Infinity" prefWidth="81.60003662109375"
+                    <TableColumn fx:id="amountColumn"  styleClass="table-column-center"  prefWidth="68.00005948543549" text="Amount"/>
+                    <TableColumn fx:id="nameColumn" styleClass="table-column-center"  prefWidth="139.19995880126953" text="Name"/>
+                    <TableColumn fx:id="unitPriceColumn" styleClass="table-column-center"  minWidth="-Infinity" prefWidth="81.60003662109375"
                                  text="Price"/>
-                    <TableColumn fx:id="totalPriceColumn" minWidth="-Infinity" prefWidth="68.800048828125"
+                    <TableColumn fx:id="totalPriceColumn" styleClass="table-column-center"  minWidth="-Infinity" prefWidth="68.800048828125"
                                  text="Total"/>
                     <TableColumn fx:id="actionColumn" minWidth="-Infinity" prefWidth="44.0"/>
                 </columns>
