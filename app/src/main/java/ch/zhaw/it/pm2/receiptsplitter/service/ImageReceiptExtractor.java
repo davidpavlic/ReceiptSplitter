@@ -17,11 +17,14 @@ import java.util.Objects;
 import java.util.logging.Logger;
 
 /**
- * The ImageReceiptExtractor  class is responsible for extracting receipt data from an image file.
+ * The ImageReceiptExtractor class is responsible for extracting receipt data from an image file.
  * The extracted data includes the total price and a list of items.
  * Each item includes the quantity, name, and total price.
  * <p>
  * The class includes nested classes for representing the extracted receipt and its items, and an exception class for handling errors.
+ *
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
  */
 public class ImageReceiptExtractor {
     private static final Logger logger = Logger.getLogger(ImageReceiptExtractor.class.getName());
@@ -30,6 +33,12 @@ public class ImageReceiptExtractor {
     private final String endpoint;
     private final String key;
 
+    /**
+     * Constructs a new ImageReceiptExtractor instance.
+     * <p>
+     * The constructor retrieves the Azure AI Form Recognizer endpoint and key from the system properties.
+     * These properties are used to authenticate the client with the Azure AI Form Recognizer service.
+     */
     public ImageReceiptExtractor() {
         endpoint = System.getProperty(EnvConstants.AZURE_AI_FORM_RECOGNIZER_ENDPOINT.getKey());
         key = System.getProperty(EnvConstants.AZURE_AI_FORM_RECOGNIZER_KEY.getKey());
@@ -56,10 +65,7 @@ public class ImageReceiptExtractor {
 
             List<ReceiptItemOCR> receiptItemOCRList = extractReceiptItemOCRList(analyzedReceiptFields);
 
-            return new ReceiptOCR(
-                    roundExtractedPrice(analyzedReceiptFields.get("Total").getValueAsDouble()),
-                    receiptItemOCRList
-            );
+            return new ReceiptOCR(roundExtractedPrice(analyzedReceiptFields.get("Total").getValueAsDouble()), receiptItemOCRList);
         } catch (HttpResponseException e) {
             logger.severe("Network error occurred: " + e.getMessage());
             throw new ImageReceiptExtractorException("Could not extract OCR from image. OCR service not available.", e);
@@ -69,28 +75,101 @@ public class ImageReceiptExtractor {
         }
     }
 
+    /**
+     * Represents a receipt extracted from an image with OCR.
+     *
+     * @param totalPrice         The total price of the receipt.
+     * @param receiptItemOCRList The items on the receipt.
+     */
+    public record ReceiptOCR(double totalPrice, List<ReceiptItemOCR> receiptItemOCRList) {
+
+        /**
+         * Creates a new ReceiptOCR instance.
+         *
+         * @throws NullPointerException if the items are null.
+         */
+        public ReceiptOCR {
+            Objects.requireNonNull(receiptItemOCRList, "Receipt Items must not be null");
+        }
+    }
+
+    /**
+     * Represents a single item on a receipt extracted from an image with OCR.
+     *
+     * @param amount The amount of the specific item on the receipt.
+     * @param name   The name of the item.
+     * @param price  The total price of the item.
+     */
+    public record ReceiptItemOCR(int amount, String name, double price) {
+
+        /**
+         * Creates a new ReceiptItemOCR instance.
+         *
+         * @throws NullPointerException if the name is null.
+         */
+        public ReceiptItemOCR {
+            Objects.requireNonNull(name, "Name must not be null");
+        }
+    }
+
+    /**
+     * Checked Exception thrown when an error occurs during the image extraction process.
+     */
+    public static class ImageReceiptExtractorException extends Exception {
+        public ImageReceiptExtractorException(String message) {
+            super(message);
+        }
+
+        public ImageReceiptExtractorException(String message, Throwable cause) {
+            super(message, cause);
+        }
+    }
+
+    /**
+     * Returns a DocumentAnalysisClient instance.
+     * <p>
+     * The DocumentAnalysisClient is used to analyze documents using the Azure AI Form Recognizer service.
+     * The client is authenticated using the AzureKeyCredential created with the key retrieved from the system properties.
+     *
+     * @return a DocumentAnalysisClient instance
+     */
     @NotNull
     private DocumentAnalysisClient getDocumentAnalysisClient() {
-        return new DocumentAnalysisClientBuilder()
-                .credential(new AzureKeyCredential(key))
-                .endpoint(endpoint)
-                .buildClient();
+        return new DocumentAnalysisClientBuilder().credential(new AzureKeyCredential(key)).endpoint(endpoint).buildClient();
     }
 
+    /**
+     * Extracts a list of ReceiptItemOCR instances from the analyzed receipt fields.
+     * <p>
+     * The method filters out null items and maps each item to a ReceiptItemOCR instance.
+     * The ReceiptItemOCR instance is created with the item quantity, description, and total price.
+     * If the total price is not available, it is calculated using the item quantity and unit price.
+     *
+     * @param analyzedReceiptFields the analyzed receipt fields
+     * @return a list of ReceiptItemOCR instances
+     */
     @NotNull
     private List<ReceiptItemOCR> extractReceiptItemOCRList(Map<String, DocumentField> analyzedReceiptFields) {
-        return analyzedReceiptFields.get("Items").getValueAsList().stream()
-                .filter(Objects::nonNull)
-                .map(item -> {
-                    String itemDescription = getDocumentFieldContent(item, "Description", "");
-                    int itemQuantity = getDocumentFieldIntValue(item, "Quantity", 1);
-                    double totalPrice = calculateTotalPrice(item, itemQuantity);
+        return analyzedReceiptFields.get("Items").getValueAsList().stream().filter(Objects::nonNull).map(item -> {
+            String itemDescription = getDocumentFieldContent(item, "Description", "");
+            int itemQuantity = getDocumentFieldIntValue(item, "Quantity", 1);
+            double totalPrice = calculateTotalPrice(item, itemQuantity);
 
-                    return new ReceiptItemOCR(itemQuantity, itemDescription, roundExtractedPrice(totalPrice));
-                })
-                .toList();
+            return new ReceiptItemOCR(itemQuantity, itemDescription, roundExtractedPrice(totalPrice));
+        }).toList();
     }
 
+
+    /**
+     * Returns the analyzed receipt fields from the analyze layout result poller.
+     * <p>
+     * The method gets the final result from the poller and retrieves the first document as the analyzed receipt.
+     * If the analyzed receipt does not contain the "Items" or "Total" fields, an ImageReceiptExtractorException is thrown.
+     *
+     * @param analyzeLayoutResultPoller the analyze layout result poller
+     * @return the analyzed receipt fields
+     * @throws ImageReceiptExtractorException if the analyzed receipt does not contain the "Items" or "Total" fields
+     */
     @NotNull
     private Map<String, DocumentField> getAnalyzedReceiptFields(SyncPoller<OperationResult, AnalyzeResult> analyzeLayoutResultPoller) throws ImageReceiptExtractorException {
         AnalyzeResult analyzeResult = analyzeLayoutResultPoller.getFinalResult();
@@ -149,8 +228,7 @@ public class ImageReceiptExtractor {
 
         if (priceField != null) {
             return Math.abs(recordedTotalPrice - calculatedTotalPrice) < 0.01  // Margin of error with double comparison from extracted values
-                    ? recordedTotalPrice
-                    : chooseMostConfidentPrice(totalPriceField, priceField, calculatedTotalPrice);
+                    ? recordedTotalPrice : chooseMostConfidentPrice(totalPriceField, priceField, calculatedTotalPrice);
         }
 
         // If only one of the fields is present, return the value of the present field
@@ -171,55 +249,5 @@ public class ImageReceiptExtractor {
     // Round the extracted price to two decimal places
     private static double roundExtractedPrice(double value) {
         return Math.round(value * 100.0) / 100.0;
-    }
-
-    /**
-     * Represents a receipt extracted from an image with OCR.
-     *
-     * @param totalPrice         The total price of the receipt.
-     * @param receiptItemOCRList The items on the receipt.
-     */
-    public record ReceiptOCR(double totalPrice, List<ReceiptItemOCR> receiptItemOCRList) {
-
-        /**
-         * Creates a new ReceiptOCR instance.
-         *
-         * @throws NullPointerException if the items are null.
-         */
-        public ReceiptOCR {
-            Objects.requireNonNull(receiptItemOCRList, "Receipt Items must not be null");
-        }
-    }
-
-    /**
-     * Represents a single item on a receipt extracted from an image with OCR.
-     *
-     * @param amount The amount of the specific item on the receipt.
-     * @param name   The name of the item.
-     * @param price  The total price of the item.
-     */
-    public record ReceiptItemOCR(int amount, String name, double price) {
-
-        /**
-         * Creates a new ReceiptItemOCR instance.
-         *
-         * @throws NullPointerException if the name is null.
-         */
-        public ReceiptItemOCR {
-            Objects.requireNonNull(name, "Name must not be null");
-        }
-    }
-
-    /**
-     * Checked Exception thrown when an error occurs during the image extraction process.
-     */
-    public static class ImageReceiptExtractorException extends Exception {
-        public ImageReceiptExtractorException(String message) {
-            super(message);
-        }
-
-        public ImageReceiptExtractorException(String message, Throwable cause) {
-            super(message, cause);
-        }
     }
 }

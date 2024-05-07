@@ -24,6 +24,9 @@ import java.util.stream.Stream;
  * <p>
  * A profile can be set which is automatically added to the selected contacts.
  * The profile represents the User who is currently logged in.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
  */
 public class ContactRepository implements IsObservable {
     private static final Logger logger = Logger.getLogger(ContactRepository.class.getName());
@@ -152,21 +155,34 @@ public class ContactRepository implements IsObservable {
     }
 
     //The following methods represent CRUD operations for selected contacts list
+
+    /**
+     * Adds a contact to the selected contacts list.
+     *
+     * @param email Email of the contact to be added
+     */
     public void addToSelectedContacts(String email) {
         if (contactExists(email)) {
             selectedContacts.add(findContactByEmail(email).isPresent() ? findContactByEmail(email).get() : null);
         }
     }
 
+    /**
+     * Removes a contact from the selected contacts list.
+     *
+     * @param email Email of the contact to be removed
+     */
     public void removeFromSelectedContacts(String email) {
         selectedContacts.removeIf(contact -> contact.getEmail().equals(email));
     }
 
+    /**
+     * Removes all contacts from the selected contacts list.
+     */
     public void removeAllSelectedContacts() {
         selectedContacts.clear();
     }
 
-    //Getters
     public List<Contact> getSelectedContacts() {
         return selectedContacts;
     }

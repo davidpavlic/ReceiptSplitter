@@ -22,6 +22,16 @@ import javafx.scene.layout.HBox;
 
 import java.io.IOException;
 
+/**
+ * This class is the controller for the ContactList view.
+ * It handles the display of a list of contacts, as well as the navigation to the CreateProfile view and the MainWindow view.
+ * It also handles the deletion and editing of contacts.
+ * It implements the CanNavigate, HasDynamicLastPage, CanReset, and IsObserver interfaces.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+
+ */
 public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
 
     private static final String CONTACT_NOT_REMOVED_ERROR_MESSAGE = "Could not remove contact. Please try again.";
@@ -34,7 +44,7 @@ public class ContactListController extends DefaultController implements CanNavig
     private Pages lastPage;
 
     /**
-     * @inheritDoc Configures the table for the contact list.
+     * {@inheritDoc} Configures the table for the contact list.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -46,7 +56,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Executes update method before the stage is loaded.
+     * {@inheritDoc}Executes update method before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -55,7 +65,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Updates the contact list table.
+     * {@inheritDoc} Updates the contact list table.
      */
     @Override
     public void update() {
@@ -64,7 +74,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Switches to the create profile window.
+     * {@inheritDoc} Switches to the create profile window.
      */
     @FXML
     public void openCreateProfile() {
@@ -72,7 +82,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Switches to the main window.
+     * {@inheritDoc}Switches to the main window.
      */
     @FXML
     @Override
@@ -82,7 +92,7 @@ public class ContactListController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Switches to the last page.
+     * {@inheritDoc} Switches to the last page.
      */
     @FXML
     @Override
@@ -90,6 +100,9 @@ public class ContactListController extends DefaultController implements CanNavig
         switchScene(lastPage);
     }
 
+    /**
+     * {@inheritDoc} Resets the controller.
+     */
     @Override
     public void reset() {
     } // TODO: Implement? Or remove?

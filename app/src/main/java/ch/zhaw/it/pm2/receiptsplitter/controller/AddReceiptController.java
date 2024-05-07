@@ -32,7 +32,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-//TODO: JavaDoc
+/**
+ * This class is the controller for the AddReceipt view.
+ * It handles the addition of a receipt by either dragging and dropping an image or selecting an image from the file system.
+ * It processes the receipt and navigates to the ListItems view.
+ * It implements the CanNavigate and CanReset interfaces.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
 
     public static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
@@ -51,12 +59,10 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     /**
+     *
+     * {@inheritDoc}
      * Initializes the Controller with the necessary dependencies and initial data.
      * Configures the drag and drop pane and the upload receipt button.
-     *
-     * @param router            The router to be used for navigation.
-     * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor  The processor to be used for receipt processing.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -113,6 +119,31 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         }).start();
     }
 
+    @Override
+    public void back() {
+        switchScene(Pages.MAIN_WINDOW);
+        clearReceiptData();
+    }
+
+    @Override
+    public void reset() {
+        clearReceiptData();
+    }
+
+    @FXML
+    public void handleReceiptDropped(DragEvent dragEvent) {
+        boolean success = false;
+        Dragboard dragboard = dragEvent.getDragboard();
+
+        if (dragboard.hasFiles()) {
+            success = true;
+            loadReceipt(dragboard.getFiles().getFirst());
+        }
+
+        dragEvent.setDropCompleted(success);
+        dragEvent.consume();
+    }
+
     private boolean processReceipt(File file) {
         try {
             ReceiptOCR extractedImage = imageExtractor.extractReceiptOCR(file);
@@ -138,30 +169,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             receiptItems.add(new ReceiptItem(price, name, amount));
         }
         return receiptItems;
-    }
-
-    @Override
-    public void back() {
-        switchScene(Pages.MAIN_WINDOW);
-        clearReceiptData();
-    }
-
-    @Override
-    public void reset() {
-        clearReceiptData();
-    }
-
-    public void handleReceiptDropped(DragEvent dragEvent) {
-        boolean success = false;
-        Dragboard dragboard = dragEvent.getDragboard();
-
-        if (dragboard.hasFiles()) {
-            success = true;
-            loadReceipt(dragboard.getFiles().getFirst());
-        }
-
-        dragEvent.setDropCompleted(success);
-        dragEvent.consume();
     }
 
     private void setupDragAndDrop() {

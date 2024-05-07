@@ -19,6 +19,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * This class is the controller for the NewContact view.
+ * It handles the creation of new contacts and the validation of the input fields.
+ * It implements the CanNavigate, CanReset, and HasDynamicLastPage interfaces.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class NewContactController extends DefaultController implements CanNavigate, CanReset, HasDynamicLastPage {
     public static final String CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE = "Could not add contact: Email does already exist";
     public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
@@ -30,6 +38,9 @@ public class NewContactController extends DefaultController implements CanNaviga
     @FXML private TextField firstNameInput;
     @FXML private TextField lastNameInput;
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -45,11 +56,19 @@ public class NewContactController extends DefaultController implements CanNaviga
         confirmButton.setOnAction(event -> confirm());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setLastPage(Pages lastPage) {
         this.lastPage = lastPage;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * This method adds a new contact to the contact repository.
+     */
     @Override
     public void confirm() {
         try {
@@ -70,14 +89,19 @@ public class NewContactController extends DefaultController implements CanNaviga
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @FXML
     @Override
     public void back() {
         switchScene(lastPage);
     }
 
-    @FXML
-    @Override
+    /**
+     * {@inheritDoc}
+     */
+    @FXML  @Override
     public void reset() {
         emailInput.clear();
         firstNameInput.clear();

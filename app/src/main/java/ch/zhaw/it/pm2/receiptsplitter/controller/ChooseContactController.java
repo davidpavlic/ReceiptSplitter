@@ -27,7 +27,15 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-// TODO: Consistency issue: Rename to ChooseContactController
+/**
+ * This class is the controller for the ChooseContact view.
+ * It handles the selection of contacts from a dropdown menu and the navigation to the AllocateItems view.
+ * It also updates the dropdown menu based on the current contacts in the contact repository.
+ * It implements the CanNavigate and CanReset interfaces.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class ChooseContactController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
@@ -39,7 +47,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     private boolean shouldUpdate;
 
     /**
-     * @inheritDoc Configures the contact list container and the confirm button.
+     *  {@inheritDoc}  Configures the contact list container and the confirm button.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -52,7 +60,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Executes update method before the stage is loaded.
+     *  {@inheritDoc}  Executes update method before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -64,7 +72,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Clears the current contact rows and updates the available contacts.
+     *  {@inheritDoc}  Clears the current contact rows and updates the available contacts.
      * Adds a new row with the active profile as the first contact.
      */
     @Override
@@ -79,7 +87,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Iterates over the contact rows and adds the selected contacts to the selected contacts list in the contact repository.
+     *  {@inheritDoc}  Iterates over the contact rows and adds the selected contacts to the selected contacts list in the contact repository.
      * Switches to the allocate items window in the end.
      */
     @FXML
@@ -98,7 +106,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Switches to the contact list window.
+     *  {@inheritDoc}  Switches to the contact list window.
      */
     @FXML
     public void openContactList() {
@@ -106,7 +114,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Switches back to the list items window.
+     *  {@inheritDoc}  Switches back to the list items window.
      */
     @Override
     public void back() {
@@ -114,7 +122,7 @@ public class ChooseContactController extends DefaultController implements CanNav
     }
 
     /**
-     * @inheritDoc Clears the contact rows and adds a new row with the active profile as the first contact.
+     *  {@inheritDoc}  Clears the contact rows and adds a new row with the active profile as the first contact.
      */
     @Override
     public void reset() {

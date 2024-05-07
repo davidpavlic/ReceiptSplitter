@@ -21,6 +21,14 @@ import javafx.util.StringConverter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is the controller for the AllocateItems view.
+ * It handles the allocation of items to contacts.
+ * It implements the IsObserver, CanNavigate, and CanReset interfaces.
+ *
+ * @version 1.0
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ */
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
     @FXML private TableView<TableRow> contactItemTable;
     @FXML private TableColumn<TableRow, String> itemColumn;
@@ -29,6 +37,9 @@ public class AllocateItemsController extends DefaultController implements IsObse
     @FXML private Button confirmButton;
     private boolean shouldUpdate;
 
+    /**
+     * {@inheritDoc} Initializes the controller and sets the help message.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -38,7 +49,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
     }
 
     /**
-     * @inheritDoc Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
+     * {@inheritDoc}  Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
      */
     @Override
     public void onBeforeStage() {
@@ -48,6 +59,9 @@ public class AllocateItemsController extends DefaultController implements IsObse
         }
     }
 
+    /**
+     * {@inheritDoc}  Updates the contact item allocation table.
+     */
     @Override
     public void update() {
         List<ComboBox<Contact>> comboBoxes = new ArrayList<>();
@@ -57,17 +71,27 @@ public class AllocateItemsController extends DefaultController implements IsObse
         checkAllComboBoxesSelected(comboBoxes);
     }
 
+    /**
+     * {@inheritDoc} Switches back to the ChooseContact window.
+     */
     @Override
     public void back() {
         shouldUpdate = true;
         switchScene(Pages.CHOOSE_CONTACT_WINDOW);
     }
 
+    /**
+     * {@inheritDoc} Executed the update
+     */
     @Override
     public void reset() {
         update();
     }
 
+    /**
+     * {@inheritDoc} Confirms the allocation of items to contacts.
+     * Creates a contact receipt item for each contact and item.
+     */
     @Override
     public void confirm() {
         receiptProcessor.deleteAllContactReceiptItems();
@@ -100,15 +124,11 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
                     @Override
                     public Contact fromString(String string) {
-                        return contactRepository.getSelectedContacts().stream()
-                                .filter(contact -> contact.getDisplayName().equals(string))
-                                .findFirst()
-                                .orElse(null);
+                        return contactRepository.getSelectedContacts().stream().filter(contact -> contact.getDisplayName().equals(string)).findFirst().orElse(null);
                     }
                 });
 
-                comboBox.getSelectionModel().selectedItemProperty()
-                        .addListener((observable, oldValue, newValue) -> checkAllComboBoxesSelected(comboBoxes));
+                comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> checkAllComboBoxesSelected(comboBoxes));
 
                 comboBoxes.add(comboBox);
                 receiptItems.add(new TableRow(receiptItem, comboBox, receiptProcessor));
@@ -136,12 +156,15 @@ public class AllocateItemsController extends DefaultController implements IsObse
     }
 
     private void checkAllComboBoxesSelected(List<ComboBox<Contact>> comboBoxes) {
-        boolean allSelected = comboBoxes.stream()
-                .allMatch(comboBox -> comboBox.getSelectionModel().getSelectedItem() != null);
+        boolean allSelected = comboBoxes.stream().allMatch(comboBox -> comboBox.getSelectionModel().getSelectedItem() != null);
 
         confirmButton.setDisable(!allSelected);
     }
 
+    /**
+     * This class represents a row in the contact item allocation table.
+     * It contains the receipt item, the item name, the item unit price, and a contact combo box.
+     */
     public static class TableRow {
         private final ReceiptItem receiptItem;
         private final SimpleStringProperty itemName;
@@ -151,7 +174,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
         public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
 
-            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(receiptItem.getPrice() );
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(receiptItem.getPrice());
 
             this.itemUnitPrice = new SimpleStringProperty(formattedUnitPrice);
             this.receiptItem = receiptItem;

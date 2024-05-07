@@ -169,6 +169,9 @@ public class ReceiptProcessor implements IsObservable {
         notifyObservers();
     }
 
+    /**
+     * Clears all the items in the contact-receipt items list.
+     */
     public void deleteAllContactReceiptItems() {
         contactReceiptItems.clear();
     }
