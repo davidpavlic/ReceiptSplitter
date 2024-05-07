@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem.roundPrice;
-
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
 
@@ -215,21 +213,41 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureUnitPriceColumn() {
         unitPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            float roundedPrice = roundPrice(item.getPrice() / item.getAmount());
 
-            return new SimpleStringProperty(roundedPrice + " CHF");
+            float unitPrice = item.getPrice() / item.getAmount();
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(unitPrice);
+
+            return new SimpleStringProperty(formattedUnitPrice);
         });
 
         unitPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         unitPriceColumn.setOnEditCommit(event -> {
+            logger.severe("Edit Commit for: " + event.getRowValue().getName() + " with new value: " + event.getNewValue());
             String unitPriceInput = event.getNewValue();
-            if (event.getOldValue().equals(unitPriceInput)) return;
+
+            logger.severe("Checking if old value is same as new value");
+            if (event.getOldValue().equals(unitPriceInput)) {
+                logger.severe("Old value equals new value item: " + event.getRowValue().getName() + " with new value: " + unitPriceInput);
+                return;
+            }
+
+            logger.severe("Old value is not same as new value");
 
             ReceiptItem item = event.getRowValue();
-            Optional<Float> unitPrice = extractPrice(unitPriceInput, item);
-            if (unitPrice.isEmpty()) return;
+            logger.severe("Got item: " + item.getName());
 
+            Optional<Float> unitPrice = extractPrice(unitPriceInput);
+            logger.severe("Extracted unit price. IsPresent: " + unitPrice.isPresent());
+
+            if (unitPrice.isEmpty()) {
+                logger.severe("Unit price is empty");
+                return;
+            }
+
+            logger.severe("Setting Unit price: " + unitPrice.get());
             item.setPrice(unitPrice.get() * item.getAmount());
+
+            logger.severe("Updating receipt item: " + item.getName());
             updateReceiptItem(item.getName(), item);
         });
     }
@@ -237,8 +255,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureTotalPriceColumn() {
         totalPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            float roundedPrice = roundPrice(item.getPrice());
-            return new SimpleStringProperty( roundedPrice + " CHF");
+            String formattedPrice = receiptProcessor.formatPriceWithCurrency(item.getPrice());
+
+            return new SimpleStringProperty(formattedPrice);
         });
 
         totalPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -246,8 +265,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
             String totalPriceInput = event.getNewValue();
             if (event.getOldValue().equals(totalPriceInput)) return;
 
+
             ReceiptItem item = event.getRowValue();
-            Optional<Float> totalPrice = extractPrice(totalPriceInput, item);
+            Optional<Float> totalPrice = extractPrice(totalPriceInput);
 
             if (totalPrice.isEmpty()) return;
 
@@ -295,11 +315,11 @@ public class ListItemsController extends DefaultController implements CanNavigat
         }
     }
 
-    private Optional<Float> extractPrice(String priceInput, ReceiptItem item) {
+    private Optional<Float> extractPrice(String priceInput) {
         float price = floatFromString(priceInput);
 
-        if (item.getPrice() == price) return Optional.empty();
         if (price == Float.MIN_VALUE) {
+            showErrorMessage(FLOAT_PARSE_ERROR_MESSAGE);
             tableReceiptItems.refresh();
             return Optional.empty();
         }
@@ -315,6 +335,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     private boolean updateReceiptItem(String oldName, ReceiptItem item) {
         try {
+            logger.severe("Updating receipt item value: " + item.getPrice());
             receiptProcessor.updateReceiptItemByName(oldName, item);
             return true;
         } catch (IllegalArgumentException e) {
@@ -325,10 +346,16 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     private void updateTable() {
+        logger.severe("----------------0------");
         var sortOrder = new ArrayList<>(tableReceiptItems.getSortOrder());
+        logger.severe("----------------1-------");
         tableReceiptItems.setItems(FXCollections.observableArrayList(dataReceiptItems));
+        logger.severe("----------------2-------");
         tableReceiptItems.refresh();
+        logger.severe("----------------3-------");
+
         tableReceiptItems.getSortOrder().setAll(sortOrder);
+        logger.severe("----------------4-------");
     }
 
     public Float floatFromString(String string) {
