@@ -2,10 +2,10 @@
 
 ## Beschreibung
 Dieses Java-Konsolen-Programm startet bei Ausführung eine JavaFX Applikation um eine Quittung aufzuteilen.
-Dies ist ein Software-Projekt im Rahmen des Moduls Software-Projekt-2.
+Dies ist ein Software-Projekt im Rahmen des Moduls PM2 Software Projekt 2, FS2024, an der ZHAW.
 
 ### Abhängigkeiten
-Um das Programm auszuführen, benötigt es eine Java Umgebung.
+Um das Programm auszuführen, benötigt es eine Java-Umgebung.
 Wir verwenden zudem untenstehende Version von Gradle als Build Tool und Dependency Management Tool.
 
 * OpenJDK version 21 -> https://openjdk.org/projects/jdk/21/
@@ -50,7 +50,7 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 - [IntelliJ für java Umgebung einrichten](https://www.jetbrains.com/help/idea/run-java-applications.html#run_application)
 - [Eclipse für java Umgebung einrichten](https://www.golinuxcloud.com/set-up-java-with-eclipse-ide/#Write_and_compile_your_first_Java_program_using_Eclipse_IDE)
 
-# Branching Modell
+## Branching Modell
 Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist. Hier existiert ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch.
 Dies ermöglicht es, die Entwicklung von Funktionen durchzuführen und nur stabile Versionen in den Master-Branch zu überführen.
 Es ist ein Mittelweg zwischen dem einfachen Feature-Branch und dem Hauptbranch "Master".
@@ -62,28 +62,66 @@ Für die Bearbeitung von Pull Requests (PRs) im Rahmen unseres Git-Develop-Workf
 - Ein Approval darf nur erteilt werden, wenn der Code sorgfältig geprüft wurde und als qualitativ hochwertig befunden wurde.
 - Branches und PRs werden stets auf dem Develop-Branch erstellt (Ausnahme: hotfix branches).
 
+#### Beispiele für PRs
+1. Feat/23-Contact-Repository-Creation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/51
+2. Feat/38-Receit-Processor-Creation: https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcKings-Projekt2-ReceiptSplitter/pull/52
+
 ### Branch Naming
 - Feature Branches: `feat/<issue-number>-<short-description>`
 - Infrastructure Branches: `infra/<issue-number>-<short-description>`
 - Bugfix Branches: `fix/<issue-number>-<short-description>`
 - Hotfix Branches: `hotfix/<issue-number>-<short-description>`
 
+
 ## Überlegungen zu Struktur und Aufbau
 
-### Grundsätze
-#### Übersichtlichkeit und Wartbarkeit
-Durch die klare Unterteilung in Pakete ist auf einen Blick erkennbar, wo bestimmte Funktionalitäten implementiert sind.
-Dies erleichtert nicht nur neue Entwickler im Projekt, sich zurechtzufinden, sondern vereinfacht auch die Wartung und das Testen des Codes.
 
-#### Skalierbarkeit
+### Grundsätze und Designentscheidungen
+Durch die Unterteilung in Pakete ist auf einen Blick erkennbar, wo bestimmte Funktionalitäten implementiert sind.
+Dies erleichtert nicht nur neue Entwickler im Projekt, sich zurechtzufinden, sondern vereinfacht auch die Wartung und das Testen des Codes.
 Die modulare Natur der Struktur ermöglicht es, Teile der Anwendung unabhängig voneinander zu skalieren oder zu verbessern.
 Beispielsweise können neue Services oder Controller hinzugefügt werden, ohne bestehende Funktionalitäten zu stören.
-
-#### Ressourcen und FXML-Dateien
 Die klare Trennung der Benutzeroberflächendefinitionen (.fxml-Dateien) von der Logik (.java) erleichtert die Arbeit von Entwicklern,
 die parallel an diesen arbeiten können, ohne sich gegenseitig zu beeinflussen.
 
-### Trennung von Anliegen
+### Dependency Injection
+Das Konzept der Dependency Injection (DI) wird verwendet, um die Abhängigkeiten zwischen den verschiedenen Komponenten Ihrer Anwendung zu verwalten und zu minimieren. 
+In der start-Methode der Main-Klasse werden so die Repositories ContactRepository und ReceiptProcessor wie auch der Router initialisiert.
+
+#### Instanziierung von Abhängigkeiten
+ContactRepository wird mit dem Pfad zur CSV-Datei initialisiert. Dies entkoppelt die Datenquelle vom ContactRepository, 
+da die Datei durch eine andere ersetzt werden kann, ohne das Repository direkt zu modifizieren.
+
+ReceiptProcessor wird als neue Instanz erstellt, was zeigt, dass es eigenständig funktioniert, 
+aber verwendet wird, um mit anderen Teilen der Anwendung zusammenzuarbeiten.
+
+Der Router erhält seine Abhängigkeiten (stage, contactRepository, receiptProcessor) über seinen Konstruktor und kann diese so an die Controller weitergeben. 
+Dies erleichtert das Testen, da Mock- oder Stub-Objekte während des Testens leicht eingesetzt werden können.
+
+
+### Implementation des MVC-Patterns
+Diese Trennung der Verantwortlichkeiten innerhalb des MVC-Designs fördert die Wiederverwendbarkeit und die Unabhängigkeit der Komponenten, 
+erleichtert das Testen und die Wartung der Anwendung und ermöglicht eine klarere Modularisierung der Funktionalität. 
+Die Kommunikation zwischen den Komponenten wird durch die Implementation des Observer Pattern sichergestellt.
+
+#### Model
+Die model-Komponente beinhaltet Klassen wie Contact, Receipt, und ReceiptItem. Diese Klassen repräsentieren die Datenstruktur und die Logik der Anwendung. 
+Sie halten die Daten und definieren Methoden, die zur Manipulation dieser Daten verwendet werden. 
+Beispielsweise implementiert Contact Methoden, um Kontaktinformationen zu speichern und abzurufen, 
+während Receipt und ReceiptItem die Logik für die einzelnen Quittungselemente zur Verfügung stellen
+
+#### View
+Die resources-Komponente, insbesondere der Unterordner pages, enthält alle FXML-Dateien wie MainWindow.fxml, Login.fxml, und NewContact.fxml. 
+Diese FXML-Dateien definieren die Benutzeroberfläche der Anwendung. Sie beschreiben, wie verschiedene GUI-Komponenten angeordnet sind und wie sie aussehen, 
+was den Views in einem typischen MVC-Pattern entspricht.
+
+#### Controller
+Die controller-Komponente beinhaltet Klassen wie MainWindowController, LoginController, und NewContactController. 
+Jeder Controller ist für die Verarbeitung der Benutzerinteraktionen, die Steuerung der Anwendungslogik und die Aktualisierung der View zuständig. 
+Die Controller lauschen auf Aktionen des Benutzers (z.B. Button-Klicks), manipulieren Model-Daten entsprechend und aktualisieren die Views.
+
+
+### Ordnerstruktur und Packages
 Die Anwendung wurde in verschiedene Pakete unterteilt, um die Trennung von Anliegen zu gewährleisten:
 
 - **interfaces**: Enthält Interfaces, die bestimmte Verhaltensweisen definieren, die von anderen Klassen implementiert werden können. 
@@ -95,15 +133,14 @@ Verbindung zwischen der Benutzeroberfläche und dem Modell verantwortlich sind.
 - **model**: Dieses Verzeichnis enthält Klassen, die die Datenstrukturen  der Anwendung repräsentieren. 
 Diese Trennung sorgt dafür, dass das Modell unabhängig von der Benutzeroberfläche entwickelt und verändert werden kann.
 
-- **repository**: Hier befinden sich Klassen, die den Zugriff auf Datenquellen abstrahieren, 
-was oft die Interaktion mit einer Datenbank beinhaltet.
+- **repository**: Hier befinden sich Klassen, die den Zugriff auf Datenquellen und die Datenverwaltung für die Anwendung bereitstellen.
 
 - **service**: Die Service-Schicht implementiert Logik, die sich über mehrere Modelle oder Bereiche erstreckt 
 und zentrale Funktionen für die Anwendung koordiniert.
 
 - **util**: Enthält Hilfsklassen und -funktionen, die in verschiedenen Teilen der Anwendung verwendet werden können.
 
-- **pages**: Enthält die FXML-Dateien und Controller-Klassen für die verschiedenen Seiten der JavaFX-Anwendung.
+- **pages**: Enthält die FXML-Dateien und Controller-Klassen für die verschiedenen Seiten der JavaFX-Anwendung/ des GUI.
 
 
 
@@ -118,5 +155,5 @@ Namen der Mitwirkenden:
 
 ## Anhang
 - [Klassendiagramm](docs/classdiagram/classdiagramm.png)
-- [Äquivalenzklassen](docs/testing/equivalence_classes.md)
+- [Testkonzept](docs/testing/equivalence_classes.md)
 
