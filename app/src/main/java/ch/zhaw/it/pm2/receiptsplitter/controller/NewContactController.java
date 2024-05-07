@@ -62,15 +62,13 @@ public class NewContactController extends DefaultController implements CanNaviga
             reset();
             back();
         } catch (IllegalArgumentException illegalArgumentException) {
-            logger.severe(illegalArgumentException.getMessage());
+            logError(illegalArgumentException.getMessage(), illegalArgumentException);
             emailErrorLabel.setText(CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE);
         } catch (IOException ioException) {
-            logger.severe(ioException.getMessage());
-            logger.fine(Arrays.toString(ioException.getStackTrace()));
+            logError(ioException.getMessage(), ioException);
             emailErrorLabel.setText(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
         } catch (Exception exception) {
-            logger.severe("Error adding contact: " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
+            logError("Error adding contact", exception);
             emailErrorLabel.setText(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
         }
     }

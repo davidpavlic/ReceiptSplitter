@@ -23,19 +23,36 @@ import java.util.List;
 
 
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
-    @FXML private TableView<TableRow> contactItemTable;
-    @FXML private TableColumn<TableRow, String> itemColumn;
-    @FXML private TableColumn<TableRow, String> priceColumn;
-    @FXML private TableColumn<TableRow, String> dropdown;
-    @FXML private Button confirmButton;
+    @FXML
+    private TableView<TableRow> contactItemTable;
+    @FXML
+    private TableColumn<TableRow, String> itemColumn;
+    @FXML
+    private TableColumn<TableRow, String> priceColumn;
+    @FXML
+    private TableColumn<TableRow, String> dropdown;
+    @FXML
+    private Button confirmButton;
+    private boolean shouldUpdate;
 
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
         contactRepository.addObserver(this);
-        receiptProcessor.addObserver(this);
         confirmButton.setOnAction(event -> confirm());
+        this.shouldUpdate = true;
+    }
+
+    /**
+     * @inheritDoc Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
+     */
+    @Override
+    public void onBeforeStage() {
+        super.onBeforeStage();
+        if (shouldUpdate) {
+            update();
+        }
     }
 
     @Override
@@ -47,12 +64,39 @@ public class AllocateItemsController extends DefaultController implements IsObse
         checkAllComboBoxesSelected(comboBoxes);
     }
 
+    @Override
+    public void back() {
+        shouldUpdate = true;
+        switchScene(Pages.CHOOSE_CONTACT_WINDOW);
+    }
+
+    @Override
+    public void reset() {
+        update();
+    }
+
+    @Override
+    public void confirm() {
+        receiptProcessor.deleteAllContactReceiptItems();
+        for (TableRow tableRow : contactItemTable.getItems()) {
+            Contact contact = tableRow.getContactComboBox().getSelectionModel().getSelectedItem();
+            if (contact != null) {
+                receiptProcessor.createContactReceiptItem(contact, tableRow.getReceiptItem());
+            } else {
+                logger.warning("Can not Continue, Contact not selected for item: " + tableRow.getReceiptItem().getName());
+                return;
+            }
+        }
+        shouldUpdate = false;
+        switchScene(Pages.SHOW_SPLIT_WINDOW);
+    }
+
     private List<TableRow> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
         List<TableRow> receiptItems = new ArrayList<>();
-        for (ReceiptItem receiptItem : receiptProcessor.getFullCopyReceiptItems()) {
+        for (ReceiptItem receiptItem : receiptProcessor.splitReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
                 ComboBox<Contact> comboBox = new ComboBox<>();
-                comboBox.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));
+                comboBox.setItems(FXCollections.observableArrayList(contactRepository.getSelectedContacts()));
                 comboBox.setPromptText("Choose Contact");
                 comboBox.setConverter(new StringConverter<>() {
                     @Override
@@ -62,7 +106,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
                     @Override
                     public Contact fromString(String string) {
-                        return contactRepository.getContacts().stream()
+                        return contactRepository.getSelectedContacts().stream()
                                 .filter(contact -> contact.getDisplayName().equals(string))
                                 .findFirst()
                                 .orElse(null);
@@ -103,38 +147,6 @@ public class AllocateItemsController extends DefaultController implements IsObse
         confirmButton.setDisable(!allSelected);
     }
 
-    /**
-     * Switches to the next scene.
-     */
-    @Override
-    public void confirm() {
-        receiptProcessor.deleteAllContactReceiptItems();
-        for (TableRow tableRow : contactItemTable.getItems()) {
-            Contact contact = tableRow.getContactComboBox().getSelectionModel().getSelectedItem();
-            if (contact != null) {
-                receiptProcessor.createContactReceiptItem(contact, tableRow.getReceiptItem());
-            } else {
-                logger.warning("Can not Continue, Contact not selected for item: " + tableRow.getReceiptItem().getName());
-                return;
-            }
-        }
-        router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
-    }
-
-    /**
-     * Switches to the previous scene.
-     */
-    @Override
-    public void back() {
-        router.gotoScene(Pages.MAIN_WINDOW);
-    }
-
-    @Override
-    public void reset() {
-        update();
-    }
-
-    // Data model class for a table row
     public static class TableRow {
         private final ReceiptItem receiptItem;
         private final SimpleStringProperty itemName;
@@ -143,7 +155,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
         public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.itemPrice = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
+            this.itemPrice = new SimpleStringProperty(receiptItem.getPrice() + " CHF");
             //TODO: Convert Price with default method
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;

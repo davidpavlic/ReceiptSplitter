@@ -33,9 +33,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
 
     private static final String ADD_FAIL_ERROR_MESSAGE = "Could not add Receipt Item";
-    private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item";
+    private static final String UPDATE_FAIL_ERROR_MESSAGE = "Could not update Receipt Item. Before editing, please make sure to delete the whole cell and after editing, press enter to confirm the change";
     private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
-    private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell";
+    private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell. Before editing, please make sure to delete the whole cell and after editing, press enter to confirm the change";
     private static final String FLOAT_PARSE_ERROR_MESSAGE = "You can only enter numbers in this cell";
 
     @FXML private HBox errorMessageBox;
@@ -95,7 +95,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void confirm() {
-        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.CHOOSE_CONTACT_WINDOW);
     }
 
     /**

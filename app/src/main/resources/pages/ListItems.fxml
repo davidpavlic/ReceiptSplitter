@@ -41,7 +41,7 @@
                 <Button onAction="#closeErrorMessage" styleClass="errormessage-close-button" text="x"
                         HBox.hgrow="NEVER"/>
             </HBox>
-            <Label text="Receipt Items">
+            <Label text="Edit Receipt Items">
                 <font>
                     <Font name="System Bold Italic" size="18.0"/>
                 </font>
