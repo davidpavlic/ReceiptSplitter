@@ -89,5 +89,5 @@ Namen der Mitwirkenden:
 
 ## Anhang
 - [Klassendiagramm](docs/classdiagram/classdiagramm.png)
-- [Äquivalenzklassen](docs/testing/equivalence_classes.md)
+- [Äquivalenzklassen](docs/testing/testing_concept.md)
 
