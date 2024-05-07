@@ -49,7 +49,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
     private List<TableRow> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
         List<TableRow> receiptItems = new ArrayList<>();
-        for (ReceiptItem receiptItem : receiptProcessor.getReceiptItems()) {
+        for (ReceiptItem receiptItem : receiptProcessor.getFullCopyReceiptItems()) {
             for (int index = 0; index < receiptItem.getAmount(); index++) {
                 ComboBox<Contact> comboBox = new ComboBox<>();
                 comboBox.setItems(FXCollections.observableArrayList(contactRepository.getContacts()));

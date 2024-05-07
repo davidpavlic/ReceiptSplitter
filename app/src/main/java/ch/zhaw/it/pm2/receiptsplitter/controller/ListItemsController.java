@@ -75,8 +75,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
      */
     @Override
     public void onBeforeStage() {
+        super.onBeforeStage();
         initialDataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
-        dataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
+        update();
     }
 
     /**
