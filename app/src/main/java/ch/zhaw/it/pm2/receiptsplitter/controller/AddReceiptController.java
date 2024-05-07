@@ -30,7 +30,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 //TODO: JavaDoc
@@ -82,24 +81,35 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         setLoadingAnimationEnabled(true);
         setAllButtonsDisabled(true);
 
-        // TODO: Check if this Threading is alright (just to make sure)
-        //Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
-        new Thread(() -> {
-            boolean success = processReceipt(selectedFile);
+        // Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
+        processReceiptInBackgroundThread();
+    }
 
-            //The UI updates occur in the JavaFX Application thread using `Platform.runLater` to ensure thread safety.
-            Platform.runLater(() -> {
-                setLoadingAnimationEnabled(false);
-                if (success) {
-                    switchScene(Pages.LIST_ITEMS_WINDOW);
-                    clearReceiptData();
-                    closeErrorMessage();
-                } else {
+    private void processReceiptInBackgroundThread() {
+        new Thread(() -> {
+            try {
+                boolean success = processReceipt(selectedFile);
+                //The UI updates occur in the JavaFX Application thread using `Platform.runLater` to ensure thread safety.
+                Platform.runLater(() -> {
+                    setLoadingAnimationEnabled(false);
+                    if (success) {
+                        switchScene(Pages.LIST_ITEMS_WINDOW);
+                        clearReceiptData();
+                        closeErrorMessage();
+                    } else {
+                        errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
+                        logger.fine("Showing parsing receipt error, receipt processing has failed.");
+                    }
+                    setUtilButtonsDisabled(false);
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    logError("Error while processing receipt: " + e.getMessage(), e);
+                    setLoadingAnimationEnabled(false);
                     errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
-                    logger.fine("Showing parsing receipt error, receipt processing has failed.");
-                }
-                setUtilButtonsDisabled(false);
-            });
+                    setUtilButtonsDisabled(false);
+                });
+            }
         }).start();
     }
 
