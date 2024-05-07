@@ -40,7 +40,7 @@ Insgesamt helfen die Äquivalenzklassentests, sicherzustellen, dass die Methoden
 
 
 #### Testtabellen
-develop| Äquivalenzklasse      | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung         | Erwartetes Ergebnis |
+| Äquivalenzklasse      | Name Testmethode    | Methoden Parameter | Zustand vor Ausführung         | Erwartetes Ergebnis |
 |-----------------------|-----|--------------|--------------------------------|---------------------|
 | 1: Gültige Attribute  |   constructor_ValidAttributes_ItemCreated()   | Positiver Preis, gültiger Name, positive Anzahl | Keine Voraussetzung            | Objekt wird korrekt erstellt |
 | 2.1: Negativer Preis  |  setPrice_NegativePrice_ThrowsException| Negativer Preis | Gültige restliche Anfangswerte           | Wirft Exception     |
