@@ -3,11 +3,11 @@
  */
 package ch.zhaw.it.pm2.receiptsplitter;
 
+import ch.zhaw.it.pm2.receiptsplitter.enums.EnvConstants;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.EnvConstants;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
@@ -96,10 +97,33 @@ public class Main extends Application {
             logger.severe("Env Vars are not set correctly, please ensure to follow the documentation in the README.md file");
             return false;
         }
-        if (!Files.exists(Paths.get("contacts.csv"))) {
-            logger.severe("contacts.csv does not exist, please ensure to follow the documentation in the README.md file");
-            return false;
+
+        Path contactsFile = Paths.get("contacts.csv");
+        if (Files.exists(contactsFile)) {
+            return true;
         }
+
+        // Check if local.contacts.csv file exists and copy it to contacts.csv, otherwise create an empty contacts.csv file
+        Path localContactsFile = Paths.get("../local.contacts.csv");
+
+        if (Files.exists(localContactsFile)) {
+            logger.info("contacts.csv file not found, copying local.contacts.csv file");
+            try {
+                Files.copy(localContactsFile, contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not copy local.contacts.csv file: " + e);
+                return false;
+            }
+        } else {
+            logger.info("creating empty contacts.csv file");
+            try {
+                Files.createFile(contactsFile);
+            } catch (IOException e) {
+                logger.severe("Could not create contacts.csv file: " + e);
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -109,9 +133,12 @@ public class Main extends Application {
      * It creates a logs directory if it does not exist and sets up the logger configuration.
      */
     private static void configureLogging() {
+        // TODO: java.nio verwenden?
         File logDir = new File("logs");
         if (!logDir.exists()) {
-            logDir.mkdir(); // Create the directory if it does not exist
+            boolean created = logDir.mkdir(); // Create the directory if it does not exist
+
+            if (!created) System.err.println("Could not create logs directory");
         }
         LogManager.getLogManager().reset();
         try {

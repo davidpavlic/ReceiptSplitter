@@ -1,11 +1,10 @@
 # Team01-LightningMcKings-Projekt2-ReceiptSplitter
-
 ## Beschreibung
-Dieses Java-Konsolen-Programm startet bei Ausführung eine JavaFX Applikation um eine Quittung aufzuteilen.
-Dies ist ein Software-Projekt im Rahmen des Moduls PM2 Software Projekt 2, FS2024, an der ZHAW.
+Dieses Java Konsolen Programm startet bei Ausführung eine JavaFX Applikation um eine Quittung aufzuteilen.
+Dies ist ein Software Projekt im Rahmen des Moduls Software-Projekt-2.
 
 ### Abhängigkeiten
-Um das Programm auszuführen, benötigt es eine Java-Umgebung.
+Um das Programm auszuführen, benötigt es eine Java Umgebung.
 Wir verwenden zudem untenstehende Version von Gradle als Build Tool und Dependency Management Tool.
 
 * OpenJDK version 21 -> https://openjdk.org/projects/jdk/21/
@@ -19,8 +18,8 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 ```
 - Öffnen Sie das Projekt in ihrer IDE.
 - Kopieren Sie die Datei `local.gradle.properties` ins Projektverzeichnis als `gradle.properties` und fügen Sie die Werte der Env vars zu. 
-- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und benennen Sie sie `contacts.csv`. 
-- Führen sie folgende Befehle aus, um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
+- Kopieren Sie die Datei `local.contacts.csv`ins Verzeichnis `app` und bennen Sie es als `contacts.csv`. 
+- Führen sie folgende Befehle aus um mit dem Gradle Wrapper die Anwendung zu "builden" und zu starten.
 
 ### Linux/MacOS
 ```
@@ -34,7 +33,7 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 ```
 
 
-## Unit-Tests ausführen
+## Unit Test ausführen
 ### Linux/MacOS
 ```
 ./gradlew test
@@ -50,8 +49,15 @@ git clone https://github.zhaw.ch/PM2-IT23taZH-mach-muon-pasu/Team01-LightningMcK
 - [IntelliJ für java Umgebung einrichten](https://www.jetbrains.com/help/idea/run-java-applications.html#run_application)
 - [Eclipse für java Umgebung einrichten](https://www.golinuxcloud.com/set-up-java-with-eclipse-ide/#Write_and_compile_your_first_Java_program_using_Eclipse_IDE)
 
-## Branching Modell
-Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist. Hier existiert ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch.
+# Known Issues
+## Email Versand
+Der Email Versand funktioniert nicht in jedem Netzwerk. Manchmal kann es dazu kommen, dass die Firewall des Gerätes oder des Netzwerks den Versand blockiert.
+Wir haben ein Timeout von 20 Sekunden gesetzt, falls der Versand nicht funktioniert. In diesem Fall wird eine Fehlermeldung ausgegeben.
+Im ZHAW Netzwerk funktioniert der Versand jedoch. Dies wurde bei allen Authoren dieses Projekts getestet.
+
+# Branching Modell
+Wir verwenden den "Git Develop Branch Workflow", der eine Erweiterung des Feature-Branching-Workflows ist,
+bei dem ein zweiter, langfristig angelegter Develop-Branch neben dem Master-Branch existiert.
 Dies ermöglicht es, die Entwicklung von Funktionen durchzuführen und nur stabile Versionen in den Master-Branch zu überführen.
 Es ist ein Mittelweg zwischen dem einfachen Feature-Branch und dem Hauptbranch "Master".
 
@@ -71,7 +77,6 @@ Für die Bearbeitung von Pull Requests (PRs) im Rahmen unseres Git-Develop-Workf
 - Infrastructure Branches: `infra/<issue-number>-<short-description>`
 - Bugfix Branches: `fix/<issue-number>-<short-description>`
 - Hotfix Branches: `hotfix/<issue-number>-<short-description>`
-
 
 ## Überlegungen zu Struktur und Aufbau
 
@@ -152,7 +157,7 @@ und zentrale Funktionen für die Anwendung koordiniert.
 
 
 ## Autoren
-Teamname: **LightningMcKings**
+Teamname: LightningMcKings
 
 Namen der Mitwirkenden:
 - David Pavlic
@@ -162,5 +167,5 @@ Namen der Mitwirkenden:
 
 ## Anhang
 - [Klassendiagramm](docs/classdiagram/classdiagramm.png)
-- [Testkonzept](docs/testing/testing_concept.md)
+- [Äquivalenzklassen](docs/testing/equivalence_classes.md)
 

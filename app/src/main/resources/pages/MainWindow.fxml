@@ -49,7 +49,7 @@
                   </columnConstraints>
       
                   <Button maxWidth="Infinity" onAction="#openContactList" style="-fx-font-size: 14px;" text="Contact List" GridPane.rowIndex="3" />
-                  <Button maxWidth="Infinity" onAction="#openTransactions" style="-fx-font-size: 14px;" text="Transactions" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Button maxWidth="Infinity" onAction="#openTransactions" style="-fx-font-size: 14px;" text="Transactions" GridPane.columnIndex="1" GridPane.rowIndex="3" disable="true" />
                   <Button maxWidth="Infinity" onAction="#addReceipt" prefHeight="27.0" prefWidth="329.0" style="-fx-font-size: 14px;" text="Add Receipt" GridPane.columnSpan="2" GridPane.rowIndex="2" />
                <rowConstraints>
                   <RowConstraints />

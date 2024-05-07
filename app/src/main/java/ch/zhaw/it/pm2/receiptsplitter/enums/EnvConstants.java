@@ -1,4 +1,4 @@
-package ch.zhaw.it.pm2.receiptsplitter.utils;
+package ch.zhaw.it.pm2.receiptsplitter.enums;
 
 public enum EnvConstants {
     SMTP_USERNAME("SMTP_USERNAME"),
