@@ -33,6 +33,9 @@ import java.util.Optional;
  * Shows a table with the receipt items that were extracted from the receipt.
  * The user can add, update and delete receipt items.
  * The [confirm] navigation leads to the Choose People Window. and the [back] navigation leads to the Add Receipt Window.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
  */
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
@@ -60,7 +63,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private List<ReceiptItem> dataReceiptItems;
 
     /**
-     * @inheritDoc Configures the table columns and sets up the error message box.
+     * {@inheritDoc} Configures the table columns and sets up the error message box.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -71,7 +74,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
+     * {@inheritDoc}Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
      */
     @Override
     public void onBeforeStage() {
@@ -81,7 +84,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Updates the table with the current receipt items.
+     * {@inheritDoc} Updates the table with the current receipt items.
      */
     @Override
     public void update() {
@@ -90,7 +93,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Switches to the choose people window.
+     * {@inheritDoc}Switches to the choose people window.
      */
     @FXML
     @Override
@@ -100,7 +103,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Switches back to the main window.
+     * {@inheritDoc} Switches back to the main window.
      */
     @FXML
     @Override
@@ -110,7 +113,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Resets the receipt items to the initial state.
+     * {@inheritDoc} Resets the receipt items to the initial state.
      */
     @FXML
     @Override

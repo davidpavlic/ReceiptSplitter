@@ -6,6 +6,13 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.util.Callback;
 
+/**
+ * This class configures the ComboBox for the Contact dropdown.
+ * It sets the cell factory and button cell to display the contact's display name.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class ContactDropdownConfigurer {
     public static void configureComboBox(ComboBox<Contact> comboBox) {
         comboBox.setCellFactory(new Callback<>() {

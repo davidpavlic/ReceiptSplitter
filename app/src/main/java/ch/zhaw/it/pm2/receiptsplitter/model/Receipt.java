@@ -12,6 +12,9 @@ import java.util.stream.Collectors;
  * The List of Receipt Items  cannot be modified from outside the class.
  * <p>
  * Thr Currency is set to CHF by default.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
  */
 public class Receipt {
 
@@ -41,7 +44,6 @@ public class Receipt {
         this.receiptItems = receiptItems;
     }
 
-    // TODO: Remove? Already have a getter for the list
     public ReceiptItem getReceiptItem(int index) {
         ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         return receiptItems.get(index);
@@ -157,6 +159,8 @@ public class Receipt {
     }
 
 
+    /* Error messages for Receipt class
+     */
     protected enum ReceiptErrorMessageType {
         LIST_NULL("ReceiptItemList must not be null."),
         ITEM_NULL("ReceiptItem must not be null."),

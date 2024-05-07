@@ -21,8 +21,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
+/**
+ * This class is the controller for the EditContact view.
+ * It handles the editing of a contact's details and the validation of the input fields.
+ * It implements the CanNavigate, HasDynamicLastPage, CanReset, and IsObserver interfaces.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
 
+ */
+public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
     public static final String EMAIL_NOT_EXISTS_ERROR_MESSAGE = "Could not update contact: Email does not exist";
     public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
     public static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while updating the contact.";
@@ -36,7 +44,7 @@ public class EditContactController extends DefaultController implements CanNavig
     @FXML private Label emailErrorLabel;
 
     /**
-     * @inheritDoc Sets a listener to the text fields to update the UI based on the validation.
+     * {@inheritDoc} Sets a listener to the text fields to update the UI based on the validation.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -51,7 +59,7 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Executes update method before the stage is loaded.
+     * {@inheritDoc}Executes update method before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -60,7 +68,7 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc Update the contact fields
+     * {@inheritDoc} Update the contact fields
      */
     @Override
     public void update() {
@@ -71,7 +79,7 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void setLastPage(Pages lastPage) {
@@ -79,6 +87,7 @@ public class EditContactController extends DefaultController implements CanNavig
     }
 
     /**
+     * {@inheritDoc}
      * Updates the contact with the new values.
      */
     @FXML
@@ -102,12 +111,18 @@ public class EditContactController extends DefaultController implements CanNavig
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @FXML
     @Override
     public void back() {
         switchScene(lastPage);
     }
 
+    /**
+    {@inheritDoc}
+    */
     @FXML
     @Override
     public void reset() {

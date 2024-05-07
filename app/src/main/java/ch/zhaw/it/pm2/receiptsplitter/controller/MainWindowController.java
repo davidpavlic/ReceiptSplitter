@@ -11,11 +11,21 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 
+/**
+ * This class is the controller for the MainWindow view.
+ * It handles the navigation to different views such as the ContactList, Transactions, and AddReceipt views.
+ * It also updates the welcome message based on the current profile in the contact repository.
+ * It implements the IsObserver interface.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+
+ */
 public class MainWindowController extends DefaultController implements IsObserver {
     @FXML private Label welcomeMessage;
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -25,7 +35,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     }
 
     /**
-     * @inheritDoc Executes update method  before the stage is loaded.
+     * {@inheritDoc} Executes update method  before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -34,7 +44,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     }
 
     /**
-     * @inheritDoc Update the welcome message
+     * {@inheritDoc} Update the welcome message
      */
     @Override
     public void update() {
@@ -75,7 +85,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     }
 
     /**
-     * Switches back to Login Window
+     * {@inheritDoc}
      */
     @FXML
     public void back() {

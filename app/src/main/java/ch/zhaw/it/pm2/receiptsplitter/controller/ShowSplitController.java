@@ -26,6 +26,15 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
+/**
+ * This class is the controller for the Show Split Window.
+ * It is responsible for displaying the split of the receipt to the user.
+ * The user can navigate through the different contacts and see the items they have to pay for.
+ * The user can also send out the request to the recipients via email.
+ *
+ * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @version 1.0
+ */
 public class ShowSplitController extends DefaultController implements CanNavigate, IsObserver {
     @FXML private Button buttonPreviousPerson;
     @FXML private Button buttonNextPerson;
@@ -43,6 +52,10 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     private List<Contact> uniqueContacts;
     private Contact currentContact;
 
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -61,7 +74,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Executes update method before the stage is loaded.
+     * {@inheritDoc} Executes update method before the stage is loaded.
      */
     @Override
     public void onBeforeStage() {
@@ -70,7 +83,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Updates the TableView with the ContactItems of the first Contact in the list.
+     * {@inheritDoc} Updates the TableView with the ContactItems of the first Contact in the list.
      */
     @Override
     public void update() {
@@ -81,6 +94,12 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         populateTableWithContactItems(currentContact);
     }
 
+
+    /**
+     * {@inheritDoc}
+     *
+     *  Handles the Confirmation of the Receipt and sends out the Request to the Recipients via Email.
+     */
     @Override
     public void confirm() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to send out the Request to the Recipients via Email?", ButtonType.YES, ButtonType.NO);
@@ -95,7 +114,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     }
 
     /**
-     * @inheritDoc Switches to the Main Window.
+     * {@inheritDoc} Switches to the Main Window.
      */
     @Override
     public void back() {
