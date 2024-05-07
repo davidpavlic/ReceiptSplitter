@@ -83,7 +83,6 @@ public class Router {
      */
     public void gotoScene(Pages page, Pages lastPage) throws IllegalStateException, IllegalArgumentException {
         DefaultController controller = getController(page);
-        controller.onBeforeStage();
 
         if (controller instanceof HasDynamicLastPage dynamicLastPageController) {
             dynamicLastPageController.setLastPage(lastPage);
@@ -100,7 +99,6 @@ public class Router {
      * @throws IllegalStateException if an error occurs during modal opening
      */
     public void openHelpModal(HelpMessages helpText) throws IllegalStateException, IOException {
-        //TODO Implement this somewhere else?
         Objects.requireNonNull(helpText, "Help message cannot be null");
 
         try {

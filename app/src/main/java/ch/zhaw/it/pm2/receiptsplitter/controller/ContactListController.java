@@ -72,7 +72,7 @@ public class ContactListController extends DefaultController implements CanNavig
      */
     @FXML
     public void openCreateProfile() {
-        router.gotoScene(Pages.CREATE_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
+        switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.CONTACT_LIST_WINDOW);
     }
 
     /**
