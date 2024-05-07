@@ -28,17 +28,17 @@
             <Button onAction="#back" text="Back" HBox.hgrow="NEVER" />
 
             <!-- Spacer that pushes both buttons to the ends -->
-            <Pane HBox.hgrow="ALWAYS"/>
+            <Pane HBox.hgrow="ALWAYS" />
 
             <!-- Button on the right -->
             <Button layoutX="192.0" layoutY="1.0" onAction="#reset" text="Reset" />
-            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
+            <Button fx:id="confirmButton" text="Confirm" HBox.hgrow="NEVER" />
         </HBox>
     </bottom>
     <center>
         <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
          <children>
-             <TableView fx:id="contactItemTable" editable="true">
+             <TableView fx:id="contactItemTable" editable="true" VBox.vgrow="ALWAYS">
                  <columns>
                      <TableColumn fx:id="itemColumn" prefWidth="127.0" text="Item" />
                      <TableColumn fx:id="priceColumn" prefWidth="118.0" text="Price" />

@@ -73,7 +73,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         }});
         receiptProcessor.setReceipt(receipt);
 
-        Contact firstContact = contacts.getFirst();
+        /*ontact firstContact = contacts.getFirst();
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().getFirst());
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(2));
         receiptProcessor.createContactReceiptItem(firstContact, receipt.getReceiptItems().get(5));
@@ -88,7 +88,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(1));
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(3));
         receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(8));
-        receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(10));
+        receiptProcessor.createContactReceiptItem(thirdContact, receipt.getReceiptItems().get(10));*/
         return true;
     }
 
