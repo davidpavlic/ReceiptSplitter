@@ -147,6 +147,10 @@ public class ReceiptProcessor implements IsObservable {
         notifyObservers();
     }
 
+    public void deleteAllContactReceiptItems() {
+        contactReceiptItems.clear();
+    }
+
     /**
      * Splits bulk items in the receipt into individual items to handle scenarios where items bought together
      * need to be billed separately.

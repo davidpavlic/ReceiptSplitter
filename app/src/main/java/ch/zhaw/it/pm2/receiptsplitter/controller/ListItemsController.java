@@ -103,7 +103,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void back() {
-        switchScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.ADD_RECEIPT_WINDOW);
     }
 
     /**
