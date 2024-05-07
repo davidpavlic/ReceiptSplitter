@@ -21,18 +21,12 @@ import javafx.util.StringConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
-    @FXML
-    private TableView<TableRow> contactItemTable;
-    @FXML
-    private TableColumn<TableRow, String> itemColumn;
-    @FXML
-    private TableColumn<TableRow, String> priceColumn;
-    @FXML
-    private TableColumn<TableRow, String> dropdown;
-    @FXML
-    private Button confirmButton;
+    @FXML private TableView<TableRow> contactItemTable;
+    @FXML private TableColumn<TableRow, String> itemColumn;
+    @FXML private TableColumn<TableRow, String> priceColumn;
+    @FXML private TableColumn<TableRow, String> dropdown;
+    @FXML private Button confirmButton;
     private boolean shouldUpdate;
 
     @Override
@@ -40,7 +34,6 @@ public class AllocateItemsController extends DefaultController implements IsObse
         super.initialize(router, contactRepository, receiptProcessor);
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
         contactRepository.addObserver(this);
-        confirmButton.setOnAction(event -> confirm());
         this.shouldUpdate = true;
     }
 
@@ -89,6 +82,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
         }
         shouldUpdate = false;
         switchScene(Pages.SHOW_SPLIT_WINDOW);
+        closeErrorMessage();
     }
 
     private List<TableRow> createComboBoxes(List<ComboBox<Contact>> comboBoxes) {
@@ -112,11 +106,12 @@ public class AllocateItemsController extends DefaultController implements IsObse
                                 .orElse(null);
                     }
                 });
-                comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    checkAllComboBoxesSelected(comboBoxes);
-                });
+
+                comboBox.getSelectionModel().selectedItemProperty()
+                        .addListener((observable, oldValue, newValue) -> checkAllComboBoxesSelected(comboBoxes));
+
                 comboBoxes.add(comboBox);
-                receiptItems.add(new TableRow(receiptItem, comboBox));
+                receiptItems.add(new TableRow(receiptItem, comboBox, receiptProcessor));
             }
         }
         return receiptItems;
@@ -124,7 +119,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
     private void configureTableColumns() {
         itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
-        priceColumn.setCellValueFactory(cellData -> cellData.getValue().itemPriceProperty());
+        priceColumn.setCellValueFactory(cellData -> cellData.getValue().itemUnitPriceProperty());
         dropdown.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -150,13 +145,15 @@ public class AllocateItemsController extends DefaultController implements IsObse
     public static class TableRow {
         private final ReceiptItem receiptItem;
         private final SimpleStringProperty itemName;
-        private final SimpleStringProperty itemPrice;
+        private final SimpleStringProperty itemUnitPrice;
         private final ComboBox<Contact> contactComboBox;
 
-        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
+        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.itemPrice = new SimpleStringProperty(receiptItem.getPrice() + " CHF");
-            //TODO: Convert Price with default method
+
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(receiptItem.getPrice() );
+
+            this.itemUnitPrice = new SimpleStringProperty(formattedUnitPrice);
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;
         }
@@ -165,8 +162,8 @@ public class AllocateItemsController extends DefaultController implements IsObse
             return itemName;
         }
 
-        public SimpleStringProperty itemPriceProperty() {
-            return itemPrice;
+        public SimpleStringProperty itemUnitPriceProperty() {
+            return itemUnitPrice;
         }
 
         public ComboBox<Contact> getContactComboBox() {

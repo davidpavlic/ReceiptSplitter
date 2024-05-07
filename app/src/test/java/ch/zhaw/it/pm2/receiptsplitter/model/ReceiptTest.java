@@ -151,16 +151,22 @@ public class ReceiptTest {
         assertEquals(receiptSizeBefore, receipt.getReceiptItems().size());
     }
 
+    @Test
+    void formatPriceToCurrency_PriceWithFiveDecimals_FormattedPrice() {
+        //Arrange
+        float price = 9.99999F;
+        String expected = "CHF 10.00";
+
+        //Act
+        String actual = receipt.formatPriceWithCurrency(price);
+
+        //Assert
+        assertEquals(expected, actual);
+    }
+
     private void assertReceiptItemAttributes(ReceiptItem expected, ReceiptItem actual) {
         assertEquals(expected.getPrice(), actual.getPrice());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getAmount(), actual.getAmount());
     }
-
-    private void assertSortingOrder(ReceiptItem firstItem, ReceiptItem secondItem, ReceiptItem thirdItem){
-        assertEquals(firstItem, receipt.getReceiptItem(0));
-        assertEquals(secondItem, receipt.getReceiptItem(1));
-        assertEquals(thirdItem, receipt.getReceiptItem(2));
-    }
-
 }

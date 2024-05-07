@@ -13,7 +13,10 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 
@@ -28,9 +31,6 @@ public class ContactListController extends DefaultController implements CanNavig
     @FXML private TableColumn<Contact, String> nameColumn;
     @FXML private TableView<Contact> tableContactList;
 
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
-
     private Pages lastPage;
 
     /**
@@ -43,10 +43,6 @@ public class ContactListController extends DefaultController implements CanNavig
         contactRepository.addObserver(this);
         this.lastPage = Pages.MAIN_WINDOW; // Default last page
         configureTable();
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -82,6 +78,7 @@ public class ContactListController extends DefaultController implements CanNavig
     @Override
     public void confirm() {
         switchScene(Pages.MAIN_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -104,19 +101,6 @@ public class ContactListController extends DefaultController implements CanNavig
     @Override
     public void setLastPage(Pages page) {
         this.lastPage = page;
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void configureTable() {

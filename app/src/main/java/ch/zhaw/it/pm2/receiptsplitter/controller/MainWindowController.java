@@ -3,9 +3,6 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
-import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
-import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
-import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -13,9 +10,6 @@ import ch.zhaw.it.pm2.receiptsplitter.service.Router;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainWindowController extends DefaultController implements IsObserver {
     @FXML private Label welcomeMessage;
@@ -55,6 +49,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     @FXML
     public void openContactList() {
         switchScene(Pages.CONTACT_LIST_WINDOW, Pages.MAIN_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -76,8 +71,12 @@ public class MainWindowController extends DefaultController implements IsObserve
     @FXML
     public void addReceipt() {
         switchScene(Pages.ADD_RECEIPT_WINDOW);
+        closeErrorMessage();
     }
 
+    /**
+     * Switches back to Login Window
+     */
     @FXML
     public void back() {
         switchScene(Pages.LOGIN_WINDOW);

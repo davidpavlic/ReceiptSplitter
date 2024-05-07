@@ -1,5 +1,6 @@
 package ch.zhaw.it.pm2.receiptsplitter.repository;
 
+import ch.zhaw.it.pm2.receiptsplitter.enums.Currencies;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
@@ -220,6 +221,15 @@ public class ReceiptProcessor implements IsObservable {
         return (float) contactItemsByContact.stream()
                 .mapToDouble(ContactReceiptItem::getPrice)
                 .sum();
+    }
+
+    /**
+     * Formats a price with the currency symbol.
+     * @param price the price to be formatted
+     * @return the formatted price with the currency symbol
+     */
+    public String formatPriceWithCurrency(float price) {
+        return receipt.formatPriceWithCurrency(price);
     }
 
     /**
