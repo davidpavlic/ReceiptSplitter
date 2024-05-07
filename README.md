@@ -146,8 +146,8 @@ Diese Trennung sorgt dafür, dass das Modell unabhängig von der Benutzeroberfl�
 und zentrale Funktionen für die Anwendung koordiniert.
 
 - **util**: Enthält Hilfsklassen und -funktionen, die in verschiedenen Teilen der Anwendung verwendet werden können. Ein Beispiel hierfüre wäre ContactDropdown, welches in den Controllern mehrmals verwendet wird.
-- 
--**enums**: Enums, die in der Anwendung verwendet werden, finden sich in diesem Package.
+
+- **enums**: Enums, die in der Anwendung verwendet werden, finden sich in diesem Package.
 
 - **pages**: Enthält die FXML-Dateien und Controller-Klassen für die verschiedenen Seiten der JavaFX-Anwendung/ des GUI.
 
@@ -167,5 +167,5 @@ Namen der Mitwirkenden:
 
 ## Anhang
 - [Klassendiagramm](docs/classdiagram/classdiagramm.png)
-- [Äquivalenzklassen](docs/testing/testing_concept.md)
+- [Testing Konzept](docs/testing/testing_concept.md)
 
