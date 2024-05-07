@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 /**
  * Manages receipt-related operations including item management and allocation to contacts.
  * The ReceiptItems added to the Receipt should be unique by name.
- *
  */
 public class ReceiptProcessor implements IsObservable {
     private Receipt receipt;

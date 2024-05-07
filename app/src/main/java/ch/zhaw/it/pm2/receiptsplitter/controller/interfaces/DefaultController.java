@@ -1,18 +1,17 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller.interfaces;
 
-import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
-import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.fxml.FXML;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.logging.Logger;
-
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
-import javafx.fxml.FXML;
 
 /**
  * This abstract class provides a default implementation for a controller in the application.
@@ -25,7 +24,7 @@ import javafx.fxml.FXML;
  * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
-public abstract class  DefaultController {
+public abstract class DefaultController {
     protected final Logger logger = Logger.getLogger(DefaultController.class.getName());
     protected Router router;
     protected ContactRepository contactRepository;
@@ -37,11 +36,11 @@ public abstract class  DefaultController {
     /**
      * Initializes the controller with a router, contact repository, and receipt processor.
      *
-     * @param router The router to be used for navigation.
+     * @param router            The router to be used for navigation.
      * @param contactRepository The repository to be used for contact management.
-     * @param receiptProcessor The processor to be used for receipt processing.
+     * @param receiptProcessor  The processor to be used for receipt processing.
      */
-    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor){
+    public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         this.router = router;
         this.contactRepository = contactRepository;
         this.receiptProcessor = receiptProcessor;
@@ -63,8 +62,7 @@ public abstract class  DefaultController {
         try {
             router.openHelpModal(HelpMessages.FAQ_MSG);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal: " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
+            logError("Could not open FAQ modal", exception);
             errorMessageProperty.setValue("Could not open FAQ modal");
         }
     }
@@ -81,8 +79,7 @@ public abstract class  DefaultController {
         try {
             router.openHelpModal(helpMessage);
         } catch (IllegalStateException | IOException exception) {
-            logger.severe("Could not open help modal: " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
+            logError("Could not open help modal", exception);
             errorMessageProperty.setValue("Could not open help modal");
         }
     }
@@ -96,8 +93,7 @@ public abstract class  DefaultController {
         try {
             router.gotoScene(page);
         } catch (IllegalStateException exception) {
-            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
+            logError(getSwitchSceneErrorMessage(page) + ", " + exception.getMessage(), exception);
             errorMessageProperty.setValue("Could not switch to " + page + " Window");
         }
     }
@@ -105,15 +101,14 @@ public abstract class  DefaultController {
     /**
      * Switches the scene to the specified page, and sets the last page.
      *
-     * @param page The page to switch to.
+     * @param page     The page to switch to.
      * @param lastPage The last page.
      */
     protected void switchScene(Pages page, Pages lastPage) {
         try {
             router.gotoScene(page, lastPage);
         } catch (IllegalStateException | IllegalArgumentException exception) {
-            logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
-            logger.fine(Arrays.toString(exception.getStackTrace()));
+            logError(getSwitchSceneErrorMessage(page) + ", " + exception.getMessage(), exception);
             errorMessageProperty.setValue("Could not switch to " + page + " Window");
         }
     }
@@ -121,7 +116,7 @@ public abstract class  DefaultController {
     /**
      * Logs an error message and exception stack trace.
      *
-     * @param message The error message.
+     * @param message   The error message.
      * @param exception The exception.
      */
     protected void logError(String message, Exception exception) {
@@ -129,5 +124,9 @@ public abstract class  DefaultController {
         if (exception != null) {
             logger.fine(Arrays.toString(exception.getStackTrace()));
         }
+    }
+
+    private String getSwitchSceneErrorMessage(Pages page) {
+        return "Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName();
     }
 }

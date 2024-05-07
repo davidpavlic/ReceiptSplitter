@@ -17,6 +17,11 @@ import javafx.scene.layout.HBox;
 
 
 public class LoginController extends DefaultController implements IsObserver{
+
+    public static final String PROFILE_NOT_SET_ERROR_MESSAGE = "Could not set the selected profile. Please try again.";
+    public static final String SELECTED_PROFILE_NO_EMAIL_ADDRESS_ERROR_MESSAGE = "The selected profile has no email address. Please select another profile.";
+    public static final String SELECT_PROFILE_ERROR_MESSAGE = "Please select a profile";
+
     @FXML private Button confirmButton;
     @FXML private ComboBox<Contact> selectContactDropdown;
 
@@ -76,13 +81,12 @@ public class LoginController extends DefaultController implements IsObserver{
     @FXML
     private void openCreateProfile() {
         switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.LOGIN_WINDOW);
-//        errorMessageProperty.set("This feature is not yet implemented");
     }
 
     @FXML
     private void confirm() {
         if (selectContactDropdown.getValue() == null) {
-            errorMessageProperty.set("Please select a profile");
+            errorMessageProperty.set(SELECT_PROFILE_ERROR_MESSAGE);
             logger.fine("No contact selected");
             return;
         }
@@ -90,7 +94,7 @@ public class LoginController extends DefaultController implements IsObserver{
         String selectedEmail = selectContactDropdown.getValue().getEmail();
         if (selectedEmail == null ||  selectedEmail.isEmpty()){
             logger.fine("Email is empty");
-            errorMessageProperty.set("The selected profile has no email address. Please select another profile.");
+            errorMessageProperty.set(SELECTED_PROFILE_NO_EMAIL_ADDRESS_ERROR_MESSAGE);
             return;
         }
 
@@ -98,7 +102,7 @@ public class LoginController extends DefaultController implements IsObserver{
 
         if (!success){
             logger.fine("Could not set profile");
-            errorMessageProperty.set("Could not set the selected profile. Please try again.");
+            errorMessageProperty.set(PROFILE_NOT_SET_ERROR_MESSAGE);
             return;
         }
 
@@ -114,7 +118,8 @@ public class LoginController extends DefaultController implements IsObserver{
 
     private void configureDropdown() {
         selectContactDropdown.setPromptText("Please choose a profile");
-        selectContactDropdown.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> confirmButton.setDisable(newValue == null));
+        selectContactDropdown.getSelectionModel().selectedItemProperty()
+                .addListener((observable, oldValue, newValue) -> confirmButton.setDisable(newValue == null));
 
         ContactDropdownConfigurer.configureComboBox(selectContactDropdown);
     }

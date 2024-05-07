@@ -4,21 +4,19 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextArea?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-
-<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.HelpController">
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" stylesheets="@../styles/style.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.HelpController">
     <bottom>
         <HBox spacing="10" style="-fx-padding: 10;">
 
             <!-- Spacer that pushes both buttons to the ends -->
-            <Pane HBox.hgrow="ALWAYS" />
+            <Pane HBox.hgrow="ALWAYS"/>
 
             <!-- Button on the right -->
-            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER" />
+            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER"/>
         </HBox>
     </bottom>
     <center>

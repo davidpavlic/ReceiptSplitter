@@ -8,14 +8,22 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 //TODO: Slight Refactoring
-//TODO: JavaDoc und private methods Commenting
+
+/**
+ * Represents a repository for contacts. It manages the contacts and selected contacts.
+ * It also provides methods to add, update, remove and get contacts.
+ * <p>
+ * A profile can be set which is automatically added to the selected contacts.
+ * The profile represents the User who is currently logged in.
+ */
 public class ContactRepository implements IsObservable {
     private final List<IsObserver> observers = new ArrayList<>();
     private final List<Contact> contacts = new ArrayList<>();
@@ -26,14 +34,22 @@ public class ContactRepository implements IsObservable {
     private static final String DELIMITER = ";";
     private final Path contactsFilePath;
 
-    //Constructor defines the filepath
+    /**
+     * Sets the path of the contacts file.
+     *
+     * @param path Path of the contacts file
+     */
     public ContactRepository(String path) {
         contactsFilePath = Paths.get(path);
     }
 
-    //Loads the contacts from the file into the contact list
-    public void loadContacts() throws IOException{
-        try(Stream<String> lines = Files.lines(contactsFilePath)){
+    /**
+     * Loads the contacts from the file into the contact list.
+     *
+     * @throws IOException If an I/O error occurs
+     */
+    public void loadContacts() throws IOException {
+        try (Stream<String> lines = Files.lines(contactsFilePath)) {
             lines.map(this::parseLineToContact).filter(Objects::nonNull).forEach(contacts::add);
         }
     }
@@ -55,37 +71,54 @@ public class ContactRepository implements IsObservable {
         }
     }
 
-    //Checks if a contact exists
-    public boolean contactExists(String email){
-        return findContactByEmail(email) != null;
+    /**
+     * Checks if a contact exists by email.
+     *
+     * @param email Email of the contact
+     * @return True if the contact exists, false otherwise
+     */
+    // TODO: Not used outside of this class. Private?
+    public boolean contactExists(String email) {
+        return findContactByEmail(email).isPresent();
     }
 
-    //The following methods represent CRUD operations for contacts adjusting the file, contactlist, selectedContact and selectedProfile
-    public Contact findContactByEmail(String email) {
+    /**
+     * Finds a contact by email.
+     *
+     * @param email Email of the contact
+     * @return The contact if found, null otherwise
+     */
+    // TODO: Not used outside of this class. Private?
+    public Optional<Contact> findContactByEmail(String email) {
         return contacts.stream()
                 .filter(contact -> contact.getEmail().equals(email))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
-    public boolean addContact(Contact contact) throws IllegalArgumentException, IOException {
-        if(contactExists(contact.getEmail()))
+    /**
+     * Adds a contact to the contact list.
+     *
+     * @param contact Contact to be added
+     * @return True if the contact is added, false otherwise
+     * @throws IOException If an I/O error occurs
+     */
+    public void addContact(Contact contact) throws IOException {
+        if (contactExists(contact.getEmail()))
             throw new IllegalArgumentException("Duplicate contact will not be inserted");
 
         appendContactToContactFile(contact);
         contacts.add(contact);
         notifyObservers();
-        return true;
     }
 
     public boolean updateContact(String email, Contact newContact) throws IOException {
         Objects.requireNonNull(email);
         Objects.requireNonNull(newContact);
 
-        if(!contactExists(email))
+        if (!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
-        if(updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
+        if (updateContactInContactFile(email, newContact) && updateContactInContactList(email, newContact)) {
             notifyObservers();
             return true;
         }
@@ -93,13 +126,13 @@ public class ContactRepository implements IsObservable {
     }
 
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
-        if(selectedProfile != null && selectedProfile.getEmail().equals(email))
+        if (selectedProfile != null && selectedProfile.getEmail().equals(email))
             throw new IllegalArgumentException("Contact is selected profile");
 
-        if(!contactExists(email))
+        if (!contactExists(email))
             throw new IllegalArgumentException("No record found with email: " + email);
 
-        if(removeContactFromContactFile(email)) {
+        if (removeContactFromContactFile(email)) {
             if (contacts.removeIf(contact -> contact.getEmail().equals(email))) {
                 removeFromSelectedContacts(email);
                 notifyObservers();
@@ -111,15 +144,15 @@ public class ContactRepository implements IsObservable {
 
     //The following methods represent CRUD operations for selected contacts list
     // TODO: Return type is not used for this and other methods. Maybe throw Exception instead? ReceiptProcessor is throwing Exception for such cases.
-    public boolean addToSelectedContacts(String email){
-        if(contactExists(email)){
-            selectedContacts.add(findContactByEmail(email));
+    public boolean addToSelectedContacts(String email) {
+        if (contactExists(email)) {
+            selectedContacts.add(findContactByEmail(email).get());
             return true;
         }
         return false;
     }
 
-    public boolean removeFromSelectedContacts(String email){
+    public boolean removeFromSelectedContacts(String email) {
         return selectedContacts.removeIf(contact -> contact.getEmail().equals(email));
     }
 
@@ -132,7 +165,7 @@ public class ContactRepository implements IsObservable {
         return selectedToEditContact;
     }
 
-    public Contact getProfile(){
+    public Contact getProfile() {
         return selectedProfile;
     }
 
@@ -144,27 +177,38 @@ public class ContactRepository implements IsObservable {
         this.selectedToEditContact = selectedToEditContact;
     }
 
-    //Setters
-    public boolean setProfile(String email){
-        String removeEmail = (selectedProfile != null) ? selectedProfile.getEmail(): email;
+    /**
+     * Sets the profile to the selected contact.
+     *
+     * @param email Email of the contact
+     * @return True if the profile is set, false otherwise
+     */
+    public boolean setProfile(String email) {
+        String removeEmail = (selectedProfile != null) ? selectedProfile.getEmail() : email;
         removeFromSelectedContacts(removeEmail);
 
-        Contact profile = findContactByEmail(email);
-        if(profile != null){
-            selectedProfile = profile;
-            return selectedContacts.add(profile);
-        }
-        return false;
+        Optional<Contact> profileOptional = findContactByEmail(email);
+        if (profileOptional.isEmpty()) return false;
+
+        selectedProfile = profileOptional.get();
+        return selectedContacts.add(selectedProfile);
     }
 
+    /**
+     * Sets a new profile and adds it as a new Contact first.
+     *
+     * @param contact Contact to be set as profile
+     * @return True if the profile is set, false otherwise
+     * @throws IOException              If an I/O error occurs
+     * @throws IllegalArgumentException If the contact already exists
+     */
+    // TODO: Not used. currently. Remove?
     public boolean setNewProfile(Contact contact) throws IOException {
-        if(addContact(contact))
-            return setProfile(contact.getEmail());
-        return false;
+        addContact(contact);
+        return setProfile(contact.getEmail());
     }
 
-    //The following method is a helper method for updating a contact in the contact list
-    private boolean updateContactInContactList(String email, Contact newContact){
+    private boolean updateContactInContactList(String email, Contact newContact) {
         for (Contact contact : contacts) {
             if (contact.getEmail().equals(email)) {
                 contact.setFirstName(newContact.getFirstName());
@@ -176,17 +220,16 @@ public class ContactRepository implements IsObservable {
         return false;
     }
 
-    //The following methods represent file CRUD operations
-    private boolean updateContactInContactFile(String email, Contact newContact) throws IOException{
+    private boolean updateContactInContactFile(String email, Contact newContact) throws IOException {
         List<String> updatedLines = getUpdatedContactsFromEmail(email, Files.readAllLines(contactsFilePath), newContact);
-        if(updatedLines != null){
+        if (updatedLines != null) {
             Files.write(contactsFilePath, updatedLines);
             return true;
         }
         return false;
     }
 
-    private List<String> getUpdatedContactsFromEmail(String email, List<String> lines, Contact newContact){
+    private List<String> getUpdatedContactsFromEmail(String email, List<String> lines, Contact newContact) {
         List<String> updatedLines = new ArrayList<>();
         boolean found = false;
 
@@ -223,7 +266,7 @@ public class ContactRepository implements IsObservable {
         String lastLine = Files.readAllLines(contactsFilePath).getLast();
 
         try (BufferedWriter writer = Files.newBufferedWriter(contactsFilePath, StandardOpenOption.APPEND)) {
-            if (!lastLine.isEmpty()){
+            if (!lastLine.isEmpty()) {
                 writer.newLine();
             }
 
@@ -231,8 +274,7 @@ public class ContactRepository implements IsObservable {
         }
     }
 
-    //The following methods parse between line and contact
-    private Contact parseLineToContact(String line){
+    private Contact parseLineToContact(String line) {
         String[] values = line.split(DELIMITER);
         if (values.length >= 3) {
             return new Contact(values[0], values[1], values[2]);

@@ -1,16 +1,16 @@
 package ch.zhaw.it.pm2.receiptsplitter.model;
 
-import ch.zhaw.it.pm2.receiptsplitter.enums.Currency;
-
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-//TODO: JavaDoc
+/**
+ * Represents a receipt with a list of receipt items.
+ * Exposes methods to add, update, delete and get receipt items.
+ * The List of Receipt Items  cannot be modified from outside the class.
+ */
 public class Receipt {
-    private Currency currency;
     private List<ReceiptItem> receiptItems;
 
     /**
@@ -22,15 +22,6 @@ public class Receipt {
      */
     public Receipt(List<ReceiptItem> receiptItem) {
         setReceiptItems(receiptItem);
-    }
-
-    /**
-     * Get an immutable list of receipt items.
-     *
-     * @return Immutable list of receipt items.
-     */
-    public List<ReceiptItem> getReceiptItems() {
-        return Collections.unmodifiableList(receiptItems);
     }
 
     /**
@@ -63,11 +54,12 @@ public class Receipt {
     }
 
     /**
-     * Get the total price of all receipt items.
+     * Calculates the total price of all receipt items.
      *
      * @return Total price of all receipt items.
      */
     public float getReceiptTotal() {
+        // TODO: Nice to have in List Items, otherwise I don't know where the sum total of all Receipt Items is needed? Needs to be removed then if not used.
         return (float) receiptItems.stream().mapToDouble(ReceiptItem::getPrice).sum();
     }
 
@@ -77,7 +69,7 @@ public class Receipt {
      * @param receiptItem Receipt item to be added.
      * @throws IllegalArgumentException If the receipt item is null.
      */
-    public void addReceiptItem(ReceiptItem receiptItem) throws IllegalArgumentException {
+    public void addReceiptItem(ReceiptItem receiptItem) {
         ModelParamValidator.throwIfElementIsNull(receiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
         receiptItems.add(receiptItem);
     }
@@ -89,7 +81,7 @@ public class Receipt {
      * @param newReceiptItem New receipt item.
      * @throws IllegalArgumentException If the index is out of bounds or the new receipt item is null.
      */
-    public void updateReceiptItem(int index, ReceiptItem newReceiptItem) throws IllegalArgumentException {
+    public void updateReceiptItem(int index, ReceiptItem newReceiptItem) {
         ModelParamValidator.throwIfIndexOutOfBounds(index, receiptItems.size(), ReceiptErrorMessageType.INDEX_NOT_PRESENT.toString());
         ModelParamValidator.throwIfElementIsNull(newReceiptItem, ReceiptErrorMessageType.ITEM_NULL.toString());
 
@@ -110,29 +102,13 @@ public class Receipt {
         receiptItems.remove(index);
     }
 
-    // TODO: Are these sorting methods used? If not, remove (and remove tests too)
-    public void sortByPriceLowestFirst() {
-        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getPrice));
-    }
-
-    public void sortByPriceHighestFirst() {
-        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getPrice).reversed());
-    }
-
-    public void sortByNameLowestFirst() {
-        sortReceiptItemsBy(Comparator.comparing(ReceiptItem::getName));
-    }
-
-    public void sortByNameHighestFirst() {
-        sortReceiptItemsBy(Comparator.comparing(ReceiptItem::getName).reversed());
-    }
-
-    public void sortByAmountLowestFirst() {
-        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getAmount));
-    }
-
-    public void sortByAmountHighestFirst() {
-        sortReceiptItemsBy(Comparator.comparingDouble(ReceiptItem::getAmount).reversed());
+    /**
+     * Get an immutable list of receipt items.
+     *
+     * @return Immutable list of receipt items.
+     */
+    public List<ReceiptItem> getReceiptItems() {
+        return Collections.unmodifiableList(receiptItems);
     }
 
     /**
@@ -145,10 +121,6 @@ public class Receipt {
         return receiptItems.stream().
                 map(item -> new ReceiptItem(item.getPrice(), item.getName(), item.getAmount()))
                 .collect(Collectors.toList());
-    }
-
-    private void sortReceiptItemsBy(Comparator<ReceiptItem> comparator) {
-        receiptItems.sort(comparator);
     }
 
     protected enum ReceiptErrorMessageType {

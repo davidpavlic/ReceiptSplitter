@@ -21,6 +21,8 @@ import java.io.IOException;
 
 public class ContactListController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
 
+    private static final String CONTACT_NOT_REMOVED_ERROR_MESSAGE = "Could not remove contact. Please try again.";
+
     @FXML private TableColumn<Contact, String> actionColumn;
     @FXML private TableColumn<Contact, String> emailColumn;
     @FXML private TableColumn<Contact, String> nameColumn;
@@ -167,11 +169,11 @@ public class ContactListController extends DefaultController implements CanNavig
         try {
             if (!contactRepository.removeContact(contact.getEmail())) {
                 logError("Could not remove contact", null);
-                errorMessageProperty.set("Could not remove contact. Please try again.");
+                errorMessageProperty.set(CONTACT_NOT_REMOVED_ERROR_MESSAGE);
             }
         } catch (IOException e) {
             logError("Error removing contact", e);
-            errorMessageProperty.set("An error occurred while removing the contact. Please try again.");
+            errorMessageProperty.set(CONTACT_NOT_REMOVED_ERROR_MESSAGE);
         }
     }
 }

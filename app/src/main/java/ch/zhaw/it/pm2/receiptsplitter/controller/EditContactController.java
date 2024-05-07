@@ -23,6 +23,11 @@ import java.util.Arrays;
 import java.util.List;
 
 public class EditContactController extends DefaultController implements CanNavigate, HasDynamicLastPage, CanReset, IsObserver {
+
+    public static final String EMAIL_NOT_EXISTS_ERROR_MESSAGE = "Could not update contact: Email does not exist";
+    public static final String CONTACTS_FILE_ACCESS_ERROR_MESSAGE = "An error occurred trying to access the contacts file.";
+    public static final String CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE = "An unknown error occurred while updating the contact.";
+
     private Pages lastPage;
 
     @FXML private Button confirmButton;
@@ -94,13 +99,13 @@ public class EditContactController extends DefaultController implements CanNavig
             back();
         } catch (IllegalArgumentException illegalArgumentException) {
             logError(illegalArgumentException.getMessage(), illegalArgumentException);
-            errorMessageProperty.set("Could not update contact: Email does not exist");
+            errorMessageProperty.set(EMAIL_NOT_EXISTS_ERROR_MESSAGE);
         } catch (IOException ioException) {
             logError(ioException.getMessage(), ioException);
-            errorMessageProperty.set("An error occurred trying to access the contacts file.");
+            errorMessageProperty.set(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
         } catch (Exception exception) {
             logError("Error updating contact: " + exception.getMessage(), exception);
-            errorMessageProperty.set("An unknown error occurred while updating the contact.");
+            errorMessageProperty.set(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
         }
     }
 

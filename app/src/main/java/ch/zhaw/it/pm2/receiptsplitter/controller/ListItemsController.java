@@ -48,7 +48,11 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML private TableColumn<ReceiptItem, String> totalPriceColumn;
     @FXML private TableColumn<ReceiptItem, Void> actionColumn;
 
+    // The initial data of the receipt items. Only used for resetting the receipt items and is set in onBeforeStage.
+    //  It won't be updated by any data changes until the user confirms the receipt items.
     private List<ReceiptItem> initialDataReceiptItems;
+
+    // The current data of the receipt items. It will be updated by data changes.
     private List<ReceiptItem> dataReceiptItems;
 
     /**
