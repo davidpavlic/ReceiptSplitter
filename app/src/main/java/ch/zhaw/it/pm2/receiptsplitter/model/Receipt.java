@@ -145,15 +145,6 @@ public class Receipt {
     }
 
     /**
-     * Get the currency of the receipt.
-     *
-     * @return Currency of the receipt.
-     */
-    public Currencies getCurrency() {
-        return currencies;
-    }
-
-    /**
      * Full copy of receipt items with the elements copied.
      *
      * @param receiptItems List of receipt items to be copied.

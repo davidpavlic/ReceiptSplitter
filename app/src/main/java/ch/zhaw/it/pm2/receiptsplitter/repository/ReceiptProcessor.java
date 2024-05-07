@@ -210,10 +210,6 @@ public class ReceiptProcessor implements IsObservable {
         return receipt.formatPriceWithCurrency(price);
     }
 
-    public Currencies getCurrency() {
-        return receipt.getCurrency();
-    }
-
     /**
      * Retrieves the list of receipt items as a copy with every item being copied too, to prevent direct modification.
      *

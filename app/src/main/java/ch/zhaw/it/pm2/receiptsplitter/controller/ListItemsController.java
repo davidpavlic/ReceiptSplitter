@@ -45,9 +45,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
     public static final String ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE = "You can only add one placeholder item at a time";
     public static final String POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE = "You can only enter positive numbers in this cell";
 
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
-
     @FXML private TableView<ReceiptItem> tableReceiptItems;
     @FXML private TableColumn<ReceiptItem, Integer> amountColumn;
     @FXML private TableColumn<ReceiptItem, String> nameColumn;
@@ -71,10 +68,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
         this.helpMessage = HelpMessages.LIST_ITEMS_WINDOW_MSG;
         receiptProcessor.addObserver(this);
         configureTable();
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -103,6 +96,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @Override
     public void confirm() {
         switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -111,7 +105,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     @FXML
     @Override
     public void back() {
-        switchScene(Pages.ADD_RECEIPT_WINDOW);
+//        switchScene(Pages.ADD_RECEIPT_WINDOW);
+        errorMessageProperty.set("This feature will be available in the next version.");
     }
 
     /**
@@ -143,19 +138,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
             logError(ADD_FAIL_ERROR_MESSAGE, e);
             showErrorMessage(ADD_FAIL_ERROR_MESSAGE);
         }
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void configureTable() {

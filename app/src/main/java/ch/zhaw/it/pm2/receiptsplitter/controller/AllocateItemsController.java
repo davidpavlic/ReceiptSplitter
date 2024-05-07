@@ -34,7 +34,6 @@ public class AllocateItemsController extends DefaultController implements IsObse
         this.helpMessage = HelpMessages.ALLOCATE_ITEMS_WINDOW_MSG;
         contactRepository.addObserver(this);
         receiptProcessor.addObserver(this);
-        confirmButton.setOnAction(event -> confirm());
     }
 
     @Override
@@ -119,6 +118,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
             }
         }
         router.gotoScene(Pages.SHOW_SPLIT_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -141,7 +141,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
         private final SimpleStringProperty itemUnitPrice;
         private final ComboBox<Contact> contactComboBox;
 
-        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor ) {
+        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
 
             float unitPrice = receiptItem.getPrice() / receiptItem.getAmount(); // Price of a single unit of the item

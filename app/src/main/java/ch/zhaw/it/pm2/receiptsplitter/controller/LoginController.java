@@ -2,18 +2,16 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
 import ch.zhaw.it.pm2.receiptsplitter.controller.utils.ContactDropdownConfigurer;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
 
 public class LoginController extends DefaultController implements IsObserver{
@@ -24,9 +22,6 @@ public class LoginController extends DefaultController implements IsObserver{
 
     @FXML private Button confirmButton;
     @FXML private ComboBox<Contact> selectContactDropdown;
-
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
 
     /**
      *
@@ -42,11 +37,6 @@ public class LoginController extends DefaultController implements IsObserver{
 
         configureDropdown();
         confirmButton.setDisable(true);
-        confirmButton.setOnAction(event -> confirm());
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -81,6 +71,7 @@ public class LoginController extends DefaultController implements IsObserver{
     @FXML
     private void openCreateProfile() {
         switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.LOGIN_WINDOW);
+        closeErrorMessage();
     }
 
     @FXML
@@ -107,13 +98,7 @@ public class LoginController extends DefaultController implements IsObserver{
         }
 
         switchScene(Pages.MAIN_WINDOW);
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
+        closeErrorMessage();
     }
 
     private void configureDropdown() {
@@ -122,11 +107,5 @@ public class LoginController extends DefaultController implements IsObserver{
                 .addListener((observable, oldValue, newValue) -> confirmButton.setDisable(newValue == null));
 
         ContactDropdownConfigurer.configureComboBox(selectContactDropdown);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 }

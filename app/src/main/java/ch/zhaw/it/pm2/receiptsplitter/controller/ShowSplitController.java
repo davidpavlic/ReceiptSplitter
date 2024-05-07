@@ -17,7 +17,6 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
@@ -39,9 +38,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     @FXML private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
     @FXML private ProgressIndicator spinner;
 
-    @FXML private HBox errorMessageBox;
-    @FXML private Label errorMessageLabel;
-
     private List<Contact> uniqueContacts;
     private Contact currentContact;
 
@@ -60,10 +56,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         String formattedInitialPrice = receiptProcessor.formatPriceWithCurrency(0);
         totalPrice.setText(formattedInitialPrice);
         uniqueContacts = new ArrayList<>();
-
-        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
-            if (newValue != null) showErrorMessage(newValue);
-        });
     }
 
     /**
@@ -97,6 +89,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                 handleConfirmationAndEmails();
             }
         });
+        closeErrorMessage();
     }
 
     /**
@@ -159,19 +152,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
             currentContact = uniqueContacts.get(currentIndex - 1);
             populateTableWithContactItems(currentContact);
         }
-    }
-
-    @FXML
-    private void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorMessageProperty.set(null);
-    }
-
-    private void showErrorMessage(String message) {
-        errorMessageLabel.setText(message);
-        errorMessageBox.setVisible(true);
-        errorMessageBox.setManaged(true);
     }
 
     private void setSpinnerActive(boolean active) {

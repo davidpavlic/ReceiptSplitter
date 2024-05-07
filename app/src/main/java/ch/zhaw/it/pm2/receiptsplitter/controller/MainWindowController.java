@@ -55,6 +55,7 @@ public class MainWindowController extends DefaultController implements IsObserve
     @FXML
     public void openContactList() {
         switchScene(Pages.CONTACT_LIST_WINDOW, Pages.MAIN_WINDOW);
+        closeErrorMessage();
     }
 
     /**
@@ -78,6 +79,7 @@ public class MainWindowController extends DefaultController implements IsObserve
         prepareListItemDebugTestData();
 
         switchScene(Pages.LIST_ITEMS_WINDOW);
+        closeErrorMessage();
     }
 
     // TODO: Only used for testing, remove in the end
