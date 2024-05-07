@@ -8,9 +8,9 @@ import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.utils.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.utils.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.utils.Pages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -72,10 +72,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         populateTableWithContactItems(currentContact);
     }
 
-    /**
-     * @inheritDoc Send out the Request to the Recipients via Email.
-     * Shows a confirmation dialog before sending out the emails.
-     */
     @Override
     public void confirm() {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to send out the Request to the Recipients via Email?", ButtonType.YES, ButtonType.NO);
