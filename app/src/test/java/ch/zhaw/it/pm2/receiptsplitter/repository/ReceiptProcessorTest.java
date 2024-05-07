@@ -7,29 +7,43 @@ import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
+import org.mockito.Mock;
+import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ReceiptProcessorTest {
+
+    @InjectMocks
     private ReceiptProcessor receiptProcessor;
+
+    @Mock
     private Receipt receipt;
+
+    @Mock
+    private ReceiptItem receiptItem;
+
+    List<ReceiptItem> receiptItems;
 
     @BeforeEach
     void setUp() {
-        List<ReceiptItem> receiptItems = new ArrayList<>() {{
-            add(new ReceiptItem(5.0f, "Tee", 1));
-        }};
+        receiptItems = new ArrayList<>(Collections.singletonList(receiptItem));
+        lenient().when(receipt.getReceiptItems()).thenReturn(receiptItems);
+        generateMock(receiptItem, 5.0f, "Tee", 1);
 
-        receipt = new Receipt(receiptItems);
-        receiptProcessor = new ReceiptProcessor();
         receiptProcessor.setReceipt(receipt);
+    }
+
+    private void generateMock(ReceiptItem mockItem, float price, String name, int amount){
+        lenient().when(mockItem.getPrice()).thenReturn(price);
+        lenient().when(mockItem.getName()).thenReturn(name);
+        lenient().when(mockItem.getAmount()).thenReturn(amount);
     }
 
     @Test
@@ -41,17 +55,21 @@ class ReceiptProcessorTest {
     @Test
     void splitReceiptItems_ValidReceiptItem_ItemsSplit() {
         // Arrange
-        float price = 20F;
+        float price = 20.0f;
+        String name = "Pommes Frites";
         int amount = 2;
-        ReceiptItem receiptItem = new ReceiptItem(price, "Pommes Frites", amount);
-        receiptProcessor.setReceipt(new Receipt(Collections.singletonList(receiptItem)));
+
+        ReceiptItem mockItem = mock(ReceiptItem.class);
+        generateMock(mockItem, price, name, amount);
 
         // Act
+        receiptProcessor.setReceipt(new Receipt(Collections.singletonList(mockItem)));
+
         List<ReceiptItem> splitItems = receiptProcessor.splitReceiptItems();
 
         // Assert
         assertEquals(amount, splitItems.size());
-        assertEquals(price / amount, splitItems.getFirst().getPrice());
+        assertEquals(price/amount, splitItems.get(0).getPrice());
     }
 
     @Test
@@ -69,38 +87,37 @@ class ReceiptProcessorTest {
     @Test
     void addReceiptItem_ValidReceiptItem_NewItemAdded() {
         // Arrange
-        int sizeBefore = receipt.getReceiptItems().size();
-        List<ReceiptItem> items = receipt.getReceiptItems();
         ReceiptItem newItem = new ReceiptItem(5.0f, "Kaffee", 1);
 
         // Act
         receiptProcessor.addReceiptItem(newItem);
 
         // Assert
-        assertTrue(items.contains(newItem), "The new item should be added to the list.");
-        assertEquals(sizeBefore + 1, items.size(), "The size of the list should be incremented by 1.");
+        verify(receipt).addReceiptItem(newItem);
     }
 
     @Test
     void updateReceiptItem_ValidReceiptItem_ItemUpdated() {
         // Arrange
-        int sizeBefore = receipt.getReceiptItems().size();
-        String oldName = receipt.getReceiptItems().getFirst().getName();
+        int sizeBefore = 1;
+        String oldName = "Tee";
         String newName = "Kaffee";
         int newAmount = 3;
 
-        ReceiptItem newItem = new ReceiptItem(5.0f, newName, newAmount);
+        ReceiptItem newItem = mock(ReceiptItem.class);
+        generateMock(newItem,5.0f, newName, newAmount);
+        when(receipt.getReceiptItemByName(oldName)).thenReturn(Optional.of(receiptItem));
+
+        InOrder inOrderReceipt = inOrder(receipt);
 
         // Act
         receiptProcessor.updateReceiptItemByName(oldName, newItem);
 
         // Assert
-        List<ReceiptItem> receiptItems = receipt.getReceiptItems();
-        ReceiptItem actualReceiptItem = receiptItems.getLast();
-
-        assertEquals(newName, actualReceiptItem.getName(), "The item name is expected to be updated.");
-        assertEquals(newAmount, actualReceiptItem.getAmount(), "The item amount is expected to be updated.");
-        assertEquals(sizeBefore, receiptItems.size(), "The size of the list should remain the same.");
+        inOrderReceipt.verify(receipt).getReceiptItems();
+        inOrderReceipt.verify(receipt).getReceiptItemByName(oldName);
+        inOrderReceipt.verify(receipt).updateReceiptItem(receipt.getReceiptItems().indexOf(receipt.getReceiptItemByName(oldName).get()), newItem);
+        assertEquals(sizeBefore, receipt.getReceiptItems().size());
     }
 
     @Test
@@ -112,13 +129,15 @@ class ReceiptProcessorTest {
     @Test
     void deleteReceiptItemByName_ExistingReceiptItem_IsDeleted() {
         // Arrange
-        ReceiptItem existingItem = receipt.getReceiptItems().getFirst();
+        String name = receipt.getReceiptItems().getFirst().getName();
+        when(receipt.getReceiptItems()).thenReturn(new ArrayList<>(Collections.singletonList(receiptItem)));
+        when(receiptItem.getName()).thenReturn(name);
 
         //Act
-        receiptProcessor.deleteReceiptItemByName(existingItem.getName());
+        receiptProcessor.deleteReceiptItemByName(name);
 
         // Assert
-        assertFalse(receipt.getReceiptItems().contains(existingItem), "The item should be removed from the list.");
+        verify(receipt).deleteReceiptItem(receipt.getReceiptItems().indexOf(receipt.getReceiptItemByName(name).get()));
     }
 
     @Test
