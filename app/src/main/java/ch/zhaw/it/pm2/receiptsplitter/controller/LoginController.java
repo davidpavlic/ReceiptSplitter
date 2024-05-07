@@ -12,12 +12,23 @@ import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 
 
 public class LoginController extends DefaultController implements IsObserver{
     @FXML private Button confirmButton;
     @FXML private ComboBox<Contact> selectContactDropdown;
 
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
+
+    /**
+     *
+     * @param router The router to be used for navigation.
+     * @param contactRepository The repository to be used for contact management.
+     * @param receiptProcessor The processor to be used for receipt processing.
+     */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
         super.initialize(router, contactRepository, receiptProcessor);
@@ -27,30 +38,50 @@ public class LoginController extends DefaultController implements IsObserver{
         configureDropdown();
         confirmButton.setDisable(true);
         confirmButton.setOnAction(event -> confirm());
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
+    }
+
+    /**
+     * @inheritDoc Update the contact dropdown list
+     */
+    @Override
+    public void update() {
+        Contact selectedContact = selectContactDropdown.getValue();
+        selectContactDropdown.getItems().clear();
+        selectContactDropdown.getItems().addAll(contactRepository.getContacts());
+        if (contactRepository.getProfile() != null) {
+            selectContactDropdown.setValue(contactRepository.getProfile());
+        } else {
+            selectContactDropdown.setValue(selectedContact);
+        }
     }
 
     @FXML
-    void closeWindow() {
+    private void closeWindow() {
         router.closeWindow();
     }
 
     @FXML
-    void openCreateProfile() {
+    private void openCreateProfile() {
         switchScene(Pages.CREATE_PROFILE_WINDOW, Pages.LOGIN_WINDOW);
+//        errorMessageProperty.set("This feature is not yet implemented");
     }
 
     @FXML
-    void confirm() {
+    private void confirm() {
         if (selectContactDropdown.getValue() == null) {
+            errorMessageProperty.set("Please select a profile");
             logger.fine("No contact selected");
-            // TODO: Show error message
             return;
         }
 
         String selectedEmail = selectContactDropdown.getValue().getEmail();
         if (selectedEmail == null ||  selectedEmail.isEmpty()){
             logger.fine("Email is empty");
-            //  TODO: Show error message
+            errorMessageProperty.set("The selected profile has no email address. Please select another profile.");
             return;
         }
 
@@ -58,23 +89,18 @@ public class LoginController extends DefaultController implements IsObserver{
 
         if (!success){
             logger.fine("Could not set profile");
-            // TODO: Show error message
+            errorMessageProperty.set("Could not set the selected profile. Please try again.");
             return;
         }
 
         switchScene(Pages.MAIN_WINDOW);
     }
 
-    @Override
-    public void update() {
-        Contact exists = selectContactDropdown.getValue();
-        selectContactDropdown.getItems().clear();
-        selectContactDropdown.getItems().addAll(contactRepository.getContacts());
-        if (contactRepository.getProfile() != null) {
-            selectContactDropdown.setValue(contactRepository.getProfile());
-        } else {
-            selectContactDropdown.setValue(exists);
-        }
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
     }
 
     private void configureDropdown() {
@@ -84,5 +110,11 @@ public class LoginController extends DefaultController implements IsObserver{
         });
 
         ContactDropdownConfigurer.configureComboBox(selectContactDropdown);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 }

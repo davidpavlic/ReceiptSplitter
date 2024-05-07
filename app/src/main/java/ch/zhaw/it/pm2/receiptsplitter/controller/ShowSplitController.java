@@ -2,32 +2,31 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
+import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.EmailService;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class ShowSplitController extends DefaultController implements CanNavigate, IsObserver {
-    // TODO: Implement Error Box after merge with feat/26
-
     @FXML private Button buttonPreviousPerson;
     @FXML private Button buttonNextPerson;
     @FXML private Text contactName;
@@ -40,6 +39,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     @FXML private TableColumn<ContactReceiptItem, String> itemNameColumn;
     @FXML private TableColumn<ContactReceiptItem, Double> itemPriceColumn;
     @FXML private ProgressIndicator spinner;
+
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
 
     private List<Contact> uniqueContacts;
     private Contact currentContact;
@@ -58,6 +60,10 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
         totalPrice.setText("0.00 CHF");
         uniqueContacts = new ArrayList<>();
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
     }
 
     /**
@@ -106,10 +112,9 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         itemsTable.setItems(items);
         contactName.setText(contact.getDisplayName());
 
-        double totalAmount = receiptProcessor.calculateDebtByPerson(contact);
+        float totalAmount = receiptProcessor.calculateDebtByPerson(contact);
 
-        // TODO: Use logic of ListItemsController for rounded price.
-        totalPrice.setText(String.format("%.2f", totalAmount) + " CHF");
+        totalPrice.setText(ReceiptItem.roundPrice(totalAmount) + " CHF");
 
         this.uniqueContacts = receiptProcessor.getDistinctContacts();
         int currentIndex = uniqueContacts.indexOf(contact);
@@ -121,6 +126,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     @FXML
     private void nextPerson() {
         if (uniqueContacts.isEmpty()) {
+            logger.fine("No contacts available to switch to");
             return;
         }
 
@@ -134,6 +140,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
     @FXML
     private void previousPerson() {
         if (uniqueContacts.isEmpty()) {
+            logger.fine("No contacts available to switch to");
             return;
         }
 
@@ -142,6 +149,19 @@ public class ShowSplitController extends DefaultController implements CanNavigat
             currentContact = uniqueContacts.get(currentIndex - 1);
             populateTableWithContactItems(currentContact);
         }
+    }
+
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private void setSpinnerActive(boolean active) {
@@ -201,8 +221,7 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                 }
             } catch (Exception e) {
                 // TODO: logError() after merge
-                logger.severe("Failed to send email: " + e.getMessage());
-                logger.fine(Arrays.toString(e.getStackTrace()));
+                logError("Failed to send email", e);
                 return false;
             }
         }

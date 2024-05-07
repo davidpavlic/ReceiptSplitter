@@ -62,12 +62,12 @@ public class ReceiptProcessor implements IsObservable {
         if (receiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
-        boolean receiptItemExists = receiptItems.stream().anyMatch(item -> item.getName().equals(receiptItem.getName()));
+        boolean receiptItemExists = receipt.getReceiptItemByName(receiptItem.getName()).isPresent();
         if (receiptItemExists) {
             throw new IllegalArgumentException("Receipt item already exists.");
         }
 
-        receiptItems.add(receiptItem);
+        receipt.addReceiptItem(receiptItem);
         notifyObservers();
     }
 
@@ -84,7 +84,7 @@ public class ReceiptProcessor implements IsObservable {
         if (newReceiptItem == null) throw new IllegalArgumentException("Receipt item cannot be null.");
 
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
-        Optional<ReceiptItem> receiptItemOptional = receiptItems.stream().filter(item -> item.getName().equals(oldName)).findFirst();
+        Optional<ReceiptItem> receiptItemOptional = receipt.getReceiptItemByName(oldName);
 
         if (receiptItemOptional.isEmpty()) {
             throw new IllegalArgumentException("Receipt item does not exist.");
@@ -98,9 +98,7 @@ public class ReceiptProcessor implements IsObservable {
         }
 
         ReceiptItem receiptItem = receiptItemOptional.get();
-        receiptItem.setAmount(newReceiptItem.getAmount());
-        receiptItem.setName(newReceiptItem.getName());
-        receiptItem.setPrice(newReceiptItem.getPrice());
+        receipt.updateReceiptItem(receiptItems.indexOf(receiptItem), newReceiptItem);
 
         notifyObservers();
     }
@@ -114,12 +112,12 @@ public class ReceiptProcessor implements IsObservable {
      * @return true if the item was removed, false otherwise
      * @throws IllegalArgumentException if the name is null or if the item does not exist
      */
-    public boolean deleteReceiptItemByName(String name) {
+    public void deleteReceiptItemByName(String name) {
         if (name == null) {
             throw new IllegalArgumentException("Receipt item cannot be null.");
         }
 
-        Optional<ReceiptItem> receiptItemOptional = receipt.getReceiptItems().stream().filter(item -> item.getName().equals(name)).findFirst();
+        Optional<ReceiptItem> receiptItemOptional = receipt.getReceiptItemByName(name);
 
         if (receiptItemOptional.isEmpty()) {
             throw new IllegalArgumentException("Receipt item does not exist.");
@@ -127,11 +125,9 @@ public class ReceiptProcessor implements IsObservable {
 
         List<ReceiptItem> receiptItems = receipt.getReceiptItems();
         ReceiptItem itemToRemove = receiptItemOptional.get();
-        boolean removeSuccess = receiptItems.remove(itemToRemove);
+        receipt.deleteReceiptItem(receiptItems.indexOf(itemToRemove));
 
-        if (removeSuccess) notifyObservers();
-
-        return removeSuccess;
+        notifyObservers();
     }
 
     /**
@@ -192,19 +188,15 @@ public class ReceiptProcessor implements IsObservable {
      * @return the total amount owed
      * @throws IllegalArgumentException if no items are associated with the contact.
      */
-    public double calculateDebtByPerson(Contact contact) {
+    public float calculateDebtByPerson(Contact contact) {
         List<ContactReceiptItem> contactItemsByContact = getContactItemsByContact(contact.getEmail());
         if (contactItemsByContact.isEmpty()) {
             throw new IllegalArgumentException("The list is empty.");
         }
 
-        double total = 0;
-
-        for (ContactReceiptItem contactReceiptItem : contactItemsByContact) {
-            total += contactReceiptItem.getPrice();
-        }
-
-        return total;
+        return (float) contactItemsByContact.stream()
+                .mapToDouble(ContactReceiptItem::getPrice)
+                .sum();
     }
 
     /**

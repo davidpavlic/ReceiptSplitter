@@ -41,7 +41,7 @@ public class EditContactController extends DefaultController implements CanNavig
             updateUIBasedOnValidation(textFields);
         }));
 
-        errorProperty.addListener((observable, oldValue, newValue) -> {
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
             emailErrorLabel.setText(newValue);
         });
 

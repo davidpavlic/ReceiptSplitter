@@ -1,15 +1,16 @@
 package ch.zhaw.it.pm2.receiptsplitter.controller;
 
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
+import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
 import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
+import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
 import ch.zhaw.it.pm2.receiptsplitter.service.Router;
-import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
-import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
-import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -28,7 +29,7 @@ import java.util.Optional;
 
 import static ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem.roundPrice;
 
-public class ListItemsController extends DefaultController implements CanNavigate, IsObserver {
+public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
 
     private static final String ADD_FAIL_ERROR_MESSAGE = "Could not add Receipt Item";
@@ -49,7 +50,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private List<ReceiptItem> dataReceiptItems;
 
     /**
-     * @inheritDoc
+     * @inheritDoc Configures the table columns and sets up the error message box.
      */
     @Override
     public void initialize(Router router, ContactRepository contactRepository, ReceiptProcessor receiptProcessor) {
@@ -58,47 +59,27 @@ public class ListItemsController extends DefaultController implements CanNavigat
         receiptProcessor.addObserver(this);
         configureTable();
 
-        errorProperty.addListener((observable, oldValue, newValue) -> {
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
             if (newValue != null) showErrorMessage(newValue);
         });
     }
 
     /**
-     * @inheritDoc
+     * @inheritDoc Saves the initial state of the receipt items and sets the data receipt items to a copy of the receipt items.
      */
     @Override
     public void onBeforeStage() {
         initialDataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
-        dataReceiptItems = new ArrayList<>(receiptProcessor.getFullCopyReceiptItems());
+        dataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
     }
 
+    /**
+     * @inheritDoc Updates the table with the current receipt items.
+     */
     @Override
     public void update() {
         dataReceiptItems = receiptProcessor.getFullCopyReceiptItems();
         updateTable();
-    }
-
-    @FXML
-    public void addReceiptItem() {
-
-        boolean placeholderExists = dataReceiptItems.stream().anyMatch(item -> RECEIPT_ITEM_PLACEHOLDER_DATA.getName().equals(item.getName()));
-
-        if (placeholderExists) {
-            showErrorMessage("You can only add one placeholder item at a time");
-            return;
-        }
-
-        try {
-            ReceiptItem receiptItem = new ReceiptItem(
-                    RECEIPT_ITEM_PLACEHOLDER_DATA.getPrice(),
-                    RECEIPT_ITEM_PLACEHOLDER_DATA.getName(),
-                    RECEIPT_ITEM_PLACEHOLDER_DATA.getAmount());
-
-            receiptProcessor.addReceiptItem(receiptItem);
-        } catch (IllegalArgumentException e) {
-            logError(ADD_FAIL_ERROR_MESSAGE, e);
-            showErrorMessage(ADD_FAIL_ERROR_MESSAGE);
-        }
     }
 
     /**
@@ -120,23 +101,43 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     /**
-     * Resets the receipt items to the initial state.
+     * @inheritDoc Resets the receipt items to the initial state.
      */
     @FXML
+    @Override
     public void reset() {
         receiptProcessor.setReceiptItems(Receipt.fullCopyReceiptItems(initialDataReceiptItems));
     }
 
-    /**
-     * Closes the error message box.
-     */
     @FXML
-    public void closeErrorMessage() {
-        errorMessageBox.setVisible(false);
-        errorMessageBox.setManaged(false);
-        errorProperty.set(null);
+    private void addReceiptItem() {
+
+        boolean placeholderExists = dataReceiptItems.stream().anyMatch(item -> RECEIPT_ITEM_PLACEHOLDER_DATA.getName().equals(item.getName()));
+
+        if (placeholderExists) {
+            showErrorMessage("You can only add one placeholder item at a time");
+            return;
+        }
+
+        try {
+            ReceiptItem receiptItem = new ReceiptItem(
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getPrice(),
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getName(),
+                    RECEIPT_ITEM_PLACEHOLDER_DATA.getAmount());
+
+            receiptProcessor.addReceiptItem(receiptItem);
+        } catch (IllegalArgumentException e) {
+            logError(ADD_FAIL_ERROR_MESSAGE, e);
+            showErrorMessage(ADD_FAIL_ERROR_MESSAGE);
+        }
     }
 
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
 
     private void showErrorMessage(String message) {
         errorMessageLabel.setText(message);
@@ -207,7 +208,9 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private void configureUnitPriceColumn() {
         unitPriceColumn.setCellValueFactory(cellItem -> {
             ReceiptItem item = cellItem.getValue();
-            return new SimpleStringProperty(roundPrice(item.getPrice() / item.getAmount()) + " CHF");
+            float roundedPrice = roundPrice(item.getPrice() / item.getAmount());
+
+            return new SimpleStringProperty(roundedPrice + " CHF");
         });
 
         unitPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
@@ -277,12 +280,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     private void handleDeleteAction(ReceiptItem receiptItem) {
         try {
-            boolean removeSuccess = receiptProcessor.deleteReceiptItemByName(receiptItem.getName());
-
-            if (!removeSuccess) {
-                logger.warning(DELETE_FAIL_ERROR_MESSAGE + receiptItem.getName());
-                errorProperty.setValue(DELETE_FAIL_ERROR_MESSAGE);
-            }
+            receiptProcessor.deleteReceiptItemByName(receiptItem.getName());
         } catch (IllegalArgumentException e) {
             logError(DELETE_FAIL_ERROR_MESSAGE, e);
             showErrorMessage(DELETE_FAIL_ERROR_MESSAGE);
@@ -300,7 +298,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
         if (price < 0) {
             showErrorMessage("You can only enter positive numbers in this cell");
-
+            tableReceiptItems.refresh();
             return Optional.empty();
         }
 

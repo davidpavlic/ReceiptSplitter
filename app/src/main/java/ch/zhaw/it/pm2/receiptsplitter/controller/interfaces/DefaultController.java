@@ -31,7 +31,7 @@ public abstract class  DefaultController {
     protected ContactRepository contactRepository;
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
-    protected StringProperty errorProperty = new SimpleStringProperty();
+    protected StringProperty errorMessageProperty = new SimpleStringProperty();
 
 
     /**
@@ -65,7 +65,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException | IOException exception) {
             logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            errorProperty.setValue("Could not open FAQ modal");
+            errorMessageProperty.setValue("Could not open FAQ modal");
         }
     }
 
@@ -83,7 +83,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException | IOException exception) {
             logger.severe("Could not open help modal: " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            errorProperty.setValue("Could not open help modal");
+            errorMessageProperty.setValue("Could not open help modal");
         }
     }
 
@@ -98,7 +98,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException exception) {
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            errorProperty.setValue("Could not switch to " + page + " Window");
+            errorMessageProperty.setValue("Could not switch to " + page + " Window");
         }
     }
 
@@ -114,7 +114,7 @@ public abstract class  DefaultController {
         } catch (IllegalStateException | IllegalArgumentException exception) {
             logger.severe("Could not switch Scenes to " + page.toString() + " Window from Controller " + this.getClass().getSimpleName() + ", " + exception.getMessage());
             logger.fine(Arrays.toString(exception.getStackTrace()));
-            errorProperty.setValue("Could not switch to " + page + " Window");
+            errorMessageProperty.setValue("Could not switch to " + page + " Window");
         }
     }
 

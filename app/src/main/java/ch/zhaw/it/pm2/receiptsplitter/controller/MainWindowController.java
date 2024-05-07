@@ -45,11 +45,26 @@ public class MainWindowController extends DefaultController implements IsObserve
 
     @FXML
     public void addReceipt() {
-        if (!prepareDebugTestData()) return;
+//        if (!prepareDebugTestData()) return;
+        prepareListItemDebugTestData();
 
-        switchScene(Pages.CHOOSE_PEOPLE_WINDOW);
+        switchScene(Pages.LIST_ITEMS_WINDOW);
     }
 
+    // TODO: Only used for testing, remove in the end
+    private void prepareListItemDebugTestData(){
+        Receipt receipt = new Receipt(new ArrayList<>(){{
+            add(new ReceiptItem(1.0F, "Test Item 1", 1));
+            add(new ReceiptItem(2.0F, "Test Item 2", 2));
+            add(new ReceiptItem(3.0F, "Test Item 3", 3));
+            add(new ReceiptItem(4.0F, "Test Item 4", 4));
+            add(new ReceiptItem(5.0F, "Test Item 5", 5));
+        }});
+
+        receiptProcessor.setReceipt(receipt);
+    }
+
+    // TODO: Only used for testing, remove in the end
     private boolean prepareDebugTestData() {
         List<Contact> contacts = contactRepository.getContacts();
 

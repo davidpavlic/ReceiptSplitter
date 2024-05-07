@@ -33,6 +33,9 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
     @FXML private VBox contactListContainer;
     @FXML private Button confirmButton;
 
+    @FXML private HBox errorMessageBox;
+    @FXML private Label errorMessageLabel;
+
     private final ObservableList<HBox> contactRows = FXCollections.observableArrayList();
 
     private Contact activeProfile;
@@ -55,6 +58,10 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         confirmButton.setOnAction(e -> confirm());
         configureConfirmButton();
         createAndAddNewRow();
+
+        errorMessageProperty.addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) showErrorMessage(newValue);
+        });
     }
 
     /**
@@ -63,6 +70,8 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
      */
     @Override
     public void confirm() {
+
+
         for (HBox row : contactRows) {
             ComboBox<Contact> comboBox = getComboBoxFromRow(row);
             Contact contact = comboBox.getValue();
@@ -119,6 +128,19 @@ public class ChoosePeopleController extends DefaultController implements CanNavi
         HBox newRow = createContactRow();
         contactRows.add(newRow);
         contactListContainer.getChildren().add(newRow);
+    }
+
+    @FXML
+    private void closeErrorMessage() {
+        errorMessageBox.setVisible(false);
+        errorMessageBox.setManaged(false);
+        errorMessageProperty.set(null);
+    }
+
+    private void showErrorMessage(String message) {
+        errorMessageLabel.setText(message);
+        errorMessageBox.setVisible(true);
+        errorMessageBox.setManaged(true);
     }
 
     private void updateFirstContactRow() {
