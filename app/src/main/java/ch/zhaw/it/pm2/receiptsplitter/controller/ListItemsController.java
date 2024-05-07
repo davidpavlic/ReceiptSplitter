@@ -27,6 +27,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Controller for the List Items Window.
+ * <p>
+ * Shows a table with the receipt items that were extracted from the receipt.
+ * The user can add, update and delete receipt items.
+ * The [confirm] navigation leads to the Choose People Window. and the [back] navigation leads to the Add Receipt Window.
+ */
 public class ListItemsController extends DefaultController implements CanNavigate, CanReset, IsObserver {
     private static final ReceiptItem RECEIPT_ITEM_PLACEHOLDER_DATA = new ReceiptItem(0.01F, "[Enter name]", 1);
 
@@ -35,6 +42,8 @@ public class ListItemsController extends DefaultController implements CanNavigat
     private static final String DELETE_FAIL_ERROR_MESSAGE = "Could not remove Receipt Item";
     private static final String INTEGER_PARSE_ERROR_MESSAGE = "You can only enter digits in this cell";
     private static final String FLOAT_PARSE_ERROR_MESSAGE = "You can only enter numbers in this cell";
+    public static final String ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE = "You can only add one placeholder item at a time";
+    public static final String POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE = "You can only enter positive numbers in this cell";
 
     @FXML private HBox errorMessageBox;
     @FXML private Label errorMessageLabel;
@@ -116,11 +125,10 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     @FXML
     private void addReceiptItem() {
-
         boolean placeholderExists = dataReceiptItems.stream().anyMatch(item -> RECEIPT_ITEM_PLACEHOLDER_DATA.getName().equals(item.getName()));
 
         if (placeholderExists) {
-            showErrorMessage("You can only add one placeholder item at a time");
+            showErrorMessage(ADD_PLACEHOLDER_LIMIT_ERROR_MESSAGE);
             return;
         }
 
@@ -200,7 +208,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
             }
 
             if (amount < 0) {
-                showErrorMessage("You can only enter positive numbers in this cell");
+                showErrorMessage(POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE);
                 tableReceiptItems.refresh();
                 return;
             }
@@ -222,32 +230,16 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
         unitPriceColumn.setCellFactory(TextFieldTableCell.forTableColumn());
         unitPriceColumn.setOnEditCommit(event -> {
-            logger.severe("Edit Commit for: " + event.getRowValue().getName() + " with new value: " + event.getNewValue());
             String unitPriceInput = event.getNewValue();
 
-            logger.severe("Checking if old value is same as new value");
-            if (event.getOldValue().equals(unitPriceInput)) {
-                logger.severe("Old value equals new value item: " + event.getRowValue().getName() + " with new value: " + unitPriceInput);
-                return;
-            }
-
-            logger.severe("Old value is not same as new value");
+            if (event.getOldValue().equals(unitPriceInput)) return;
 
             ReceiptItem item = event.getRowValue();
-            logger.severe("Got item: " + item.getName());
-
             Optional<Float> unitPrice = extractPrice(unitPriceInput);
-            logger.severe("Extracted unit price. IsPresent: " + unitPrice.isPresent());
 
-            if (unitPrice.isEmpty()) {
-                logger.severe("Unit price is empty");
-                return;
-            }
+            if (unitPrice.isEmpty()) return;
 
-            logger.severe("Setting Unit price: " + unitPrice.get());
             item.setPrice(unitPrice.get() * item.getAmount());
-
-            logger.severe("Updating receipt item: " + item.getName());
             updateReceiptItem(item.getName(), item);
         });
     }
@@ -325,7 +317,7 @@ public class ListItemsController extends DefaultController implements CanNavigat
         }
 
         if (price < 0) {
-            showErrorMessage("You can only enter positive numbers in this cell");
+            showErrorMessage(POSITIVE_NUMBERS_ONLY_ERROR_MESSAGE);
             tableReceiptItems.refresh();
             return Optional.empty();
         }
@@ -335,7 +327,6 @@ public class ListItemsController extends DefaultController implements CanNavigat
 
     private boolean updateReceiptItem(String oldName, ReceiptItem item) {
         try {
-            logger.severe("Updating receipt item value: " + item.getPrice());
             receiptProcessor.updateReceiptItemByName(oldName, item);
             return true;
         } catch (IllegalArgumentException e) {
@@ -346,16 +337,10 @@ public class ListItemsController extends DefaultController implements CanNavigat
     }
 
     private void updateTable() {
-        logger.severe("----------------0------");
         var sortOrder = new ArrayList<>(tableReceiptItems.getSortOrder());
-        logger.severe("----------------1-------");
         tableReceiptItems.setItems(FXCollections.observableArrayList(dataReceiptItems));
-        logger.severe("----------------2-------");
         tableReceiptItems.refresh();
-        logger.severe("----------------3-------");
-
         tableReceiptItems.getSortOrder().setAll(sortOrder);
-        logger.severe("----------------4-------");
     }
 
     public Float floatFromString(String string) {

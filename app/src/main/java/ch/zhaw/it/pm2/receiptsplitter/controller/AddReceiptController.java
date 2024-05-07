@@ -3,6 +3,7 @@ package ch.zhaw.it.pm2.receiptsplitter.controller;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanNavigate;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.CanReset;
 import ch.zhaw.it.pm2.receiptsplitter.controller.interfaces.DefaultController;
+import ch.zhaw.it.pm2.receiptsplitter.enums.Currencies;
 import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Receipt;
@@ -108,7 +109,9 @@ public class AddReceiptController extends DefaultController implements CanNaviga
             ReceiptOCR extractedImage = imageExtractor.extractReceiptOCR(file);
             List<ReceiptItem> receiptItems = mapReceiptItems(extractedImage);
 
-            receiptProcessor.setReceipt(new Receipt(receiptItems));
+            Receipt receipt = new Receipt(receiptItems);
+            receipt.setCurrency(Currencies.CHF); // CHF is set as default currency for this MVP Project.
+            receiptProcessor.setReceipt(receipt);
             return true;
         } catch (ImageReceiptExtractorException e) {
             logger.severe("Error while processing receipt: " + e.getMessage());

@@ -21,7 +21,6 @@ import javafx.util.StringConverter;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
     @FXML private TableView<TableRow> contactItemTable;
     @FXML private TableColumn<TableRow, String> itemColumn;
@@ -68,11 +67,12 @@ public class AllocateItemsController extends DefaultController implements IsObse
                                 .orElse(null);
                     }
                 });
-                comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-                    checkAllComboBoxesSelected(comboBoxes);
-                });
+
+                comboBox.getSelectionModel().selectedItemProperty()
+                        .addListener((observable, oldValue, newValue) -> checkAllComboBoxesSelected(comboBoxes));
+
                 comboBoxes.add(comboBox);
-                receiptItems.add(new TableRow(receiptItem, comboBox));
+                receiptItems.add(new TableRow(receiptItem, comboBox, receiptProcessor));
             }
         }
         return receiptItems;
@@ -80,7 +80,7 @@ public class AllocateItemsController extends DefaultController implements IsObse
 
     private void configureTableColumns() {
         itemColumn.setCellValueFactory(cellData -> cellData.getValue().receiptItemProperty());
-        priceColumn.setCellValueFactory(cellData -> cellData.getValue().itemPriceProperty());
+        priceColumn.setCellValueFactory(cellData -> cellData.getValue().itemUnitPriceProperty());
         dropdown.setCellFactory(param -> new TableCell<>() {
             @Override
             protected void updateItem(String item, boolean empty) {
@@ -138,13 +138,16 @@ public class AllocateItemsController extends DefaultController implements IsObse
     public static class TableRow {
         private final ReceiptItem receiptItem;
         private final SimpleStringProperty itemName;
-        private final SimpleStringProperty itemPrice;
+        private final SimpleStringProperty itemUnitPrice;
         private final ComboBox<Contact> contactComboBox;
 
-        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox) {
+        public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor ) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
-            this.itemPrice = new SimpleStringProperty(Math.round(receiptItem.getPrice() / receiptItem.getAmount() * 100) / 100F + " CHF");
-            //TODO: Convert Price with default method
+
+            float unitPrice = receiptItem.getPrice() / receiptItem.getAmount(); // Price of a single unit of the item
+            String formattedUnitPrice = receiptProcessor.formatPriceWithCurrency(unitPrice);
+
+            this.itemUnitPrice = new SimpleStringProperty(formattedUnitPrice);
             this.receiptItem = receiptItem;
             this.contactComboBox = contactComboBox;
         }
@@ -153,8 +156,8 @@ public class AllocateItemsController extends DefaultController implements IsObse
             return itemName;
         }
 
-        public SimpleStringProperty itemPriceProperty() {
-            return itemPrice;
+        public SimpleStringProperty itemUnitPriceProperty() {
+            return itemUnitPrice;
         }
 
         public ComboBox<Contact> getContactComboBox() {

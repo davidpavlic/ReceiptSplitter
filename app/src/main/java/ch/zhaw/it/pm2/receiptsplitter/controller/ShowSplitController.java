@@ -6,7 +6,6 @@ import ch.zhaw.it.pm2.receiptsplitter.enums.HelpMessages;
 import ch.zhaw.it.pm2.receiptsplitter.enums.Pages;
 import ch.zhaw.it.pm2.receiptsplitter.model.Contact;
 import ch.zhaw.it.pm2.receiptsplitter.model.ContactReceiptItem;
-import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ContactRepository;
 import ch.zhaw.it.pm2.receiptsplitter.repository.IsObserver;
 import ch.zhaw.it.pm2.receiptsplitter.repository.ReceiptProcessor;
@@ -58,7 +57,8 @@ public class ShowSplitController extends DefaultController implements CanNavigat
 
         configureTable();
 
-        totalPrice.setText("0.00 CHF");
+        String formattedInitialPrice = receiptProcessor.formatPriceWithCurrency(0);
+        totalPrice.setText(formattedInitialPrice);
         uniqueContacts = new ArrayList<>();
 
         errorMessageProperty.addListener((observable, oldValue, newValue) -> {
@@ -121,9 +121,10 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         itemsTable.setItems(items);
         contactName.setText(contact.getDisplayName());
 
-        float totalAmount = receiptProcessor.calculateDebtByPerson(contact);
+        float totalPriceOfContact = receiptProcessor.calculateDebtByPerson(contact);
 
-        totalPrice.setText(ReceiptItem.roundPrice(totalAmount) + " CHF");
+        String formattedTotalPrice = receiptProcessor.formatPriceWithCurrency(totalPriceOfContact);
+        this.totalPrice.setText(formattedTotalPrice);
 
         this.uniqueContacts = receiptProcessor.getDistinctContacts();
         int currentIndex = uniqueContacts.indexOf(contact);
@@ -229,7 +230,6 @@ public class ShowSplitController extends DefaultController implements CanNavigat
                     return false;
                 }
             } catch (Exception e) {
-                // TODO: logError() after merge
                 logError("Failed to send email", e);
                 return false;
             }
@@ -237,27 +237,35 @@ public class ShowSplitController extends DefaultController implements CanNavigat
         return true;
     }
 
-    private String buildEmail(Contact Recipient, Contact Requester) {
+    private String buildEmail(Contact recipient, Contact requester) {
         StringBuilder emailBody = new StringBuilder();
 
         emailBody.append("<html><body>");
-        emailBody.append("<h1>Dear ").append(Recipient.getFirstName()).append(" - You have a new Request</h1>");
-        emailBody.append("<p>").append(Requester.getDisplayName()).append(" has sent you a Request, please see the detailed List below</p>");
+        emailBody.append("<h1>Dear ").append(recipient.getFirstName()).append(" - You have a new Request</h1>");
+        emailBody.append("<p>").append(requester.getDisplayName()).append(" has sent you a Request, please see the detailed List below</p>");
 
         emailBody.append("<ul>");
-        for (ContactReceiptItem item : receiptProcessor.getContactReceiptItems().stream()
-                .filter(i -> i.getContact().equals(Recipient))
-                .toList()) {
+
+        List<ContactReceiptItem> receiptItemsOfRecipients = receiptProcessor.getContactReceiptItems().stream()
+                .filter(i -> i.getContact().equals(recipient))
+                .toList();
+
+        for (ContactReceiptItem item : receiptItemsOfRecipients) {
+            String formattedPrice = receiptProcessor.formatPriceWithCurrency(item.getPrice());
             emailBody.append("<li>")
                     .append(item.getName())
-                    .append(" - CHF")
-                    .append(String.format("%.2f", item.getPrice()))
+                    .append(" - ")
+                    .append(formattedPrice)
                     .append("</li>");
         }
+
         emailBody.append("</ul>");
 
-        emailBody.append("<p>Total: CHF")
-                .append(String.format("%.2f", receiptProcessor.calculateDebtByPerson(Recipient)))
+        float totalPriceOfRecipient = receiptProcessor.calculateDebtByPerson(recipient);
+        String formattedTotalPrice = receiptProcessor.formatPriceWithCurrency(totalPriceOfRecipient);
+
+        emailBody.append("<p>Total: ")
+                .append(formattedTotalPrice)
                 .append("</p>");
         emailBody.append("</body></html>");
 
