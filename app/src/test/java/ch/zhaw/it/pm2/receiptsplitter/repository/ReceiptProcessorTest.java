@@ -7,9 +7,8 @@ import ch.zhaw.it.pm2.receiptsplitter.model.ReceiptItem;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -40,7 +39,7 @@ class ReceiptProcessorTest {
         receiptProcessor.setReceipt(receipt);
     }
 
-    private void generateMock(ReceiptItem mockItem, float price, String name, int amount){
+    private void generateMock(ReceiptItem mockItem, float price, String name, int amount) {
         lenient().when(mockItem.getPrice()).thenReturn(price);
         lenient().when(mockItem.getName()).thenReturn(name);
         lenient().when(mockItem.getAmount()).thenReturn(amount);
@@ -69,7 +68,7 @@ class ReceiptProcessorTest {
 
         // Assert
         assertEquals(amount, splitItems.size());
-        assertEquals(price/amount, splitItems.get(0).getPrice());
+        assertEquals(price / amount, splitItems.get(0).getPrice());
     }
 
     @Test
@@ -99,24 +98,26 @@ class ReceiptProcessorTest {
     @Test
     void updateReceiptItem_ValidReceiptItem_ItemUpdated() {
         // Arrange
-        int sizeBefore = 1;
+        List<ReceiptItem> mockedReceiptItems = receiptItems;
+
+        int sizeBefore = mockedReceiptItems.size();
         String oldName = "Tee";
         String newName = "Kaffee";
         int newAmount = 3;
 
         ReceiptItem newItem = mock(ReceiptItem.class);
-        generateMock(newItem,5.0f, newName, newAmount);
-        when(receipt.getReceiptItemByName(oldName)).thenReturn(Optional.of(receiptItem));
+        generateMock(newItem, 5.0f, newName, newAmount);
 
-        InOrder inOrderReceipt = inOrder(receipt);
+        when(receipt.getReceiptItemByName(oldName)).thenReturn(Optional.of(receiptItem));
+        int expectedIndex = mockedReceiptItems.indexOf(receiptItem);
 
         // Act
         receiptProcessor.updateReceiptItemByName(oldName, newItem);
 
         // Assert
-        inOrderReceipt.verify(receipt).getReceiptItems();
-        inOrderReceipt.verify(receipt).getReceiptItemByName(oldName);
-        inOrderReceipt.verify(receipt).updateReceiptItem(receipt.getReceiptItems().indexOf(receipt.getReceiptItemByName(oldName).get()), newItem);
+        verify(receipt).getReceiptItems();
+        verify(receipt).getReceiptItemByName(oldName);
+        verify(receipt).updateReceiptItem(expectedIndex, newItem);
         assertEquals(sizeBefore, receipt.getReceiptItems().size());
     }
 
@@ -129,15 +130,16 @@ class ReceiptProcessorTest {
     @Test
     void deleteReceiptItemByName_ExistingReceiptItem_IsDeleted() {
         // Arrange
-        String name = receipt.getReceiptItems().getFirst().getName();
-        when(receipt.getReceiptItems()).thenReturn(new ArrayList<>(Collections.singletonList(receiptItem)));
-        when(receiptItem.getName()).thenReturn(name);
+        String name = receiptItems.getFirst().getName();
+        when(receipt.getReceiptItems()).thenReturn(Collections.singletonList(receiptItem));
+        when(receipt.getReceiptItemByName(name)).thenReturn(Optional.of(receiptItem));
+        int expectedIndex = receiptItems.indexOf(receiptItem);
 
         //Act
         receiptProcessor.deleteReceiptItemByName(name);
 
         // Assert
-        verify(receipt).deleteReceiptItem(receipt.getReceiptItems().indexOf(receipt.getReceiptItemByName(name).get()));
+        verify(receipt).deleteReceiptItem(expectedIndex);
     }
 
     @Test
