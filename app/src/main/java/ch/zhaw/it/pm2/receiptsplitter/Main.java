@@ -66,10 +66,10 @@ public class Main extends Application {
      * @throws Exception if any error occurs during the setup
      */
     public void start(Stage stage) throws Exception {
-        stage.setWidth(500);
-        stage.setHeight(400);
-        stage.setMinWidth(460);
-        stage.setMinHeight(360);
+        stage.setWidth(350);
+        stage.setHeight(500);
+        //stage.setMinWidth(460);
+        //stage.setMinHeight(360);
         stage.setTitle("Receipt Splitter");
 
         //ContactRepository contactRepository = new ContactRepository(Objects.requireNonNull(getClass().getResource("/contacts.csv")).getPath());

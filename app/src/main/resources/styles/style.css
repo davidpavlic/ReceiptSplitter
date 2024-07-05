@@ -35,3 +35,105 @@
 .table-column-center {
     -fx-alignment: CENTER;
 }
+
+.mfx-button {
+	-fx-text-fill: -mfx-text-he;
+    -fx-background-color: #f3f3f3;
+}
+
+.mfx-button .mfx-ripple-generator {
+	-mfx-ripple-radius: 40;
+	-mfx-auto-clip: true;
+}
+
+.mfx-button .text {
+	-fx-font-smoothing-type: gray;
+}
+
+.mfx-ripple-generator {
+	-mfx-ripple-color: #DDDDDD;
+}
+
+.link-button {
+	-fx-background-color: transparent;
+	-fx-border-radius: 3;
+	-fx-text-fill: #000000;
+	-fx-underline: true;
+	-fx-cursor: hand;
+}
+
+/**************************************************
+ * New Combos
+**************************************************/
+.combo-box {
+	-fx-min-width: 150;
+	-fx-background-color: #ffffff;
+}
+
+#customNCombo .floating-text {
+	-fx-background-color: transparent;
+	-fx-text-fill: white;
+}
+
+#customNCombo .caret .mfx-font-icon {
+	color: #ffffff;
+}
+
+#customNCombo .caret .mfx-ripple-generator {
+	-mfx-ripple-color: rgba(255, 255, 255, 0.5);
+}
+
+#customNCombo2 {
+	-fx-border-color: transparent transparent gray transparent;
+	-fx-border-radius: 0;
+	-fx-padding: 3 -3 0 3;
+}
+
+#customNCombo2:focus-within {
+	-fx-border-color: transparent transparent -common-gradient transparent;
+}
+
+#customNCombo2:focus-within .caret .mfx-font-icon {
+	color: #ff5d53;
+}
+
+#customNCombo2 .virtual-flow {
+	-track-color: derive(#ff5d53, 90%);
+	-thumb-color: derive(#ff5d53, 50%);
+	-thumb-hover-color: derive(#ff5d53, 25%);
+}
+
+#customNCombo2 .virtual-flow .combo-box-cell:hover {
+	-fx-background-color: derive(#ff5d53, 90%);
+}
+
+/**************************************************
+ * Filter Combos
+**************************************************/
+#customFilter {
+	-fx-border-color: transparent;
+	-fx-border-radius: 0;
+	-fx-background-color: #007BF6;
+	-fx-text-fill: white;
+
+	-fx-padding: 4;
+	-fx-background-insets: 0;
+}
+
+#customFilter .text-field {
+	-fx-prompt-text-fill: white;
+}
+
+#customFilter .combo-popup .text-field {
+	-fx-prompt-text-fill: -mfx-text-me;
+}
+
+#customFilter .caret .mfx-font-icon {
+    -mfx-color: #FF794B;
+    -mfx-description: "fas-angle-down";
+    -mfx-size: 16;
+}
+
+#customFilter .caret .mfx-ripple-generator {
+	-mfx-ripple-color: rgba(255, 255, 255, 0.5);
+}

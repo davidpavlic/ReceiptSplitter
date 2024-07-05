@@ -23,6 +23,8 @@ import javafx.scene.control.ComboBox;
  * @version 1.0
 
  */
+//TODO: Replace ComboBox with MFXComboBox
+//TODO: Adjust Button and Label Design
 public class LoginController extends DefaultController implements IsObserver{
 
     public static final String PROFILE_NOT_SET_ERROR_MESSAGE = "Could not set the selected profile. Please try again.";

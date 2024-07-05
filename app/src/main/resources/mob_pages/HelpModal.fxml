@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane minHeight="60.0" minWidth="280.0" prefHeight="262.0" prefWidth="386.0" stylesheets="@../styles/style.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.HelpController">
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 10;">
+
+            <!-- Spacer that pushes both buttons to the ends -->
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <!-- Button on the right -->
+            <Button onAction="#confirm" text="Confirm" HBox.hgrow="NEVER"/>
+        </HBox>
+    </bottom>
+    <center>
+        <VBox alignment="CENTER" prefHeight="167.0" prefWidth="386.0" BorderPane.alignment="CENTER">
+            <Label text="Help Instructions" VBox.vgrow="ALWAYS">
+                <VBox.margin>
+                    <Insets bottom="5.0" top="5.0"/>
+                </VBox.margin>
+                <font>
+                    <Font name="System Bold Italic" size="22.0"/>
+                </font>
+            </Label>
+            <TextArea editable="false" focusTraversable="false" minHeight="40" fx:id="helpTextArea" prefHeight="200.0"
+                      prefWidth="200.0">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                </padding>
+            </TextArea>
+        </VBox>
+    </center>
+</BorderPane>

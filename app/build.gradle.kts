@@ -5,6 +5,7 @@
  * For more details on building Java & JVM projects, please refer to https://docs.gradle.org/8.6/userguide/building_java_projects.html in the Gradle documentation.
  */
 
+
 plugins {
     // Apply the application plugin to add support for building a CLI application in Java.
     application
@@ -28,6 +29,7 @@ dependencies {
     implementation(libs.simple.java.mail)
     implementation(libs.mail.batch.modules)
     implementation(libs.azure.ai.form.recognizer)
+    implementation("io.github.palexdev:materialfx:11.17.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.

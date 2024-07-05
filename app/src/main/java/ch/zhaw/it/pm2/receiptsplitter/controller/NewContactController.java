@@ -79,13 +79,13 @@ public class NewContactController extends DefaultController implements CanNaviga
             closeErrorMessage();
         } catch (IllegalArgumentException illegalArgumentException) {
             logError(illegalArgumentException.getMessage(), illegalArgumentException);
-            errorMessageProperty.set(CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE);
+            //errorMessageProperty.set(CONTACT_EMAIL_ALREADY_EXISTS_ERROR_MESSAGE);
         } catch (IOException ioException) {
             logError(ioException.getMessage(), ioException);
-            errorMessageProperty.set(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
+            //errorMessageProperty.set(CONTACTS_FILE_ACCESS_ERROR_MESSAGE);
         } catch (Exception exception) {
             logError("Error adding contact", exception);
-            errorMessageProperty.set(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
+           //errorMessageProperty.set(CONTACTS_UPDATE_UNKNOWN_ERROR_MESSAGE);
         }
     }
 
@@ -114,11 +114,12 @@ public class NewContactController extends DefaultController implements CanNaviga
 
         boolean emailValid = EmailService.isValidMail(emailInput.getText());
 
+        /*
         if (!emailValid && !emailInput.getText().isEmpty()) {
             errorMessageProperty.set("Please enter a valid email address.");
         } else {
             closeErrorMessage();
-        }
+        }*/
 
         confirmButton.setDisable(anyEmpty || !emailValid);
     }

@@ -4,10 +4,10 @@ public enum Pages {
 
     ADD_RECEIPT_WINDOW("/pages/AddReceipt.fxml"),
     ALLOCATE_ITEMS_WINDOW("/pages/AllocateItems.fxml"),
-    LOGIN_WINDOW("/pages/Login.fxml"),
+    LOGIN_WINDOW("/mob_pages/Login.fxml"),
     MAIN_WINDOW("/pages/MainWindow.fxml"),
     CONTACT_LIST_WINDOW("/pages/ContactList.fxml"),
-    CREATE_PROFILE_WINDOW("/pages/NewContact.fxml"),
+    CREATE_PROFILE_WINDOW("/mob_pages/NewContact.fxml"),
     EDIT_PROFILE_WINDOW("/pages/EditContact.fxml"),
     LIST_ITEMS_WINDOW("/pages/ListItems.fxml"),
     CHOOSE_CONTACT_WINDOW("/pages/ChooseContact.fxml"),

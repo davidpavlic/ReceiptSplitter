@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<BorderPane minHeight="60.0" minWidth="236.0" prefHeight="500.0" prefWidth="350.0" stylesheets="@../styles/style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ch.zhaw.it.pm2.receiptsplitter.controller.NewContactController">
+    <top>
+        <VBox>
+            <HBox spacing="10" style="-fx-padding: 10;">
+                <!-- Button on the left -->
+                <MFXButton layoutY="2.0" onAction="#back" prefHeight="26.0" prefWidth="58.0" text="Back" HBox.hgrow="NEVER" />
+
+                <Pane HBox.hgrow="ALWAYS" />
+
+                <MFXButton fx:id="confirmButton" text="Confirm" />
+            </HBox>
+        </VBox>
+    </top>
+    <center>
+        <VBox alignment="TOP_CENTER" prefHeight="188.0" prefWidth="308.0" BorderPane.alignment="CENTER">
+            <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Neuen Kontakt hinzufügen:" wrappingWidth="307.74634170532227">
+               <font>
+                  <Font size="12.0" />
+               </font>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </Text>
+            <Pane prefHeight="443.0" prefWidth="350.0">
+               <children>
+                  <VBox prefHeight="131.0" prefWidth="350.0">
+                     <children>
+                        <Pane prefHeight="96.0" prefWidth="350.0" style="-fx-background-color: #ffffff;" />
+                        <HBox prefHeight="100.0" prefWidth="350.0">
+                           <children>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                                    <TextField fx:id="firstNameInput" prefHeight="30.0" prefWidth="310.0" promptText="Vorname">
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font>
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding></TextField>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                           </children>
+                        </HBox>
+                        <Pane prefHeight="90.0" prefWidth="350.0" style="-fx-background-color: #ffffff;" />
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                                    <TextField fx:id="lastNameInput" prefHeight="30.0" prefWidth="310.0" promptText="Nachname">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font></TextField>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                           </children>
+                        </HBox>
+                        <Pane prefHeight="90.0" prefWidth="350.0" style="-fx-background-color: #ffffff;" />
+                        <HBox prefHeight="100.0" prefWidth="200.0">
+                           <children>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                                    <TextField fx:id="emailInput" prefHeight="26.0" prefWidth="310.0" promptText="E-Mail">
+                                 <padding>
+                                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                 </padding>
+                                 <font>
+                                    <Font size="12.0" />
+                                 </font></TextField>
+                              <Pane prefHeight="26.0" prefWidth="20.0" style="-fx-background-color: #ffffff;" />
+                           </children>
+                        </HBox>
+                        <Pane prefHeight="96.0" prefWidth="350.0" style="-fx-background-color: #ffffff;" />
+                     </children>
+                     <padding>
+                        <Insets top="5.0" />
+                     </padding>
+                  </VBox>
+               </children>
+            </Pane>
+            </children>
+        </VBox>
+    </center>
+</BorderPane>
