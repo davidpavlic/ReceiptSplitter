@@ -15,7 +15,7 @@
         <VBox>
             <HBox spacing="10" style="-fx-padding: 10;">
                 <!-- Button on the left -->
-                <MFXButton layoutY="2.0" onAction="#back" prefHeight="26.0" prefWidth="58.0" text="Back" HBox.hgrow="NEVER" />
+                <MFXButton layoutY="2.0" onAction="#back" prefHeight="27.0" prefWidth="73.0" text="＜ Login" textFill="#c6297d" HBox.hgrow="NEVER" />
 
                 <Pane HBox.hgrow="ALWAYS" />
 

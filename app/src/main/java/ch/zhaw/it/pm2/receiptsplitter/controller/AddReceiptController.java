@@ -111,7 +111,7 @@ public class AddReceiptController extends DefaultController implements CanNaviga
 
     @Override
     public void back() {
-        switchScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.LOGIN_WINDOW);
         clearReceiptData();
     }
 

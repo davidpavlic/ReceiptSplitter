@@ -104,7 +104,7 @@ public class LoginController extends DefaultController implements IsObserver{
             return;
         }
 
-        switchScene(Pages.MAIN_WINDOW);
+        switchScene(Pages.ADD_RECEIPT_WINDOW);
         closeErrorMessage();
     }
 
