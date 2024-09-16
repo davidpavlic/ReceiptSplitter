@@ -134,7 +134,7 @@ public class ContactListController extends DefaultController implements CanNavig
     private TableCell<Contact, String> createActionCell() {
         return new TableCell<>() {
             final Button editButton = new Button("Edit");
-            final Button deleteButton = new Button("Delete");
+            final Button deleteButton = new Button("Del");
             final HBox hbox = new HBox(10, editButton, deleteButton);
 
             @Override
