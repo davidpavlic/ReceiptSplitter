@@ -28,11 +28,12 @@ import java.util.logging.Logger;
  */
 public abstract class DefaultController {
     protected final Logger logger = Logger.getLogger(DefaultController.class.getName());
+    protected final StringProperty errorMessageProperty = new SimpleStringProperty();
+
     private Router router;
     protected ContactRepository contactRepository;
     protected ReceiptProcessor receiptProcessor;
     protected HelpMessages helpMessage;
-    protected StringProperty errorMessageProperty = new SimpleStringProperty();
 
     @FXML protected HBox errorMessageBox;
     @FXML protected Label errorMessageLabel;

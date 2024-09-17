@@ -1,7 +1,10 @@
 package ch.zhaw.it.pm2.receiptsplitter.enums;
 
+/**
+ * Enum for the Help Messages.
+ * Each Enum has a message that can be displayed in the Help Window.
+ */
 public enum HelpMessages {
-    //TODO: Add more messages and define them correctly
     MAIN_WINDOW_MSG("Main Window \n\nPlease choose a function from the menu. You can either add a receipt or Edit your List of Contacts"),
     LOGIN_WINDOW_MSG("Login Window \n\nPlease choose your Profile you would like to Login with. \nYou also have the option to create a new one."),
     CONTACT_LIST_WINDOW_MSG("Contact List Window \n\nYou can either create a new Contact or Edit an existing one. \nYou can also delete a Contact."),
@@ -26,10 +29,18 @@ public enum HelpMessages {
 
     private final String message;
 
+    /**
+     * Creates the Enum with a message.
+     * @param message The message of the Enum.
+     */
     HelpMessages(String message) {
         this.message = message;
     }
 
+    /**
+     * Get the message of the Enum.
+     * @return The message of the Enum.
+     */
     public String getMessage() {
         return message;
     }

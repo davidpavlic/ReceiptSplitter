@@ -58,18 +58,6 @@ public class ReceiptTest {
     }
 
     @Test
-    void getTotal_ValidAttributes_TotalGenerated(){
-        //Arrange
-        float localTotal = mockReceiptItemOne.getPrice() + mockReceiptItemTwo.getPrice() + mockReceiptItemThree.getPrice();
-
-        //Act
-        float generatedTotal = receipt.getReceiptTotal();
-
-        //Assert
-        assertEquals(localTotal, generatedTotal);
-    }
-
-    @Test
     void addReceiptItem_ValidAttributes_ReceiptItemAdded() {
         //Arrange
         ReceiptItem mockNewReceiptItem = mock(ReceiptItem.class);

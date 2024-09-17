@@ -23,15 +23,17 @@ import java.util.stream.Stream;
  * A profile can be set which is automatically added to the selected contacts.
  * The profile represents the User who is currently logged in.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 //TODO: Decide for consistent errormessages. Enum, static string or hard coded.
 public class ContactRepository implements IsObservable {
     private static final Logger logger = Logger.getLogger(ContactRepository.class.getName());
+
     private final List<IsObserver> observers = new ArrayList<>();
     private final List<Contact> contacts = new ArrayList<>();
     private final List<Contact> selectedContacts = new ArrayList<>();
+
     private Contact selectedProfile;
     private Contact selectedToEditContact;
 
@@ -59,7 +61,7 @@ public class ContactRepository implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     @Override
     public void addObserver(IsObserver observer) {
@@ -67,37 +69,13 @@ public class ContactRepository implements IsObservable {
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
      */
     public void notifyObservers() {
         logger.fine("Notifying observers in " + this.getClass().getSimpleName());
         for (IsObserver observer : observers) {
             observer.update();
         }
-    }
-
-    /**
-     * Checks if a contact exists by email.
-     *
-     * @param email Email of the contact
-     * @return True if the contact exists, false otherwise
-     */
-    // TODO: Not used outside of this class. Private?
-    public boolean contactExists(String email) {
-        return findContactByEmail(email).isPresent();
-    }
-
-    /**
-     * Finds a contact by email.
-     *
-     * @param email Email of the contact
-     * @return The contact if found, null otherwise
-     */
-    // TODO: Not used outside of this class. Private?
-    public Optional<Contact> findContactByEmail(String email) {
-        return contacts.stream()
-                .filter(contact -> contact.getEmail().equals(email))
-                .findFirst();
     }
 
     /**
@@ -117,6 +95,13 @@ public class ContactRepository implements IsObservable {
         notifyObservers();
     }
 
+    /**
+     * Updates a contact in the contact list.
+     *
+     * @param email      Email of the contact to be updated
+     * @param newContact New contact to be updated
+     * @throws IOException If an I/O error occurs
+     */
     public void updateContact(String email, Contact newContact) throws IOException {
         Objects.requireNonNull(email);
         Objects.requireNonNull(newContact);
@@ -131,6 +116,14 @@ public class ContactRepository implements IsObservable {
         }
     }
 
+    /**
+     * Removes a contact from the contact list.
+     *
+     * @param email Email of the contact to be removed
+     * @return True if the contact is removed, false otherwise
+     * @throws IllegalArgumentException If the contact is the selected profile or the contact does not exist
+     * @throws IOException              If an I/O error occurs
+     */
     public boolean removeContact(String email) throws IllegalArgumentException, IOException {
         if (selectedProfile != null && selectedProfile.getEmail().equals(email)) {
             logger.fine("Contact is selected profile and cannot be removed" + email);
@@ -151,8 +144,6 @@ public class ContactRepository implements IsObservable {
         }
         return false;
     }
-
-    //The following methods represent CRUD operations for selected contacts list
 
     /**
      * Adds a contact to the selected contacts list.
@@ -179,26 +170,6 @@ public class ContactRepository implements IsObservable {
      */
     public void removeAllSelectedContacts() {
         selectedContacts.clear();
-    }
-
-    public List<Contact> getSelectedContacts() {
-        return selectedContacts;
-    }
-
-    public Contact getSelectedToEditContact() {
-        return selectedToEditContact;
-    }
-
-    public Contact getProfile() {
-        return selectedProfile;
-    }
-
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setSelectedToEditContact(Contact selectedToEditContact) {
-        this.selectedToEditContact = selectedToEditContact;
     }
 
     /**
@@ -230,6 +201,51 @@ public class ContactRepository implements IsObservable {
         logger.info("Setting new profile: " + contact.getEmail());
         addContact(contact);
         setProfile(contact.getEmail());
+    }
+
+    /**
+     * Gets the selected contacts.
+     *
+     * @return List of selected contacts
+     */
+    public List<Contact> getSelectedContacts() {
+        return selectedContacts;
+    }
+
+    /**
+     * Gets the selected contact to edit.
+     *
+     * @return Contact to edit
+     */
+    public Contact getSelectedToEditContact() {
+        return selectedToEditContact;
+    }
+
+    /**
+     * Gets the contact list.
+     *
+     * @return List of contacts
+     */
+    public Contact getProfile() {
+        return selectedProfile;
+    }
+
+    /**
+     * Gets the contact list.
+     *
+     * @return List of contacts
+     */
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    /**
+     * Sets the selected contact to edit.
+     *
+     * @param selectedToEditContact Contact to edit
+     */
+    public void setSelectedToEditContact(Contact selectedToEditContact) {
+        this.selectedToEditContact = selectedToEditContact;
     }
 
     private boolean updateContactInContactList(String email, Contact newContact) {
@@ -296,6 +312,16 @@ public class ContactRepository implements IsObservable {
 
             writer.write(parseContactToLine(contact));
         }
+    }
+
+    private Optional<Contact> findContactByEmail(String email) {
+        return contacts.stream()
+                .filter(contact -> contact.getEmail().equals(email))
+                .findFirst();
+    }
+
+    private boolean contactExists(String email) {
+        return findContactByEmail(email).isPresent();
     }
 
     private Contact parseLineToContact(String line) {

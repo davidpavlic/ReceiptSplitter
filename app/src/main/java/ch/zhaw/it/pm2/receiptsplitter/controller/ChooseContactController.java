@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * It also updates the dropdown menu based on the current contacts in the contact repository.
  * It implements the CanNavigate and CanReset interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class ChooseContactController extends DefaultController implements CanNavigate, CanReset, IsObserver {

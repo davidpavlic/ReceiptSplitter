@@ -27,7 +27,7 @@ import java.util.List;
  * It implements the IsObserver, CanNavigate, and CanReset interfaces.
  *
  * @version 1.0
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  */
 public class AllocateItemsController extends DefaultController implements IsObserver, CanNavigate, CanReset {
     @FXML private TableView<TableRow> contactItemTable;
@@ -171,6 +171,14 @@ public class AllocateItemsController extends DefaultController implements IsObse
         private final SimpleStringProperty itemUnitPrice;
         private final ComboBox<Contact> contactComboBox;
 
+        /**
+         * Creates a new table row with a receipt item, a contact combo box, and the item name and unit price.
+         * Formats the unit price with the currency.
+         *
+         * @param receiptItem the receipt item
+         * @param contactComboBox the contact combo box
+         * @param receiptProcessor the receipt processor
+         */
         public TableRow(ReceiptItem receiptItem, ComboBox<Contact> contactComboBox, ReceiptProcessor receiptProcessor) {
             this.itemName = new SimpleStringProperty(receiptItem.getName());
 
@@ -181,18 +189,34 @@ public class AllocateItemsController extends DefaultController implements IsObse
             this.contactComboBox = contactComboBox;
         }
 
+        /**
+         * Returns the item name.
+         * @return the item name
+         */
         public SimpleStringProperty receiptItemProperty() {
             return itemName;
         }
 
+        /**
+         * Returns the item unit price.
+         * @return the item unit price
+         */
         public SimpleStringProperty itemUnitPriceProperty() {
             return itemUnitPrice;
         }
 
+        /**
+         * Returns the contact combo box.
+         * @return the contact combo box
+         */
         public ComboBox<Contact> getContactComboBox() {
             return contactComboBox;
         }
 
+        /**
+         * Returns the receipt item.
+         * @return the receipt item
+         */
         public ReceiptItem getReceiptItem() {
             return receiptItem;
         }

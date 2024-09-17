@@ -30,7 +30,6 @@ import javafx.stage.FileChooser;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -39,12 +38,12 @@ import java.util.List;
  * It processes the receipt and navigates to the ListItems view.
  * It implements the CanNavigate and CanReset interfaces.
  *
- * @Author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
+ * @author Suhejl Asani, Ryan Simmonds, Kaspar Streiff, David Pavlic
  * @version 1.0
  */
 public class AddReceiptController extends DefaultController implements CanNavigate, CanReset {
 
-    public static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
+    private static final String RECEIPT_NOT_PROCESSED_ERROR_MESSAGE = "Receipt could not be processed. Please try again.";
 
     private File selectedFile;
     private ImageReceiptExtractor imageExtractor;
@@ -60,7 +59,6 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     @FXML private Button backButton;
 
     /**
-     *
      * {@inheritDoc}
      * Initializes the Controller with the necessary dependencies and initial data.
      * Configures the drag and drop pane and the upload receipt button.
@@ -79,7 +77,8 @@ public class AddReceiptController extends DefaultController implements CanNaviga
     }
 
     /**
-     * @inheritDoc Enables the loading animation and disables all buttons.
+     * {@inheritDoc}
+     * Enables the loading animation and disables all buttons.
      * Loads the receipt image and processes the receipt in a separate thread.
      * After processing the receipt, the loading animation is disabled and the user is navigated to the list items window, additionally doing some cleanup.
      */
@@ -88,40 +87,31 @@ public class AddReceiptController extends DefaultController implements CanNaviga
         setLoadingAnimationEnabled(true);
         setAllButtonsDisabled(true);
 
-        // TODO: Check if this Threading is alright (just to make sure)
-        //Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
-        new Thread(() -> {
-            boolean success = processReceipt(selectedFile);
-
-            //The UI updates occur in the JavaFX Application thread using `Platform.runLater` to ensure thread safety.
-            Platform.runLater(() -> {
-                setLoadingAnimationEnabled(false);
-                if (success) {
-                    switchScene(Pages.LIST_ITEMS_WINDOW);
-                    clearReceiptData();
-                    closeErrorMessage();
-                } else {
-                    errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
-                    logger.fine("Showing parsing receipt error, receipt processing has failed.");
-                }
-                setUtilButtonsDisabled(false);
-            });
-        }).start();
+        // Threading is implemented to prevent blocking the JavaFX Application thread, allowing smooth UI operation.
+        processReceiptInBackgroundThread();
     }
 
+    /**
+     * {@inheritDoc}
+     * Navigates back to the main window.
+     */
     @Override
     public void back() {
         switchScene(Pages.LOGIN_WINDOW);
         clearReceiptData();
     }
 
+    /**
+     * {@inheritDoc}
+     * Resets the view by clearing the receipt data.
+     */
     @Override
     public void reset() {
         clearReceiptData();
     }
 
     @FXML
-    public void handleReceiptDropped(DragEvent dragEvent) {
+    private void handleReceiptDropped(DragEvent dragEvent) {
         boolean success = false;
         Dragboard dragboard = dragEvent.getDragboard();
 
@@ -132,6 +122,34 @@ public class AddReceiptController extends DefaultController implements CanNaviga
 
         dragEvent.setDropCompleted(success);
         dragEvent.consume();
+    }
+
+    private void processReceiptInBackgroundThread() {
+        new Thread(() -> {
+            try {
+                boolean success = processReceipt(selectedFile);
+                //The UI updates occur in the JavaFX Application thread using `Platform.runLater` to ensure thread safety.
+                Platform.runLater(() -> {
+                    setLoadingAnimationEnabled(false);
+                    if (success) {
+                        switchScene(Pages.LIST_ITEMS_WINDOW);
+                        clearReceiptData();
+                        closeErrorMessage();
+                    } else {
+                        errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
+                        logger.fine("Showing parsing receipt error, receipt processing has failed.");
+                    }
+                    setUtilButtonsDisabled(false);
+                });
+            } catch (Exception e) {
+                Platform.runLater(() -> {
+                    logError("Error while processing receipt: " + e.getMessage(), e);
+                    setLoadingAnimationEnabled(false);
+                    errorMessageProperty.set(RECEIPT_NOT_PROCESSED_ERROR_MESSAGE);
+                    setUtilButtonsDisabled(false);
+                });
+            }
+        }).start();
     }
 
     private boolean processReceipt(File file) {
